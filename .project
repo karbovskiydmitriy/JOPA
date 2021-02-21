@@ -3,6 +3,7 @@
 	<name>JOPA</name>
 	<comment></comment>
 	<projects>
+		<project>JOPA_plugin_API</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
