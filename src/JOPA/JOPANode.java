@@ -1,6 +1,7 @@
 package JOPA;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
@@ -40,6 +41,7 @@ public class JOPANode {
 		g.drawString(command, rect.x, rect.y + headerHeight * 2);
 		if (formula != null) {
 			FontRenderContext frc = g.getFontRenderContext();
+			Font font = g.getFont();
 			int inputsCount = formula.inputs.length;
 			int outputsCount = formula.outputs.length;
 			float inputsStep = (rect.height - headerHeight) / (float) (inputsCount + 1);
@@ -49,7 +51,7 @@ public class JOPANode {
 				g.drawOval((int) (rect.x - pointRadius), (int) (h - pointRadius), (int) (pointRadius * 2),
 						(int) (pointRadius * 2));
 				String inputName = formula.inputs[i];
-				Rectangle2D r = g.getFont().getStringBounds(inputName, frc);
+				Rectangle2D r = font.getStringBounds(inputName, frc);
 				g.drawString(inputName, (int) (rect.x - r.getWidth() - pointRadius * 2), (int) (h + pointRadius));
 			}
 			for (int i = 0; i < outputsCount; i++) {

@@ -40,14 +40,12 @@ public class MainJOPA {
 		});
 
 		window.setBounds(window.getGraphicsConfiguration().getBounds());
-//		window.setAlwaysOnTop(true);
-//		window.setExtendedState(Frame.NORMAL | Frame.MAXIMIZED_BOTH);
-//		window.getGraphicsConfiguration().getDevice().setFullScreenWindow(window);
 		window.setEnabled(true);
 		window.setVisible(true);
 
 		final JOPACanvas canvas = new JOPACanvas();
 		canvas.workspace = workspace;
+		canvas.setDoubleBuffered(true);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -66,14 +64,17 @@ public class MainJOPA {
 				workspace.click(e.getPoint());
 				canvas.repaint();
 			}
-
+		});
+		canvas.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
+				workspace.moved(e.getPoint());
 				canvas.repaint();
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				workspace.moved(e.getPoint());
 				canvas.repaint();
 			}
 		});

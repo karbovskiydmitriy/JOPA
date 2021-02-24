@@ -1,11 +1,12 @@
 package JOPA;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-public class JOPACanvas extends Canvas {
+import javax.swing.JPanel;
+
+public class JOPACanvas extends JPanel {
 
 	private static final long serialVersionUID = -5988361450482572777L;
 
