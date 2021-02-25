@@ -24,6 +24,8 @@ public class JOPAWorkspace {
 		JOPANode node = getNodeOnPoint(p);
 		if (node != null) {
 			selectedNode = node;
+			nodes.remove(node);
+			nodes.add(node);
 			isDragging = true;
 			pressPoint = new Point(node.rect.x - p.x, node.rect.y - p.y);
 		}
@@ -35,7 +37,15 @@ public class JOPAWorkspace {
 	}
 
 	public void click(Point p) {
-		JOPANode node = getNodeOnPoint(p);
+		JOPAPort port = getPortOnPoint(p);
+		if (port != null) {
+			System.out.println("Port");
+		} else {
+			JOPANode node = getNodeOnPoint(p);
+			if (node != null) {
+				System.out.println("Node");
+			}
+		}
 	}
 
 	public void moved(Point p) {
@@ -47,8 +57,19 @@ public class JOPAWorkspace {
 
 	private JOPANode getNodeOnPoint(Point p) {
 		for (JOPANode node : nodes) {
-			if (node.rect.contains(p)) {
+			if (node.hit(p)) {
 				return node;
+			}
+		}
+
+		return null;
+	}
+
+	private JOPAPort getPortOnPoint(Point p) {
+		for (JOPANode node : nodes) {
+			JOPAPort port = node.hitPort(p);
+			if (port != null) {
+				return port;
 			}
 		}
 

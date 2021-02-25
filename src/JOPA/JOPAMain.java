@@ -13,7 +13,7 @@ import java.awt.event.WindowEvent;
 
 import com.jogamp.opengl.GLProfile;
 
-public class MainJOPA {
+public class JOPAMain {
 
 	public static void main(String[] args) {
 		final GLProfile glProfile = GLProfile.get(GLProfile.GL4);
@@ -83,11 +83,6 @@ public class MainJOPA {
 		canvas.repaint();
 
 		MenuBar menuBar = new MenuBar();
-
-		/*
-		 * { Font menuBarFont = new Font("Arial", Font.BOLD, 14);
-		 * menuBar.setFont(menuBarFont); }
-		 */
 
 		{
 			Menu fileMenu = new Menu("file");
