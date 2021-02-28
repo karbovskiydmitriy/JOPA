@@ -15,8 +15,28 @@ import com.jogamp.opengl.GLProfile;
 
 public class JOPAMain {
 
+	private static JOPAWorkspace currentWorkspace;
+
+	private static JOPACanvas canvas;
+	private static Frame window;
+	private static GLProfile glProfile;
+
 	public static void main(String[] args) {
-		final GLProfile glProfile = GLProfile.get(GLProfile.GL4);
+		if (!checkVersion()) {
+			return;
+		}
+
+		setupWindow();
+
+		createNewWorkspace();
+
+		setupCanvas();
+
+		setupMenu();
+	}
+
+	private static boolean checkVersion() {
+		glProfile = GLProfile.get(GLProfile.GL4);
 
 		if (!glProfile.isGL4()) {
 			System.out.println("OpenGL 4.0 is required to run compute shaders!");
@@ -24,14 +44,16 @@ public class JOPAMain {
 			if (!glProfile.isGL2()) {
 				System.out.println("OpenGL 2.0 is required to access extensions!");
 
-				return;
+				return false;
 			}
 		}
 
-		final JOPAWorkspace workspace = new JOPAWorkspace();
+		return true;
+	}
 
+	private static void setupWindow() {
 		String title = "Java and OpenGL parallel application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
-		Frame window = new Frame(title);
+		window = new Frame(title);
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
@@ -42,46 +64,50 @@ public class JOPAMain {
 		window.setBounds(window.getGraphicsConfiguration().getBounds());
 		window.setEnabled(true);
 		window.setVisible(true);
+	}
 
-		final JOPACanvas canvas = new JOPACanvas();
-		canvas.workspace = workspace;
+	private static void setupCanvas() {
+		canvas = new JOPACanvas();
+		canvas.workspace = currentWorkspace;
 		canvas.setDoubleBuffered(true);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				workspace.press(e.getPoint());
+				currentWorkspace.press(e.getPoint());
 				canvas.repaint();
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				workspace.release(e.getPoint());
+				currentWorkspace.release(e.getPoint());
 				canvas.repaint();
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				workspace.click(e.getPoint());
+				currentWorkspace.click(e.getPoint());
 				canvas.repaint();
 			}
 		});
 		canvas.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				workspace.moved(e.getPoint());
+				currentWorkspace.moved(e.getPoint());
 				canvas.repaint();
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				workspace.moved(e.getPoint());
+				currentWorkspace.moved(e.getPoint());
 				canvas.repaint();
 			}
 		});
 		window.add(canvas);
 		canvas.setSize(window.getSize());
 		canvas.repaint();
+	}
 
+	private static void setupMenu() {
 		MenuBar menuBar = new MenuBar();
 
 		{
@@ -134,7 +160,21 @@ public class JOPAMain {
 			menuBar.add(helpMenu);
 		}
 
+		{
+			Menu nodesMenu = new Menu("nodes");
+
+			MenuItem createNewNodeMenuItem = new MenuItem("create new node");
+
+			nodesMenu.add(createNewNodeMenuItem);
+
+			menuBar.add(nodesMenu);
+		}
+
 		window.setMenuBar(menuBar);
+	}
+
+	private static void createNewWorkspace() {
+		currentWorkspace = new JOPAWorkspace();
 	}
 
 }

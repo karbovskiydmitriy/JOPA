@@ -4,18 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class JOPANode {
 
 	final int HEADER_HEIGHT = 20;
-	final int PORT_RADIUS = 6;
 
 	protected Rectangle rect;
 	protected String header;
 	protected String command;
 	protected JOPAFormula formula;
-	protected JOPAPort[] inputs;
-	protected JOPAPort[] outputs;
+	protected ArrayList<JOPAPort> inputs;
+	protected ArrayList<JOPAPort> outputs;
 
 	public JOPANode(Rectangle rect, String header, String command, String formula) {
 		this.rect = rect;
@@ -23,7 +23,7 @@ public class JOPANode {
 		this.command = command;
 		try {
 			assignFormula(new JOPAFormula(formula));
-		} catch (Exception e) {
+		} catch (JOPAException e) {
 			System.err.println(e.getMessage());
 			assignFormula(null);
 		}
@@ -32,27 +32,36 @@ public class JOPANode {
 	private void assignFormula(JOPAFormula formula) {
 		this.formula = formula;
 		if (formula != null) {
-			inputs = new JOPAPort[formula.inputs.length];
-			outputs = new JOPAPort[formula.outputs.length];
+			inputs = new ArrayList<JOPAPort>(formula.inputs.length);
+			outputs = new ArrayList<JOPAPort>(formula.outputs.length);
 			int inputsCount = formula.inputs.length;
 			int outputsCount = formula.outputs.length;
 			float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputsCount + 1);
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
-			for (int i = 0; i < inputs.length; i++) {
-				float h = HEADER_HEIGHT + (i + 1) * inputsStep;
-				inputs[i] = new JOPAPort(this, new Point(0, (int) h), PORT_RADIUS, formula.inputs[i], false);
+			for (int i = 0; i < formula.inputs.length; i++) {
+				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
+				JOPAPort port = new JOPAPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
+				inputs.add(port);
 			}
-			for (int i = 0; i < outputs.length; i++) {
-				float h = HEADER_HEIGHT + (i + 1) * outputsStep;
-				outputs[i] = new JOPAPort(this, new Point(rect.width, (int) h), PORT_RADIUS, formula.outputs[i], true);
+			for (int i = 0; i < formula.outputs.length; i++) {
+				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
+				JOPAPort port = new JOPAPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i], true);
+				outputs.add(port);
 			}
 		}
 	}
 
-	public void draw(Graphics2D g, boolean isSelected) {
+	public void move(int x, int y) {
+		rect.x += x;
+		rect.y += y;
+		inputs.forEach(node -> node.move(x, y));
+		outputs.forEach(node -> node.move(x, y));
+	}
+
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		g.setColor(Color.WHITE);
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
-		if (isSelected) {
+		if (selectedNode == this) {
 			g.setColor(Color.CYAN);
 			g.fillRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		}
@@ -61,12 +70,8 @@ public class JOPANode {
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x, rect.y + HEADER_HEIGHT);
 		g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
-		for (JOPAPort port : inputs) {
-			port.draw(g);
-		}
-		for (JOPAPort port : outputs) {
-			port.draw(g);
-		}
+		inputs.forEach(port -> port.draw(g, selectedPort));
+		outputs.forEach(port -> port.draw(g, selectedPort));
 	}
 
 	public boolean hit(Point p) {

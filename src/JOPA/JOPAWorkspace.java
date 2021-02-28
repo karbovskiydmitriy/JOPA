@@ -12,12 +12,14 @@ public class JOPAWorkspace {
 			List.of(new JOPANode(new Rectangle(100, 100, 100, 100), "HEADER", "TEST_0", "();();foobar"),
 					new JOPANode(new Rectangle(300, 100, 100, 100), "HEADER", "TEST_1", "();();foobar")));
 
+	public JOPAPort selectedPort;
 	public JOPANode selectedNode;
+	public JOPANode draggingNode;
 	public boolean isDragging;
-	public Point pressPoint;
+	public Point prevPoint;
 
 	public void draw(Graphics2D g) {
-		nodes.forEach(node -> node.draw(g, node == selectedNode));
+		nodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
 	}
 
 	public void press(Point p) {
@@ -27,7 +29,7 @@ public class JOPAWorkspace {
 			nodes.remove(node);
 			nodes.add(node);
 			isDragging = true;
-			pressPoint = new Point(node.rect.x - p.x, node.rect.y - p.y);
+			prevPoint = p;
 		}
 	}
 
@@ -39,19 +41,28 @@ public class JOPAWorkspace {
 	public void click(Point p) {
 		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
-			System.out.println("Port");
+			selectedNode = null;
+			if (selectedPort == null) {
+				selectedPort = port;
+			} else {
+				if (selectedPort.output != port.output) {
+					makeConnection(selectedPort, port);
+					selectedPort = null;
+				}
+			}
 		} else {
 			JOPANode node = getNodeOnPoint(p);
 			if (node != null) {
-				System.out.println("Node");
+				selectedPort = null;
 			}
 		}
 	}
 
 	public void moved(Point p) {
 		if (selectedNode != null) {
-			selectedNode.rect.x = p.x + pressPoint.x;
-			selectedNode.rect.y = p.y + pressPoint.y;
+			selectedPort = null;
+			selectedNode.move(p.x - prevPoint.x, p.y - prevPoint.y);
+			prevPoint = p;
 		}
 	}
 
@@ -74,6 +85,11 @@ public class JOPAWorkspace {
 		}
 
 		return null;
+	}
+
+	private void makeConnection(JOPAPort from, JOPAPort to) {
+		from.connections.add(to);
+		to.connections.add(from);
 	}
 
 }

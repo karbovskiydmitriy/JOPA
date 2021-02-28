@@ -8,12 +8,12 @@ public class JOPAFormula {
 
 	public final String formula;
 
-	public JOPAFormula(String formula) throws Exception {
+	public JOPAFormula(String formula) throws JOPAException {
 		if (formula == null) {
-			throw new Exception("Formula string must be non-null!");
+			throw new JOPAException("Formula string must be non-null!");
 		}
 		if (formula.length() == 0) {
-			throw new Exception("Formula string can not be empty!");
+			throw new JOPAException("Formula string can not be empty!");
 		}
 		this.formula = formula;
 

@@ -6,43 +6,58 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class JOPAPort {
 
+	final int PORT_RADIUS = 7;
+
 	public boolean output;
-	public JOPAPort connection;
 	public JOPANode node;
 	public Point position;
-	public int radius;
 	public String name;
 	public JOPAType datatype;
+	public ArrayList<JOPAPort> connections;
 
-	public JOPAPort(JOPANode node, Point position, int radius, String name, boolean isOutput) {
+	public JOPAPort(JOPANode node, Point position, String name, boolean isOutput, JOPAPort... connections) {
 		this.node = node;
 		this.position = position;
-		this.radius = radius;
 		this.name = name;
 		this.output = isOutput;
+		this.connections = new ArrayList<JOPAPort>(Arrays.asList(connections));
 	}
 
-	public void draw(Graphics2D g) {
-		g.setColor(Color.WHITE);
-		g.fillOval(node.rect.x + position.x - radius, node.rect.y + position.y - radius, radius * 2, radius * 2);
+	public void move(int x, int y) {
+		position.translate(x, y);
+	}
+
+	public void draw(Graphics2D g, JOPAPort selectedPort) {
+		if (selectedPort != this) {
+			g.setColor(Color.WHITE);
+		} else {
+			g.setColor(Color.BLUE);
+		}
+		g.fillOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		FontRenderContext frc = g.getFontRenderContext();
 		Font font = g.getFont();
 		g.setColor(Color.BLACK);
-		g.drawOval(node.rect.x + position.x - radius, node.rect.y + position.y - radius, radius * 2, radius * 2);
+		g.drawOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		if (!output) {
 			Rectangle2D r = font.getStringBounds(name, frc);
-			g.drawString(name, node.rect.x + position.x - (int) r.getWidth() - radius * 2,
-					node.rect.y + position.y + radius);
+			g.drawString(name, position.x - (int) r.getWidth() - PORT_RADIUS * 2, position.y + PORT_RADIUS);
 		} else {
-			g.drawString(name, node.rect.x + position.x + radius * 2, node.rect.y + position.y + radius);
+			g.drawString(name, position.x + PORT_RADIUS * 2, position.y + PORT_RADIUS);
+		}
+		if (output) {
+			for (JOPAPort port : connections) {
+				g.drawLine(position.x, position.y, port.position.x, port.position.y);
+			}
 		}
 	}
 
 	public boolean hit(Point p) {
-		return (p.distance(node.rect.x + position.x, node.rect.y + position.y) <= radius);
+		return (p.distanceSq(position) <= PORT_RADIUS * PORT_RADIUS);
 	}
 
 }
