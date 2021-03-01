@@ -6,6 +6,8 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -15,23 +17,23 @@ import com.jogamp.opengl.GLProfile;
 
 public class JOPAMain {
 
-	private static JOPAWorkspace currentWorkspace;
-
+	public static Object workspaceSync;
+	public static JOPAWorkspace currentWorkspace;
+	
 	private static JOPACanvas canvas;
 	private static Frame window;
 	private static GLProfile glProfile;
 
 	public static void main(String[] args) {
+		workspaceSync = new Object();
+
 		if (!checkVersion()) {
 			return;
 		}
 
 		setupWindow();
-
 		createNewWorkspace();
-
 		setupCanvas();
-
 		setupMenu();
 	}
 
@@ -68,38 +70,67 @@ public class JOPAMain {
 
 	private static void setupCanvas() {
 		canvas = new JOPACanvas();
-		canvas.workspace = currentWorkspace;
 		canvas.setDoubleBuffered(true);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				currentWorkspace.press(e.getPoint());
-				canvas.repaint();
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.mousePressed(e.getPoint());
+						canvas.repaint();
+					}
+				}
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				currentWorkspace.release(e.getPoint());
-				canvas.repaint();
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.mouseReleased(e.getPoint());
+						canvas.repaint();
+					}
+				}
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				currentWorkspace.click(e.getPoint());
-				canvas.repaint();
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.mouseClicked(e.getPoint());
+						canvas.repaint();
+					}
+				}
 			}
 		});
 		canvas.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				currentWorkspace.moved(e.getPoint());
-				canvas.repaint();
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.mouseMoved(e.getPoint());
+						canvas.repaint();
+					}
+				}
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				currentWorkspace.moved(e.getPoint());
-				canvas.repaint();
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.mouseMoved(e.getPoint());
+						canvas.repaint();
+					}
+				}
+			}
+		});
+		canvas.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				synchronized (workspaceSync) {
+					if (currentWorkspace != null) {
+						currentWorkspace.keyTyped(e.getKeyCode());
+					}
+				}
 			}
 		});
 		window.add(canvas);
@@ -120,6 +151,20 @@ public class JOPAMain {
 			MenuItem closeFileMenuItem = new MenuItem("close");
 			MenuItem quitFileMenuItem = new MenuItem("quit");
 
+			newFileMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					createNewWorkspace();
+				}
+			});
+
+			closeFileMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					destroyWorkspace();
+				}
+			});
+
 			quitFileMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -138,16 +183,28 @@ public class JOPAMain {
 			menuBar.add(fileMenu);
 		}
 
+//		{
+//			Menu editMenu = new Menu("edit");
+//
+//			MenuItem undoEditMenuItem = new MenuItem("undo");
+//			MenuItem redoEditMenuItem = new MenuItem("redo");
+//
+//			editMenu.add(undoEditMenuItem);
+//			editMenu.add(redoEditMenuItem);
+//
+//			menuBar.add(editMenu);
+//		}
+
 		{
-			Menu editMenu = new Menu("edit");
+			Menu nodesMenu = new Menu("nodes");
 
-			MenuItem undoEditMenuItem = new MenuItem("undo");
-			MenuItem redoEditMenuItem = new MenuItem("redo");
+			MenuItem createNewNodeMenuItem = new MenuItem("create new node");
+			MenuItem validateNodesMenuItem = new MenuItem("validate nodes");
 
-			editMenu.add(undoEditMenuItem);
-			editMenu.add(redoEditMenuItem);
+			nodesMenu.add(createNewNodeMenuItem);
+			nodesMenu.add(validateNodesMenuItem);
 
-			menuBar.add(editMenu);
+			menuBar.add(nodesMenu);
 		}
 
 		{
@@ -160,21 +217,25 @@ public class JOPAMain {
 			menuBar.add(helpMenu);
 		}
 
-		{
-			Menu nodesMenu = new Menu("nodes");
-
-			MenuItem createNewNodeMenuItem = new MenuItem("create new node");
-
-			nodesMenu.add(createNewNodeMenuItem);
-
-			menuBar.add(nodesMenu);
-		}
-
 		window.setMenuBar(menuBar);
 	}
 
 	private static void createNewWorkspace() {
-		currentWorkspace = new JOPAWorkspace();
+		synchronized (workspaceSync) {
+			currentWorkspace = new JOPAWorkspace("New workspace");
+		}
+		if (canvas != null) {
+			canvas.repaint();
+		}
+	}
+
+	private static void destroyWorkspace() {
+		synchronized (workspaceSync) {
+			currentWorkspace = null;
+		}
+		if (canvas != null) {
+			canvas.repaint();
+		}
 	}
 
 }

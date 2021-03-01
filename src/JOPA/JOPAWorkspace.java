@@ -8,9 +8,9 @@ import java.util.List;
 
 public class JOPAWorkspace {
 
-	public ArrayList<JOPANode> nodes = new ArrayList<JOPANode>(
-			List.of(new JOPANode(new Rectangle(100, 100, 100, 100), "HEADER", "TEST_0", "();();foobar"),
-					new JOPANode(new Rectangle(300, 100, 100, 100), "HEADER", "TEST_1", "();();foobar")));
+	public String name;
+	public ArrayList<JOPAFunction> functions;
+	public ArrayList<JOPANode> nodes;
 
 	public JOPAPort selectedPort;
 	public JOPANode selectedNode;
@@ -18,11 +18,19 @@ public class JOPAWorkspace {
 	public boolean isDragging;
 	public Point prevPoint;
 
+	public JOPAWorkspace(String name) {
+		this.name = name;
+		this.functions = new ArrayList<JOPAFunction>();
+		this.nodes = new ArrayList<JOPANode>(
+				List.of(new JOPANode(new Rectangle(100, 100, 100, 100), "HEADER", "TEST_0", "();();foobar"),
+						new JOPANode(new Rectangle(300, 100, 100, 100), "HEADER", "TEST_1", "();();foobar")));
+	}
+
 	public void draw(Graphics2D g) {
 		nodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
 	}
 
-	public void press(Point p) {
+	public void mousePressed(Point p) {
 		JOPANode node = getNodeOnPoint(p);
 		if (node != null) {
 			selectedNode = node;
@@ -33,12 +41,12 @@ public class JOPAWorkspace {
 		}
 	}
 
-	public void release(Point p) {
+	public void mouseReleased(Point p) {
 		isDragging = false;
 		selectedNode = null;
 	}
 
-	public void click(Point p) {
+	public void mouseClicked(Point p) {
 		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
 			selectedNode = null;
@@ -58,12 +66,16 @@ public class JOPAWorkspace {
 		}
 	}
 
-	public void moved(Point p) {
+	public void mouseMoved(Point p) {
 		if (selectedNode != null) {
 			selectedPort = null;
 			selectedNode.move(p.x - prevPoint.x, p.y - prevPoint.y);
 			prevPoint = p;
 		}
+	}
+	
+	public void keyTyped(int keyCode) {
+		
 	}
 
 	private JOPANode getNodeOnPoint(Point p) {

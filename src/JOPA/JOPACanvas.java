@@ -10,13 +10,15 @@ public class JOPACanvas extends JPanel {
 
 	private static final long serialVersionUID = -5988361450482572777L;
 
-	public JOPAWorkspace workspace;
-
 	@Override
 	public void paint(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		workspace.draw((Graphics2D) (g));
+		synchronized (JOPAMain.workspaceSync) {
+			if (JOPAMain.currentWorkspace != null) {
+				JOPAMain.currentWorkspace.draw((Graphics2D) (g));
+			}
+		}
 	}
 
 }
