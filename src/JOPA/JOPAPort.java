@@ -17,7 +17,7 @@ public class JOPAPort {
 	public JOPANode node;
 	public Point position;
 	public String name;
-	public JOPAType datatype;
+	public JOPAPortType datatype;
 	public ArrayList<JOPAPort> connections;
 
 	public JOPAPort(JOPANode node, Point position, String name, boolean isOutput, JOPAPort... connections) {
