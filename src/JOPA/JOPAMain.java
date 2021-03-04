@@ -13,10 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import com.jogamp.opengl.GLProfile;
 
 public class JOPAMain {
 
@@ -25,7 +22,6 @@ public class JOPAMain {
 
 	private static JOPACanvas canvas;
 	private static Frame window;
-	private static GLProfile glProfile;
 
 	public static void main(String[] args) {
 		if (!checkVersion()) {
@@ -41,17 +37,16 @@ public class JOPAMain {
 	}
 
 	private static boolean checkVersion() {
-		glProfile = GLProfile.get(GLProfile.GL4);
 
-		if (!glProfile.isGL4()) {
-			System.out.println("OpenGL 4.0 is required to run compute shaders!");
-
-			if (!glProfile.isGL2()) {
-				System.out.println("OpenGL 2.0 is required to access extensions!");
-
-				return false;
-			}
-		}
+//		if (!glProfile.isGL4()) {
+//			System.out.println("OpenGL 4.0 is required to run compute shaders!");
+//
+//			if (!glProfile.isGL2()) {
+//				System.out.println("OpenGL 2.0 is required to access extensions!");
+//
+//				return false;
+//			}
+//		}
 
 		return true;
 	}

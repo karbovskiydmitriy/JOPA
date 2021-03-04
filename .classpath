@@ -6,10 +6,21 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
-	<classpathentry kind="lib" path="lib/gson-2.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
-	<classpathentry kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-glfw/lwjgl-glfw.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-glfw/lwjgl-glfw-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-glfw/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-glfw/lwjgl-glfw-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-glfw/lwjgl-glfw-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-utils/lwjgl_util-2.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
