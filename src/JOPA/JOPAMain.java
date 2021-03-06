@@ -4,8 +4,7 @@ import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.MenuShortcut;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -32,21 +31,10 @@ public class JOPAMain {
 
 		setupWindow();
 		createNewWorkspace();
-		setupMenu();
-		setupCanvas();
+		setupUI();
 	}
 
 	private static boolean checkVersion() {
-
-//		if (!glProfile.isGL4()) {
-//			System.out.println("OpenGL 4.0 is required to run compute shaders!");
-//
-//			if (!glProfile.isGL2()) {
-//				System.out.println("OpenGL 2.0 is required to access extensions!");
-//
-//				return false;
-//			}
-//		}
 
 		return true;
 	}
@@ -66,6 +54,11 @@ public class JOPAMain {
 		window.setVisible(true);
 	}
 
+	private static void setupUI() {
+		setupMenu();
+		setupCanvas();
+	}
+
 	private static void setupMenu() {
 		MenuBar menuBar = new MenuBar();
 
@@ -75,35 +68,38 @@ public class JOPAMain {
 			MenuItem newFileMenuItem = new MenuItem("new");
 			MenuItem openFileMenuItem = new MenuItem("open");
 			MenuItem saveFileMenuItem = new MenuItem("save");
-			MenuItem saveAsFileMenuItem = new MenuItem("save as");
 			MenuItem closeFileMenuItem = new MenuItem("close");
 			MenuItem quitFileMenuItem = new MenuItem("quit");
 
-			newFileMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					createNewWorkspace();
-				}
+			newFileMenuItem.setShortcut(new MenuShortcut('N'));
+			openFileMenuItem.setShortcut(new MenuShortcut('O'));
+			saveFileMenuItem.setShortcut(new MenuShortcut('S'));
+			closeFileMenuItem.setShortcut(new MenuShortcut('W'));
+			quitFileMenuItem.setShortcut(new MenuShortcut('Q'));
+
+			newFileMenuItem.addActionListener((e) -> {
+				createNewWorkspace();
 			});
 
-			closeFileMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					destroyWorkspace();
-				}
+			openFileMenuItem.addActionListener((e) -> {
+				openWorkspace();
 			});
 
-			quitFileMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					window.dispose();
-				}
+			saveFileMenuItem.addActionListener((e) -> {
+				saveWorkspace();
+			});
+
+			closeFileMenuItem.addActionListener((E) -> {
+				destroyWorkspace();
+			});
+
+			quitFileMenuItem.addActionListener((e) -> {
+				quit();
 			});
 
 			fileMenu.add(newFileMenuItem);
 			fileMenu.add(openFileMenuItem);
 			fileMenu.add(saveFileMenuItem);
-			fileMenu.add(saveAsFileMenuItem);
 			fileMenu.add(closeFileMenuItem);
 			fileMenu.addSeparator();
 			fileMenu.add(quitFileMenuItem);
@@ -111,36 +107,62 @@ public class JOPAMain {
 			menuBar.add(fileMenu);
 		}
 
-//		{
-//			Menu editMenu = new Menu("edit");
-//
-//			MenuItem undoEditMenuItem = new MenuItem("undo");
-//			MenuItem redoEditMenuItem = new MenuItem("redo");
-//
-//			editMenu.add(undoEditMenuItem);
-//			editMenu.add(redoEditMenuItem);
-//
-//			menuBar.add(editMenu);
-//		}
-
 		{
-			Menu nodesMenu = new Menu("nodes");
+			Menu nodeMenu = new Menu("node");
 
 			MenuItem createNewNodeMenuItem = new MenuItem("create new node");
-			MenuItem validateNodesMenuItem = new MenuItem("validate nodes");
+			MenuItem validateNodeMenuItem = new MenuItem("validate nodes");
 
-			nodesMenu.add(createNewNodeMenuItem);
-			nodesMenu.add(validateNodesMenuItem);
+			createNewNodeMenuItem.addActionListener((e) -> {
+				createNewNode();
+			});
 
-			menuBar.add(nodesMenu);
+			validateNodeMenuItem.addActionListener((e) -> {
+				validateNodes();
+			});
+
+			nodeMenu.add(createNewNodeMenuItem);
+			nodeMenu.add(validateNodeMenuItem);
+
+			menuBar.add(nodeMenu);
+		}
+
+		{
+			Menu functionMenu = new Menu("function");
+
+			MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
+			MenuItem validateFunctionMenuItem = new MenuItem("validate function");
+
+			createNewFunctionMenuItem.addActionListener((e) -> {
+				createNewFunction();
+			});
+
+			validateFunctionMenuItem.addActionListener((e) -> {
+				validateFunction();
+			});
+
+			functionMenu.add(createNewFunctionMenuItem);
+			functionMenu.add(validateFunctionMenuItem);
+
+			menuBar.add(functionMenu);
 		}
 
 		{
 			Menu helpMenu = new Menu("help");
 
 			MenuItem aboutHelpMenuItem = new MenuItem("about");
+			MenuItem manualHelpMenuItem = new MenuItem("manual");
+
+			aboutHelpMenuItem.addActionListener((e) -> {
+				about();
+			});
+
+			manualHelpMenuItem.addActionListener((e) -> {
+				manual();
+			});
 
 			helpMenu.add(aboutHelpMenuItem);
+			helpMenu.add(manualHelpMenuItem);
 
 			menuBar.add(helpMenu);
 		}
@@ -216,6 +238,7 @@ public class JOPAMain {
 
 		JTabbedPane tabs = new JTabbedPane();
 		tabs.addTab("main", canvas);
+		tabs.addTab("null", null);
 		window.add(tabs);
 
 		canvas.setSize(window.getSize());
@@ -232,6 +255,18 @@ public class JOPAMain {
 		}
 	}
 
+	private static void openWorkspace() {
+		synchronized (workspaceSync) {
+
+		}
+	}
+
+	private static void saveWorkspace() {
+		synchronized (workspaceSync) {
+
+		}
+	}
+
 	private static void destroyWorkspace() {
 		synchronized (workspaceSync) {
 			currentWorkspace = null;
@@ -240,6 +275,38 @@ public class JOPAMain {
 		if (canvas != null) {
 			canvas.repaint();
 		}
+	}
+
+	private static void quit() {
+		synchronized (workspaceSync) {
+			saveWorkspace();
+			currentWorkspace = null;
+			window.dispose();
+		}
+	}
+
+	private static void createNewNode() {
+
+	}
+
+	private static void validateNodes() {
+
+	}
+
+	private static void createNewFunction() {
+
+	}
+
+	private static void validateFunction() {
+
+	}
+
+	private static void about() {
+
+	}
+
+	private static void manual() {
+
 	}
 
 }

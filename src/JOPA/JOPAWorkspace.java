@@ -19,7 +19,8 @@ public class JOPAWorkspace {
 	public JOPAWorkspace(String name) {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
-		this.functions.add(new JOPAFunction("main"));
+		this.currentFunction = new JOPAFunction("main");
+		this.functions.add(currentFunction);
 	}
 
 	public void draw(Graphics2D g) {
@@ -41,8 +42,10 @@ public class JOPAWorkspace {
 	}
 
 	public void mouseClicked(Point p) {
+		System.out.println("clicked");
 		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
+			System.out.println("port");
 			selectedNode = null;
 			if (selectedPort == null) {
 				selectedPort = port;
@@ -82,7 +85,7 @@ public class JOPAWorkspace {
 
 	private JOPANode getNodeOnPoint(Point p) {
 		if (currentFunction != null) {
-			currentFunction.getNodeOnPoint(p);
+			return currentFunction.getNodeOnPoint(p);
 		}
 
 		return null;
@@ -90,7 +93,7 @@ public class JOPAWorkspace {
 
 	private JOPAPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
-			currentFunction.getPortOnPoint(p);
+			return currentFunction.getPortOnPoint(p);
 		}
 
 		return null;

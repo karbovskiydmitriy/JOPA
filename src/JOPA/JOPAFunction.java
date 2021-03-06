@@ -22,7 +22,7 @@ public class JOPAFunction {
 		nodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
 
 	}
-	
+
 	public JOPANode getNodeOnPoint(Point p) {
 		for (JOPANode node : nodes) {
 			if (node.hit(p)) {
