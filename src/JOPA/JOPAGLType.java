@@ -1,6 +1,6 @@
 package JOPA;
 
-public enum JOPAPortType {
+public enum JOPAGLType {
 	JOPA_BOOL,
 	JOPA_INT,
 	JOPA_FLOAT,

@@ -17,7 +17,7 @@ public class JOPAPort {
 	public JOPANode node;
 	public Point position;
 	public String name;
-	public JOPAPortType datatype;
+	public JOPAGLType datatype;
 	public ArrayList<JOPAPort> connections;
 
 	public JOPAPort(JOPANode node, Point position, String name, boolean isOutput, JOPAPort... connections) {
@@ -51,13 +51,22 @@ public class JOPAPort {
 		}
 		if (output) {
 			for (JOPAPort port : connections) {
-				g.drawLine(position.x, position.y, port.position.x, port.position.y);
+				drawConnection(g, position, port.position);
 			}
 		}
 	}
 
+	public static void drawConnection(Graphics2D g, Point a, Point b) {
+		g.setColor(Color.BLACK);
+		g.drawLine(a.x, a.y, b.x, b.y);
+	}
+
 	public boolean hit(Point p) {
 		return (p.distanceSq(position) <= PORT_RADIUS * PORT_RADIUS);
+	}
+
+	public void destroyAllConnections() {
+		connections.forEach(port -> port.connections.remove(this));
 	}
 
 }

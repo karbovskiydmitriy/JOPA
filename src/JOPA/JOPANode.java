@@ -6,9 +6,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import static java.awt.Color.*;
+
 public class JOPANode {
 
 	final int HEADER_HEIGHT = 20;
+	final Color SELECTED_COLOR = CYAN;
 
 	protected Rectangle rect;
 	protected String header;
@@ -58,18 +61,22 @@ public class JOPANode {
 		outputs.forEach(node -> node.move(x, y));
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
-		g.setColor(Color.WHITE);
+	protected void drawFrame(Graphics2D g, boolean isSelected) {
+		g.setColor(WHITE);
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
-		if (selectedNode == this) {
-			g.setColor(Color.CYAN);
+		if (isSelected) {
+			g.setColor(SELECTED_COLOR);
 			g.fillRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		}
-		g.setColor(Color.BLACK);
+		g.setColor(BLACK);
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x, rect.y + HEADER_HEIGHT);
 		g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
+	}
+	
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+		drawFrame(g, selectedNode == this);
 		inputs.forEach(port -> port.draw(g, selectedPort));
 		outputs.forEach(port -> port.draw(g, selectedPort));
 	}
