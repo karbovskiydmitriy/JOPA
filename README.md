@@ -1,2 +1,2 @@
 # JOPA
-Java and OpenGL parallel application
+Java and OpenGL parallel algorithms application
