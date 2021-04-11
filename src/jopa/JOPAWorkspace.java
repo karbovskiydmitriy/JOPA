@@ -1,14 +1,18 @@
-package JOPA;
+package jopa;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
+
+import jopa.types.JOPAType;
+import jopa.ui.JOPAUI;
 
 public class JOPAWorkspace {
 
 	public String name;
 	public ArrayList<JOPAFunction> functions;
 	public ArrayList<JOPAType> types;
+	public ArrayList<JOPANode> globals;
 
 	public JOPAUI ui;
 	public JOPAFunction currentFunction;
@@ -25,6 +29,7 @@ public class JOPAWorkspace {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
+		this.globals = new ArrayList<JOPANode>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -37,7 +42,7 @@ public class JOPAWorkspace {
 	public synchronized boolean deleteFunction(String name) {
 		return functions.removeIf(function -> function.name.equals(name));
 	}
-	
+
 	public synchronized JOPAFunction selectFunction(int index) {
 		if (functions.size() > 0) {
 			return currentFunction = functions.get(index);
@@ -45,14 +50,14 @@ public class JOPAWorkspace {
 			return currentFunction = null;
 		}
 	}
-	
+
 	public synchronized JOPAType createNewType(String name) {
 		JOPAType type = new JOPAType(name);
 		types.add(type);
-		
+
 		return type;
 	}
-	
+
 	public synchronized boolean deleteType(String name) {
 		return types.removeIf(type -> type.name.equals(name));
 	}
@@ -145,7 +150,7 @@ public class JOPAWorkspace {
 		switch (keyCode) {
 		case 9:
 			if (selectedNode != null) {
-				functions.forEach(function -> function.nodes.remove(selectedNode));
+				functions.forEach(function -> function.statements.remove(selectedNode));
 			}
 			break;
 		default:

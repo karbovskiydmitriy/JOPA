@@ -1,4 +1,4 @@
-package JOPA;
+package jopa;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,12 +1,14 @@
-package JOPA;
+package jopa;
+
+import static java.awt.Color.BLACK;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.WHITE;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
-import static java.awt.Color.*;
 
 public class JOPANode {
 

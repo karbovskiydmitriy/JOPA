@@ -1,7 +1,9 @@
-package JOPA;
+package jopa;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+
+import jopa.types.JOPAComplexType;
 
 public class JOPAOutputNode extends JOPANode {
 

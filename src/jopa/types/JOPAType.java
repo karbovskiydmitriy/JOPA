@@ -1,4 +1,4 @@
-package JOPA;
+package jopa.types;
 
 public class JOPAType {
 

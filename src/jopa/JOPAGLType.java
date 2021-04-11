@@ -1,4 +1,4 @@
-package JOPA;
+package jopa;
 
 public enum JOPAGLType {
 	JOPA_BOOL,

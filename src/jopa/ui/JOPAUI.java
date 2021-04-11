@@ -1,10 +1,27 @@
-package JOPA;
+package jopa.ui;
 
+import static jopa.JOPAMain.about;
+import static jopa.JOPAMain.createNewFunction;
+import static jopa.JOPAMain.createNewNode;
+import static jopa.JOPAMain.createNewWorkspace;
+import static jopa.JOPAMain.currentWorkspace;
+import static jopa.JOPAMain.destroyWorkspace;
+import static jopa.JOPAMain.manual;
+import static jopa.JOPAMain.openWorkspace;
+import static jopa.JOPAMain.quit;
+import static jopa.JOPAMain.saveWorkspace;
+import static jopa.JOPAMain.validateFunction;
+import static jopa.JOPAMain.validateNodes;
+import static jopa.JOPAMain.workspaceSync;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
+import java.awt.Panel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -12,20 +29,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import static JOPA.JOPAMain.*;
-
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import jopa.JOPAFunction;
+
 public class JOPAUI {
 
 	private Frame window;
+	private Panel menuPanel;
 	private JTabbedPane tabs;
 	private JOPACanvas currentCanvas;
 
-	synchronized void setupWindow() {
-		String title = "Java and OpenGL parallel application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
+	public synchronized void setupWindow() {
+		String title = "Java and OpenGL parallel algorithms application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
 		window = new Frame(title);
 		window.addWindowListener(new WindowAdapter() {
 			@Override
@@ -37,29 +55,10 @@ public class JOPAUI {
 		window.setBounds(0, 0, 800, 600);
 		window.setEnabled(true);
 		window.setVisible(true);
-
-		tabs = new JTabbedPane();
-		tabs.setDoubleBuffered(true);
-		tabs.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (currentCanvas != null) {
-					currentCanvas.setEnabled(false); // TODO the switch
-				}
-				int selectedIndex = tabs.getSelectedIndex();
-				JOPAFunction function = currentWorkspace.selectFunction(selectedIndex);
-				if (function != null) {
-					currentCanvas = function.canvas;
-					currentCanvas.setEnabled(true);
-				} else {
-					currentCanvas = null;
-				}
-			}
-		});
-		window.add(tabs);
+		window.setLayout(new BorderLayout());
 	}
 
-	synchronized void createMenu() {
+	public synchronized void createMenu() {
 		MenuBar menuBar = new MenuBar();
 
 		{
@@ -170,6 +169,38 @@ public class JOPAUI {
 		}
 
 		window.setMenuBar(menuBar);
+
+		menuPanel = new Panel(); // TODO stuff
+//		JOPAMenuPanel menuPanel = new JOPAMenuPanel(); // TODO stuff
+		window.add(menuPanel);
+		menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
+		menuPanel.setSize(window.getWidth(), 40);
+//		menuPanel.init();
+	}
+	
+	public synchronized void createTabs() {
+		tabs = new JTabbedPane();
+		tabs.setDoubleBuffered(true);
+		tabs.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (currentCanvas != null) {
+					currentCanvas.setEnabled(false); // TODO the switch
+				}
+				int selectedIndex = tabs.getSelectedIndex();
+				JOPAFunction function = currentWorkspace.selectFunction(selectedIndex);
+				if (function != null) {
+					currentCanvas = function.canvas;
+					currentCanvas.setEnabled(true);
+				} else {
+					currentCanvas = null;
+				}
+			}
+		});
+		window.add(tabs);
+		int y = menuPanel.getY() + menuPanel.getHeight();
+		tabs.setLocation(0, y);
+		tabs.setSize(window.getWidth(), window.getHeight() - y);
 	}
 
 	synchronized JOPACanvas createCanvas() {
@@ -244,7 +275,7 @@ public class JOPAUI {
 		return canvas;
 	}
 
-	synchronized void addFunction(JOPAFunction function) {
+	public synchronized void addFunction(JOPAFunction function) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				JOPACanvas canvas = createCanvas();
@@ -254,14 +285,16 @@ public class JOPAUI {
 		}
 	}
 
-	synchronized void repaint() {
+	public synchronized void repaint() {
 		if (currentCanvas != null) {
 			currentCanvas.repaint();
 		}
 	}
 
-	synchronized void close() {
-		window.dispose();
+	public synchronized void close() {
+		if (window != null) {
+			window.dispose();
+		}
 	}
 
 }

@@ -1,12 +1,14 @@
-package JOPA;
+package jopa;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import jopa.ui.JOPAUI;
+
 public class JOPAMain {
 
-	static Object workspaceSync;
-	static JOPAWorkspace currentWorkspace;
+	public static Object workspaceSync;
+	public static JOPAWorkspace currentWorkspace;
 	static JOPAUI ui;
 
 	public static void main(String[] args) {
@@ -30,10 +32,11 @@ public class JOPAMain {
 			ui = new JOPAUI();
 			ui.setupWindow();
 			ui.createMenu();
+			ui.createTabs();
 		}
 	}
 
-	static void createNewWorkspace() {
+	public static void createNewWorkspace() {
 		synchronized (workspaceSync) {
 			currentWorkspace = new JOPAWorkspace(ui, "New workspace");
 			createNewFunction(null);
@@ -42,7 +45,7 @@ public class JOPAMain {
 		ui.repaint();
 	}
 
-	static void openWorkspace() {
+	public static void openWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 
@@ -50,7 +53,7 @@ public class JOPAMain {
 		}
 	}
 
-	static void saveWorkspace() {
+	public static void saveWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 
@@ -58,7 +61,7 @@ public class JOPAMain {
 		}
 	}
 
-	static void destroyWorkspace() {
+	public static void destroyWorkspace() {
 		synchronized (workspaceSync) {
 			currentWorkspace = null;
 		}
@@ -66,7 +69,7 @@ public class JOPAMain {
 		ui.repaint();
 	}
 
-	static void quit() {
+	public static void quit() {
 		synchronized (workspaceSync) {
 			saveWorkspace();
 			currentWorkspace = null;
@@ -74,35 +77,35 @@ public class JOPAMain {
 		}
 	}
 
-	static void createNewNode() {
+	public static void createNewNode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				JOPANode node = new JOPANode(new Rectangle(0, 0, 100, 100), "HEADER", "COMMAND", "FORMULA");
-				currentWorkspace.currentFunction.nodes.add(node);
+				currentWorkspace.currentFunction.statements.add(node);
 			}
 		}
 	}
 
-	static void validateNodes() {
+	public static void validateNodes() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				boolean isValid = true;
+//				boolean isValid = true;
 
 				ArrayList<JOPANode> inputs = new ArrayList<JOPANode>();
 				ArrayList<JOPANode> statements = new ArrayList<JOPANode>();
 				ArrayList<JOPANode> outputs = new ArrayList<JOPANode>();
-				for (JOPANode node : currentWorkspace.currentFunction.nodes) {
+				for (JOPANode node : currentWorkspace.currentFunction.statements) {
 					if (node.inputs.size() == 0 && node.outputs.size() == 0) {
 						// skip
 					}
 					if (node.inputs.size() == 0) {
 						outputs.add(node);
-						
+
 						continue;
 					}
 					if (node.outputs.size() == 0) {
 						inputs.add(node);
-						
+
 						continue;
 					}
 					statements.add(node);
@@ -111,7 +114,7 @@ public class JOPAMain {
 		}
 	}
 
-	static void createNewFunction(String functionName) {
+	public static void createNewFunction(String functionName) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				if (functionName == null) {
@@ -122,7 +125,7 @@ public class JOPAMain {
 		}
 	}
 
-	static void validateFunction() {
+	public static void validateFunction() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 
@@ -130,11 +133,11 @@ public class JOPAMain {
 		}
 	}
 
-	static void about() {
+	public static void about() {
 
 	}
 
-	static void manual() {
+	public static void manual() {
 
 	}
 
