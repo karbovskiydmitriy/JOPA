@@ -6,8 +6,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAPort;
 import jopa.types.JOPAType;
-import jopa.ui.JOPAUIPort;
 
 public class JOPAWorkspace {
 
@@ -17,7 +17,7 @@ public class JOPAWorkspace {
 	public ArrayList<JOPAFormula> globals;
 
 	public JOPAFunction currentFunction;
-	public JOPAUIPort selectedPort;
+	public JOPAPort selectedPort;
 	public JOPANode selectedNode;
 	public JOPANode draggingNode;
 	public Point cursorPosition;
@@ -43,11 +43,9 @@ public class JOPAWorkspace {
 		return functions.removeIf(function -> function.name.equals(name));
 	}
 
-	public synchronized JOPAFunction selectFunction(int index) {
+	public synchronized void selectFunction(int index) {
 		if (functions.size() > 0) {
-			return currentFunction = functions.get(index);
-		} else {
-			return currentFunction = null;
+			currentFunction = functions.get(index);
 		}
 	}
 
@@ -65,17 +63,17 @@ public class JOPAWorkspace {
 	public synchronized void draw(Graphics2D g) {
 		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
 		if (selectedPort != null) {
-			JOPAUIPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
+			JOPAPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
 		}
 	}
 
 	public synchronized void mousePressed(Point p) {
-		JOPAUIPort port = getPortOnPoint(p);
+		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
 			selectedNode = null;
 			if (selectedPort == null) {
 				selectedPort = port;
-				if (selectedPort.output) {
+				if (!selectedPort.output) {
 					selectedPort.destroyAllConnections();
 				}
 			}
@@ -90,7 +88,7 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized void mouseReleased(Point p) {
-		JOPAUIPort port = getPortOnPoint(p);
+		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
 			if (makeConnection(port, selectedPort)) {
 				selectedPort = null;
@@ -111,9 +109,9 @@ public class JOPAWorkspace {
 		if (justReleased) {
 			justReleased = false;
 		} else {
-			JOPAUIPort port = getPortOnPoint(p);
+			JOPAPort port = getPortOnPoint(p);
 			if (port != null) {
-				if (port.output) {
+				if (!port.output) {
 					if (port.connections.size() > 0) {
 						port.destroyAllConnections();
 					}
@@ -166,7 +164,7 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	private JOPAUIPort getPortOnPoint(Point p) {
+	private JOPAPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
 			return currentFunction.getPortOnPoint(p);
 		}
@@ -188,7 +186,7 @@ public class JOPAWorkspace {
 		return true;
 	}
 
-	private static boolean makeConnection(JOPAUIPort from, JOPAUIPort to) {
+	private static boolean makeConnection(JOPAPort from, JOPAPort to) {
 		if (from == null || to == null) {
 			return false;
 		}

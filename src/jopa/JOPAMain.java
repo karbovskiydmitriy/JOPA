@@ -23,7 +23,6 @@ public class JOPAMain {
 	}
 
 	private static boolean checkVersion() {
-
 		return true;
 	}
 
@@ -33,6 +32,7 @@ public class JOPAMain {
 			ui.createWindow();
 			ui.createMenu();
 			ui.createTabs();
+			ui.createCanvas();
 		}
 	}
 

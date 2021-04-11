@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import jopa.types.JOPAComplexType;
-import jopa.ui.JOPAUIPort;
 
 public class JOPAInputNode extends JOPANode {
 
@@ -17,7 +16,7 @@ public class JOPAInputNode extends JOPANode {
 	}
 	
 	@Override
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAUIPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		drawFrame(g, selectedNode == this);
 		outputs.forEach(port -> port.draw(g, selectedPort));
 	}

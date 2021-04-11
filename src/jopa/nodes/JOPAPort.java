@@ -1,4 +1,4 @@
-package jopa.ui;
+package jopa.nodes;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,11 +10,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jopa.nodes.JOPANode;
 import jopa.types.JOPAGLType;
 import jopa.types.JOPAType;
 
-public class JOPAUIPort implements Serializable {
+public class JOPAPort implements Serializable {
 
 	private static final long serialVersionUID = -3922248470122818472L;
 
@@ -25,15 +24,15 @@ public class JOPAUIPort implements Serializable {
 	public Point position;
 	public String name;
 	public JOPAGLType datatype;
-	public ArrayList<JOPAUIPort> connections;
+	public ArrayList<JOPAPort> connections;
 	public Color color;
 
-	public JOPAUIPort(JOPANode node, Point position, String name, boolean isOutput, JOPAUIPort... connections) {
+	public JOPAPort(JOPANode node, Point position, String name, boolean isOutput, JOPAPort... connections) {
 		this.node = node;
 		this.position = position;
 		this.name = name;
 		this.output = isOutput;
-		this.connections = new ArrayList<JOPAUIPort>(Arrays.asList(connections));
+		this.connections = new ArrayList<JOPAPort>(Arrays.asList(connections));
 		this.color = getColorForType(datatype);
 	}
 
@@ -41,7 +40,7 @@ public class JOPAUIPort implements Serializable {
 		position.translate(x, y);
 	}
 
-	public void draw(Graphics2D g, JOPAUIPort selectedPort) {
+	public void draw(Graphics2D g, JOPAPort selectedPort) {
 		if (selectedPort != this) {
 			g.setColor(Color.WHITE);
 		} else {
@@ -59,7 +58,7 @@ public class JOPAUIPort implements Serializable {
 			g.drawString(name, position.x + PORT_RADIUS * 2, position.y + PORT_RADIUS);
 		}
 		if (output) {
-			for (JOPAUIPort port : connections) {
+			for (JOPAPort port : connections) {
 				drawConnection(g, position, port.position, Color.BLACK);
 			}
 		}

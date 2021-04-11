@@ -9,8 +9,7 @@ import java.util.List;
 import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAOutputNode;
-import jopa.ui.JOPACanvas;
-import jopa.ui.JOPAUIPort;
+import jopa.nodes.JOPAPort;
 
 public class JOPAFunction {
 
@@ -18,7 +17,7 @@ public class JOPAFunction {
 	public ArrayList<JOPANode> inputs;
 	public ArrayList<JOPANode> statements;
 	public ArrayList<JOPANode> outputs;
-	public JOPACanvas canvas;
+//	public JOPACanvas canvas;
 
 	public JOPAFunction(String name) {
 		this.name = name;
@@ -30,7 +29,7 @@ public class JOPAFunction {
 				List.of(new JOPAOutputNode(new Rectangle(450, 50, 100, 100), "OUTPUT_0")));
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAUIPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		inputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		outputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
@@ -56,21 +55,21 @@ public class JOPAFunction {
 		return null;
 	}
 
-	public JOPAUIPort getPortOnPoint(Point p) {
+	public JOPAPort getPortOnPoint(Point p) {
 		for (JOPANode node : statements) {
-			JOPAUIPort port = node.hitPort(p);
+			JOPAPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : inputs) {
-			JOPAUIPort port = node.hitPort(p);
+			JOPAPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : outputs) {
-			JOPAUIPort port = node.hitPort(p);
+			JOPAPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}

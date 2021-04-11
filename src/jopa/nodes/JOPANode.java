@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.JOPAFormula;
-import jopa.ui.JOPAUIPort;
 
 public class JOPANode implements Serializable {
 
@@ -26,8 +25,8 @@ public class JOPANode implements Serializable {
 	protected String command;
 	protected transient JOPAFormula formula;
 
-	public ArrayList<JOPAUIPort> inputs;
-	public ArrayList<JOPAUIPort> outputs;
+	public ArrayList<JOPAPort> inputs;
+	public ArrayList<JOPAPort> outputs;
 
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
@@ -39,20 +38,20 @@ public class JOPANode implements Serializable {
 		JOPAFormula formula = JOPAFormula.getFormulaByName(formulaName);
 		this.formula = formula;
 		if (formula != null) {
-			inputs = new ArrayList<JOPAUIPort>(formula.inputs.length);
-			outputs = new ArrayList<JOPAUIPort>(formula.outputs.length);
+			inputs = new ArrayList<JOPAPort>(formula.inputs.length);
+			outputs = new ArrayList<JOPAPort>(formula.outputs.length);
 			int inputsCount = formula.inputs.length;
 			int outputsCount = formula.outputs.length;
 			float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputsCount + 1);
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
 			for (int i = 0; i < formula.inputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
-				JOPAUIPort port = new JOPAUIPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
+				JOPAPort port = new JOPAPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
 				inputs.add(port);
 			}
 			for (int i = 0; i < formula.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPAUIPort port = new JOPAUIPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i],
+				JOPAPort port = new JOPAPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i],
 						true);
 				outputs.add(port);
 			}
@@ -80,7 +79,7 @@ public class JOPANode implements Serializable {
 //		g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAUIPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		drawFrame(g, selectedNode == this);
 		inputs.forEach(port -> port.draw(g, selectedPort));
 		outputs.forEach(port -> port.draw(g, selectedPort));
@@ -90,14 +89,14 @@ public class JOPANode implements Serializable {
 		return rect.contains(p);
 	}
 
-	public JOPAUIPort hitPort(Point p) {
-		for (JOPAUIPort port : inputs) {
+	public JOPAPort hitPort(Point p) {
+		for (JOPAPort port : inputs) {
 			if (port.hit(p)) {
 				return port;
 			}
 		}
 
-		for (JOPAUIPort port : outputs) {
+		for (JOPAPort port : outputs) {
 			if (port.hit(p)) {
 				return port;
 			}
@@ -110,6 +109,8 @@ public class JOPANode implements Serializable {
 		if (inputs != null) {
 			for (var port : inputs) {
 				if (port.connections.size() == 0) {
+//					System.out.println("node " + header + " not OK");
+					
 					return false;
 				}
 				if (!port.connections.get(0).node.inputsConnected()) {
