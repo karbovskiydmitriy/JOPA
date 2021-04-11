@@ -17,7 +17,6 @@ public class JOPAFunction {
 	public ArrayList<JOPANode> inputs;
 	public ArrayList<JOPANode> statements;
 	public ArrayList<JOPANode> outputs;
-//	public JOPACanvas canvas;
 
 	public JOPAFunction(String name) {
 		this.name = name;

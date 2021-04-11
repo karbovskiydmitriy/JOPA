@@ -13,6 +13,8 @@ public class JOPAMain {
 
 	public static void main(String[] args) {
 		if (!checkVersion()) {
+			// TODO gui
+			
 			return;
 		}
 
@@ -57,6 +59,8 @@ public class JOPAMain {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
@@ -82,6 +86,8 @@ public class JOPAMain {
 			if (currentWorkspace != null) {
 				JOPANode node = new JOPANode(new Rectangle(0, 0, 100, 100), "HEADER");
 				currentWorkspace.currentFunction.statements.add(node);
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
@@ -94,6 +100,8 @@ public class JOPAMain {
 						// TODO gui
 					}
 				}
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
@@ -105,6 +113,8 @@ public class JOPAMain {
 					functionName = "function_" + (currentWorkspace.functions.size());
 				}
 				ui.addFunction(currentWorkspace.createFunction(functionName));
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
@@ -112,9 +122,10 @@ public class JOPAMain {
 	public static void validateFunction() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				if (currentWorkspace.verifyFunctions()) {
-					// TODO gui
-				}
+				currentWorkspace.verifyFunctions());
+				// TODO gui
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
@@ -123,16 +134,62 @@ public class JOPAMain {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void createPlayground() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				currentWorkspace.createPlayground();
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void startPlayground() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				currentWorkspace.startPlayground();
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void stopPlayground() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				currentWorkspace.stopPlayground();
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void closePlayground() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				currentWorkspace.closePlayground();
+			} else {
+				workspaceNotCreated();
 			}
 		}
 	}
 
 	public static void about() {
-
+		// TODO
 	}
 
 	public static void manual() {
+		// TODO
+	}
 
+	private static void workspaceNotCreated() {
+		// TODO
 	}
 
 }

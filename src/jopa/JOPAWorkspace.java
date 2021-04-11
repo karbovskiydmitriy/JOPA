@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAPort;
+import jopa.playground.JOPAPlayground;
 import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
@@ -15,7 +16,7 @@ public class JOPAWorkspace {
 	public ArrayList<JOPAFunction> functions;
 	public ArrayList<JOPAType> types;
 	public ArrayList<JOPAFormula> globals;
-
+	public JOPAPlayground playground;
 	public JOPAFunction currentFunction;
 	public JOPAPort selectedPort;
 	public JOPANode selectedNode;
@@ -46,6 +47,32 @@ public class JOPAWorkspace {
 	public synchronized void selectFunction(int index) {
 		if (functions.size() > 0) {
 			currentFunction = functions.get(index);
+		}
+	}
+
+	public synchronized void createPlayground() {
+		if (playground == null) {
+			playground = new JOPAPlayground();
+		}
+	}
+
+	public synchronized void startPlayground() {
+		if (playground != null) {
+			playground.stop();
+			playground.start();
+		}
+	}
+
+	public synchronized void stopPlayground() {
+		if (playground != null) {
+			playground.stop();
+		}
+	}
+
+	public synchronized void closePlayground() {
+		if (playground != null) {
+			playground.close();
+			playground = null;
 		}
 	}
 
@@ -171,18 +198,18 @@ public class JOPAWorkspace {
 
 		return null;
 	}
-	
+
 	public boolean verifyFunctions() {
 		for (var function : functions) {
 			if (!function.verifyNodes()) {
 				System.out.println("workspace " + name + " not OK");
-				
+
 				return false;
 			}
 		}
-		
+
 		System.out.println("workspace " + name + " OK");
-		
+
 		return true;
 	}
 
@@ -202,7 +229,7 @@ public class JOPAWorkspace {
 		} else if (!to.output) {
 			to.destroyAllConnections();
 		}
-		
+
 		from.connections.add(to);
 		to.connections.add(from);
 

@@ -1,9 +1,11 @@
 package jopa.ui;
 
 import static jopa.JOPAMain.about;
+import static jopa.JOPAMain.closePlayground;
 import static jopa.JOPAMain.createNewFunction;
 import static jopa.JOPAMain.createNewNode;
 import static jopa.JOPAMain.createNewWorkspace;
+import static jopa.JOPAMain.createPlayground;
 import static jopa.JOPAMain.currentWorkspace;
 import static jopa.JOPAMain.destroyWorkspace;
 import static jopa.JOPAMain.generateShader;
@@ -11,6 +13,8 @@ import static jopa.JOPAMain.manual;
 import static jopa.JOPAMain.openWorkspace;
 import static jopa.JOPAMain.quit;
 import static jopa.JOPAMain.saveWorkspace;
+import static jopa.JOPAMain.startPlayground;
+import static jopa.JOPAMain.stopPlayground;
 import static jopa.JOPAMain.validateFunction;
 import static jopa.JOPAMain.validateNodes;
 import static jopa.JOPAMain.workspaceSync;
@@ -163,6 +167,38 @@ public class JOPAUI {
 				generateMenu.add(generateShaderMenuItem);
 
 				menuBar.add(generateMenu);
+			}
+
+			{
+				Menu playgroundMenu = new Menu("playground");
+
+				MenuItem createPlaygroundMenuItem = new MenuItem("create playground");
+				MenuItem startPlaygroundMenuItem = new MenuItem("start playground");
+				MenuItem stopPlaygroundMenuItem = new MenuItem("stop playground");
+				MenuItem closePlaygroundMenuItem = new MenuItem("close playground");
+
+				createPlaygroundMenuItem.addActionListener((e) -> {
+					createPlayground();
+				});
+
+				startPlaygroundMenuItem.addActionListener((e) -> {
+					startPlayground();
+				});
+
+				stopPlaygroundMenuItem.addActionListener((e) -> {
+					stopPlayground();
+				});
+
+				closePlaygroundMenuItem.addActionListener((e) -> {
+					closePlayground();
+				});
+				
+				playgroundMenu.add(createPlaygroundMenuItem);
+				playgroundMenu.add(startPlaygroundMenuItem);
+				playgroundMenu.add(stopPlaygroundMenuItem);
+				playgroundMenu.add(closePlaygroundMenuItem);
+
+				menuBar.add(playgroundMenu);
 			}
 
 			{
