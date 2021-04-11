@@ -1,18 +1,6 @@
 package jopa.ui;
 
-import static jopa.JOPAMain.about;
-import static jopa.JOPAMain.createNewFunction;
-import static jopa.JOPAMain.createNewNode;
-import static jopa.JOPAMain.createNewWorkspace;
-import static jopa.JOPAMain.currentWorkspace;
-import static jopa.JOPAMain.destroyWorkspace;
-import static jopa.JOPAMain.manual;
-import static jopa.JOPAMain.openWorkspace;
-import static jopa.JOPAMain.quit;
-import static jopa.JOPAMain.saveWorkspace;
-import static jopa.JOPAMain.validateFunction;
-import static jopa.JOPAMain.validateNodes;
-import static jopa.JOPAMain.workspaceSync;
+import static jopa.JOPAMain.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +30,7 @@ public class JOPAUI {
 	private JTabbedPane tabs;
 	private JOPACanvas currentCanvas;
 
-	public synchronized void setupWindow() {
+	public synchronized void createWindow() {
 		String title = "Java and OpenGL parallel algorithms application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
 		window = new Frame(title);
 		window.addWindowListener(new WindowAdapter() {
@@ -149,6 +137,20 @@ public class JOPAUI {
 		}
 
 		{
+			Menu generateMenu = new Menu("shader");
+
+			MenuItem generateShaderMenuItem = new MenuItem("generate shader");
+
+			generateShaderMenuItem.addActionListener((e) -> {
+				generateShader();
+			});
+
+			generateMenu.add(generateShaderMenuItem);
+
+			menuBar.add(generateMenu);
+		}
+
+		{
 			Menu helpMenu = new Menu("help");
 
 			MenuItem aboutHelpMenuItem = new MenuItem("about");
@@ -177,7 +179,7 @@ public class JOPAUI {
 		menuPanel.setSize(window.getWidth(), 40);
 //		menuPanel.init();
 	}
-	
+
 	public synchronized void createTabs() {
 		tabs = new JTabbedPane();
 		tabs.setDoubleBuffered(true);
@@ -198,9 +200,12 @@ public class JOPAUI {
 			}
 		});
 		window.add(tabs);
-		int y = menuPanel.getY() + menuPanel.getHeight();
+		int y = menuPanel.getLocation().y + menuPanel.getHeight();
+		System.out.println(y);
 		tabs.setLocation(0, y);
 		tabs.setSize(window.getWidth(), window.getHeight() - y);
+		System.out.println(tabs.getLocation());
+		menuPanel.setVisible(false);
 	}
 
 	synchronized JOPACanvas createCanvas() {

@@ -1,8 +1,8 @@
 package jopa;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
 
+import jopa.nodes.JOPANode;
 import jopa.ui.JOPAUI;
 
 public class JOPAMain {
@@ -30,7 +30,7 @@ public class JOPAMain {
 	private static void setupUI() {
 		if (ui == null) {
 			ui = new JOPAUI();
-			ui.setupWindow();
+			ui.createWindow();
 			ui.createMenu();
 			ui.createTabs();
 		}
@@ -38,7 +38,7 @@ public class JOPAMain {
 
 	public static void createNewWorkspace() {
 		synchronized (workspaceSync) {
-			currentWorkspace = new JOPAWorkspace(ui, "New workspace");
+			currentWorkspace = new JOPAWorkspace("New workspace");
 			createNewFunction(null);
 		}
 
@@ -80,7 +80,7 @@ public class JOPAMain {
 	public static void createNewNode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				JOPANode node = new JOPANode(new Rectangle(0, 0, 100, 100), "HEADER", "COMMAND", "FORMULA");
+				JOPANode node = new JOPANode(new Rectangle(0, 0, 100, 100), "HEADER");
 				currentWorkspace.currentFunction.statements.add(node);
 			}
 		}
@@ -89,26 +89,10 @@ public class JOPAMain {
 	public static void validateNodes() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-//				boolean isValid = true;
-
-				ArrayList<JOPANode> inputs = new ArrayList<JOPANode>();
-				ArrayList<JOPANode> statements = new ArrayList<JOPANode>();
-				ArrayList<JOPANode> outputs = new ArrayList<JOPANode>();
-				for (JOPANode node : currentWorkspace.currentFunction.statements) {
-					if (node.inputs.size() == 0 && node.outputs.size() == 0) {
-						// skip
+				if (currentWorkspace.currentFunction != null) {
+					if (currentWorkspace.currentFunction.verifyNodes()) {
+						// TODO gui
 					}
-					if (node.inputs.size() == 0) {
-						outputs.add(node);
-
-						continue;
-					}
-					if (node.outputs.size() == 0) {
-						inputs.add(node);
-
-						continue;
-					}
-					statements.add(node);
 				}
 			}
 		}
@@ -126,6 +110,16 @@ public class JOPAMain {
 	}
 
 	public static void validateFunction() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				if (currentWorkspace.verifyFunctions()) {
+					// TODO gui
+				}
+			}
+		}
+	}
+
+	public static void generateShader() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 

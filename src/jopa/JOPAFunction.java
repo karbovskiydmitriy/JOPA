@@ -6,7 +6,11 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import jopa.nodes.JOPAInputNode;
+import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAOutputNode;
 import jopa.ui.JOPACanvas;
+import jopa.ui.JOPAUIPort;
 
 public class JOPAFunction {
 
@@ -18,17 +22,15 @@ public class JOPAFunction {
 
 	public JOPAFunction(String name) {
 		this.name = name;
-		this.inputs = new ArrayList<JOPANode>(
-				List.of(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT", "INPUT_0", "();foobar")));
-		this.statements = new ArrayList<JOPANode>(
-				List.of(new JOPANode(new Rectangle(250, 50, 100, 100), "EXECUTION", "STATEMENT_0", "();foobar;()"),
-						new JOPANode(new Rectangle(250, 200, 100, 100), "EXECUTION", "STATEMENT_1", "();foobar;()"),
-						new JOPANode(new Rectangle(250, 350, 100, 100), "EXECUTION", "STATEMENT_2", "();foobar;()")));
+		this.inputs = new ArrayList<JOPANode>(List.of(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0")));
+		this.statements = new ArrayList<JOPANode>(List.of(new JOPANode(new Rectangle(250, 50, 100, 100), "STATEMENT_0"),
+				new JOPANode(new Rectangle(250, 200, 100, 100), "STATEMENT_1"),
+				new JOPANode(new Rectangle(250, 350, 100, 100), "STATEMENT_2")));
 		this.outputs = new ArrayList<JOPANode>(
-				List.of(new JOPAOutputNode(new Rectangle(450, 50, 100, 100), "OUTPUT", "OUTPUT_0", "();foobar")));
+				List.of(new JOPAOutputNode(new Rectangle(450, 50, 100, 100), "OUTPUT_0")));
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAUIPort selectedPort) {
 		inputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		outputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
@@ -54,27 +56,43 @@ public class JOPAFunction {
 		return null;
 	}
 
-	public JOPAPort getPortOnPoint(Point p) {
+	public JOPAUIPort getPortOnPoint(Point p) {
 		for (JOPANode node : statements) {
-			JOPAPort port = node.hitPort(p);
+			JOPAUIPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : inputs) {
-			JOPAPort port = node.hitPort(p);
+			JOPAUIPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : outputs) {
-			JOPAPort port = node.hitPort(p);
+			JOPAUIPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 
 		return null;
+	}
+
+	public boolean verifyNodes() {
+		if (outputs != null) {
+			for (var node : outputs) {
+				if (!node.inputsConnected()) {
+//					System.out.println("function " + name + " nodes not OK");
+
+					return false;
+				}
+			}
+		}
+
+//		System.out.println("function " + name + " OK");
+
+		return true;
 	}
 
 }

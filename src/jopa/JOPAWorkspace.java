@@ -1,22 +1,23 @@
 package jopa;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import jopa.nodes.JOPANode;
 import jopa.types.JOPAType;
-import jopa.ui.JOPAUI;
+import jopa.ui.JOPAUIPort;
 
 public class JOPAWorkspace {
 
 	public String name;
 	public ArrayList<JOPAFunction> functions;
 	public ArrayList<JOPAType> types;
-	public ArrayList<JOPANode> globals;
+	public ArrayList<JOPAFormula> globals;
 
-	public JOPAUI ui;
 	public JOPAFunction currentFunction;
-	public JOPAPort selectedPort;
+	public JOPAUIPort selectedPort;
 	public JOPANode selectedNode;
 	public JOPANode draggingNode;
 	public Point cursorPosition;
@@ -24,12 +25,11 @@ public class JOPAWorkspace {
 	public boolean isDragging;
 	public boolean justReleased;
 
-	public JOPAWorkspace(JOPAUI ui, String name) {
-		this.ui = ui;
+	public JOPAWorkspace(String name) {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
-		this.globals = new ArrayList<JOPANode>();
+		this.globals = new ArrayList<JOPAFormula>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -65,12 +65,12 @@ public class JOPAWorkspace {
 	public synchronized void draw(Graphics2D g) {
 		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
 		if (selectedPort != null) {
-			JOPAPort.drawConnection(g, selectedPort.position, cursorPosition);
+			JOPAUIPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
 		}
 	}
 
 	public synchronized void mousePressed(Point p) {
-		JOPAPort port = getPortOnPoint(p);
+		JOPAUIPort port = getPortOnPoint(p);
 		if (port != null) {
 			selectedNode = null;
 			if (selectedPort == null) {
@@ -90,7 +90,7 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized void mouseReleased(Point p) {
-		JOPAPort port = getPortOnPoint(p);
+		JOPAUIPort port = getPortOnPoint(p);
 		if (port != null) {
 			if (makeConnection(port, selectedPort)) {
 				selectedPort = null;
@@ -111,7 +111,7 @@ public class JOPAWorkspace {
 		if (justReleased) {
 			justReleased = false;
 		} else {
-			JOPAPort port = getPortOnPoint(p);
+			JOPAUIPort port = getPortOnPoint(p);
 			if (port != null) {
 				if (port.output) {
 					if (port.connections.size() > 0) {
@@ -166,15 +166,29 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	private JOPAPort getPortOnPoint(Point p) {
+	private JOPAUIPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
 			return currentFunction.getPortOnPoint(p);
 		}
 
 		return null;
 	}
+	
+	public boolean verifyFunctions() {
+		for (var function : functions) {
+			if (!function.verifyNodes()) {
+				System.out.println("workspace " + name + " not OK");
+				
+				return false;
+			}
+		}
+		
+		System.out.println("workspace " + name + " OK");
+		
+		return true;
+	}
 
-	private boolean makeConnection(JOPAPort from, JOPAPort to) {
+	private static boolean makeConnection(JOPAUIPort from, JOPAUIPort to) {
 		if (from == null || to == null) {
 			return false;
 		}
@@ -185,6 +199,12 @@ public class JOPAWorkspace {
 			return false;
 		}
 
+		if (!from.output) {
+			from.destroyAllConnections();
+		} else if (!to.output) {
+			to.destroyAllConnections();
+		}
+		
 		from.connections.add(to);
 		to.connections.add(from);
 

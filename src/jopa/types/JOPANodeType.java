@@ -1,4 +1,4 @@
-package jopa;
+package jopa.types;
 
 public enum JOPANodeType {
 	INPUT,
