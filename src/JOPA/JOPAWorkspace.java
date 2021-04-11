@@ -25,8 +25,6 @@ public class JOPAWorkspace {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
-		this.currentFunction = new JOPAFunction("main");
-		this.functions.add(currentFunction);
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -38,6 +36,14 @@ public class JOPAWorkspace {
 
 	public synchronized boolean deleteFunction(String name) {
 		return functions.removeIf(function -> function.name.equals(name));
+	}
+	
+	public synchronized JOPAFunction selectFunction(int index) {
+		if (functions.size() > 0) {
+			return currentFunction = functions.get(index);
+		} else {
+			return currentFunction = null;
+		}
 	}
 	
 	public synchronized JOPAType createNewType(String name) {

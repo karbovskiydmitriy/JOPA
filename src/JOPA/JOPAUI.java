@@ -15,11 +15,14 @@ import java.awt.event.WindowEvent;
 import static JOPA.JOPAMain.*;
 
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class JOPAUI {
 
-	private static JOPACanvas canvas;
-	private static Frame window;
+	private Frame window;
+	private JTabbedPane tabs;
+	private JOPACanvas currentCanvas;
 
 	synchronized void setupWindow() {
 		String title = "Java and OpenGL parallel application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
@@ -34,9 +37,29 @@ public class JOPAUI {
 		window.setBounds(0, 0, 800, 600);
 		window.setEnabled(true);
 		window.setVisible(true);
+
+		tabs = new JTabbedPane();
+		tabs.setDoubleBuffered(true);
+		tabs.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (currentCanvas != null) {
+					currentCanvas.setEnabled(false); // TODO the switch
+				}
+				int selectedIndex = tabs.getSelectedIndex();
+				JOPAFunction function = currentWorkspace.selectFunction(selectedIndex);
+				if (function != null) {
+					currentCanvas = function.canvas;
+					currentCanvas.setEnabled(true);
+				} else {
+					currentCanvas = null;
+				}
+			}
+		});
+		window.add(tabs);
 	}
 
-	synchronized void setupMenu() {
+	synchronized void createMenu() {
 		MenuBar menuBar = new MenuBar();
 
 		{
@@ -110,8 +133,10 @@ public class JOPAUI {
 			MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
 			MenuItem validateFunctionMenuItem = new MenuItem("validate function");
 
+			createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
+
 			createNewFunctionMenuItem.addActionListener((e) -> {
-				createNewFunction();
+				createNewFunction(null);
 			});
 
 			validateFunctionMenuItem.addActionListener((e) -> {
@@ -147,8 +172,8 @@ public class JOPAUI {
 		window.setMenuBar(menuBar);
 	}
 
-	synchronized void setupCanvas() {
-		canvas = new JOPACanvas();
+	synchronized JOPACanvas createCanvas() {
+		JOPACanvas canvas = new JOPACanvas();
 		canvas.setDoubleBuffered(true);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
@@ -213,17 +238,25 @@ public class JOPAUI {
 			}
 		});
 
-		JTabbedPane tabs = new JTabbedPane();
-		tabs.addTab("main", canvas);
-		window.add(tabs);
-
 		canvas.setSize(window.getSize());
 		canvas.repaint();
+
+		return canvas;
+	}
+
+	synchronized void addFunction(JOPAFunction function) {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				JOPACanvas canvas = createCanvas();
+				function.canvas = canvas;
+				tabs.addTab(function.name, canvas);
+			}
+		}
 	}
 
 	synchronized void repaint() {
-		if (canvas != null) {
-			canvas.repaint();
+		if (currentCanvas != null) {
+			currentCanvas.repaint();
 		}
 	}
 
