@@ -16,12 +16,14 @@ import jopa.ui.JOPAPalette;
 
 public class JOPASettings {
 
-	public JOPAPalette palette;
+	final static String DEFAULT_PALETTE_PATH = ".\\configs\\default palette.json";
+
+	public JOPAPalette defaultPalette;
 
 	public JOPASettings() {
-		palette = loadPalette(".\\configs\\default palette.json");
+		defaultPalette = loadPalette(DEFAULT_PALETTE_PATH);
 
-//		savePalette(palette, ".\\configs\\default palette.json");
+		savePalette(defaultPalette, DEFAULT_PALETTE_PATH);
 	}
 
 	private static JOPAPalette loadPalette(String filePath) {
@@ -76,8 +78,6 @@ public class JOPASettings {
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String text = gson.toJson(obj);
-
-		System.out.println(text);
 
 		try {
 			Path path = Paths.get(filePath);

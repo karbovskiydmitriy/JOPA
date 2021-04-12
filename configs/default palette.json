@@ -20,19 +20,19 @@
     "blue": 0
   },
   "portColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "red": 127,
+    "green": 127,
+    "blue": 127
   },
   "selectedPortColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "red": 10,
+    "green": 50,
+    "blue": 40
   },
   "highlightedPortColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "red": 10,
+    "green": 50,
+    "blue": 40
   },
   "boolTypeColor": {
     "red": 0,
