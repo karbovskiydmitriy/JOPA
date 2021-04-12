@@ -9,14 +9,18 @@ public class JOPAMain {
 
 	public static Object workspaceSync;
 	public static JOPAWorkspace currentWorkspace;
+	public static JOPASettings settings;
+	
 	static JOPAUI ui;
-
+	
 	public static void main(String[] args) {
 		if (!checkVersion()) {
 			// TODO gui
-			
+
 			return;
 		}
+		
+		settings = new JOPASettings();
 
 		workspaceSync = new Object();
 
@@ -25,6 +29,10 @@ public class JOPAMain {
 	}
 
 	private static boolean checkVersion() {
+//		String openGLVersion = glGetString(GL_VERSION);
+//		System.out.println(openGLVersion);
+		// TODO gui
+
 		return true;
 	}
 
@@ -50,7 +58,7 @@ public class JOPAMain {
 	public static void openWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-
+				
 			}
 		}
 	}
@@ -67,6 +75,7 @@ public class JOPAMain {
 
 	public static void destroyWorkspace() {
 		synchronized (workspaceSync) {
+			// TODO
 			currentWorkspace = null;
 		}
 
@@ -122,7 +131,7 @@ public class JOPAMain {
 	public static void validateFunction() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				currentWorkspace.verifyFunctions());
+				currentWorkspace.verifyFunctions();
 				// TODO gui
 			} else {
 				workspaceNotCreated();

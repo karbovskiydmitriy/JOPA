@@ -1,0 +1,8 @@
+package jopa.playground;
+
+public enum JOPASimulationType {
+	NONE,
+	FRAGMENT_SHADER_SIMULATION,
+	COMPUTE_SHADER_SIMULATION,
+	CUSTOM_SIMULATION
+}

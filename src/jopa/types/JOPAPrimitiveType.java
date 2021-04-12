@@ -2,7 +2,7 @@ package jopa.types;
 
 public class JOPAPrimitiveType extends JOPAType {
 
-	public JOPAGLType value;
+	public JOPAGLSLType value;
 
 	public JOPAPrimitiveType(String name) {
 		super(name);

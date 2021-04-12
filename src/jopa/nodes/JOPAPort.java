@@ -10,12 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jopa.types.JOPAGLType;
+import jopa.JOPAMain;
+import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAType;
 
-public class JOPAPort implements Serializable {
-
-	private static final long serialVersionUID = -3922248470122818472L;
+public class JOPAPort {
 
 	final int PORT_RADIUS = 7;
 
@@ -23,7 +22,7 @@ public class JOPAPort implements Serializable {
 	public JOPANode node;
 	public Point position;
 	public String name;
-	public JOPAGLType datatype;
+	public JOPAGLSLType datatype;
 	public ArrayList<JOPAPort> connections;
 	public Color color;
 
@@ -69,14 +68,35 @@ public class JOPAPort implements Serializable {
 		g.drawLine(a.x, a.y, b.x, b.y);
 	}
 
-	public static Color getColorForType(JOPAGLType type) {
+	public Color getColorForType(JOPAGLSLType type) {
 		if (type == null) {
-			return Color.BLACK;
+			return JOPAMain.settings.palette.portColor;
 		}
 
 		switch (type) {
+		case JOPA_BOOL:
+			return JOPAMain.settings.palette.boolTypeColor;
+		case JOPA_INT:
+			return JOPAMain.settings.palette.intTypeColor;
+		case JOPA_UINT:
+			return JOPAMain.settings.palette.boolTypeColor;
+		case JOPA_FLOAT:
+			return JOPAMain.settings.palette.boolTypeColor;
+		case JOPA_BOOL_VECTOR_2:
+		case JOPA_BOOL_VECTOR_3:
+		case JOPA_BOOL_VECTOR_4:
+		case JOPA_INT_VECTOR_2:
+		case JOPA_INT_VECTOR_3:
+		case JOPA_INT_VECTOR_4:
+		case JOPA_UINT_VECTOR_2:
+		case JOPA_UINT_VECTOR_3:
+		case JOPA_UINT_VECTOR_4:
+		case JOPA_FLOAT_VECTOR_2:
+		case JOPA_FLOAT_VECTOR_3:
+		case JOPA_FLOAT_VECTOR_4:
+			return JOPAMain.settings.palette.vectorTypeColor;
 		default:
-			return Color.BLACK;
+			return JOPAMain.settings.palette.portColor;
 		}
 	}
 

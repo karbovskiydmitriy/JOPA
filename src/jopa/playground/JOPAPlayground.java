@@ -1,32 +1,42 @@
 package jopa.playground;
 
 import java.io.Closeable;
+import java.util.ArrayList;
+
+import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
 
 	private boolean isRunning;
+	private JOPASimulationScript script;
+
+	private ArrayList<JOPAResource> resources;
 
 	public JOPAPlayground() {
+		resources = new ArrayList<JOPAResource>();
 		System.out.println("Playground created");
 		// TODO
 	}
 
-	public void setupScript(String script) {
-		String[] lines = script.split("\r\n");
-		for (String line : lines) {
-			System.out.println(line);
-		}
+	public synchronized void setupScript(JOPASimulationScript script) {
+		this.script = script;
 	}
 
-	public void start() {
+	public synchronized void start() {
 		if (!isRunning) {
 			isRunning = true;
 			System.out.println("Playground started");
+			if (script == null) {
+				System.out.println("Script not set up");
+				// TODO
+
+				return;
+			}
 			// TODO
 		}
 	}
 
-	public void stop() {
+	public synchronized void stop() {
 		if (isRunning) {
 			isRunning = false;
 			System.out.println("Playground stopped");
@@ -35,7 +45,8 @@ public class JOPAPlayground implements Closeable {
 	}
 
 	@Override
-	public void close() {
+	public synchronized void close() {
+		resources.clear();
 		System.out.println("Playground closed");
 		// TODO
 	}

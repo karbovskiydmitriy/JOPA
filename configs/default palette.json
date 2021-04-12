@@ -1,0 +1,72 @@
+{
+  "backgroundColor": {
+    "red": 255,
+    "green": 255,
+    "blue": 255
+  },
+  "nodeColor": {
+    "red": 255,
+    "green": 255,
+    "blue": 255
+  },
+  "selectedNodeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "highlightedNodeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "portColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "selectedPortColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "highlightedPortColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "boolTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "intTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "uintTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "floatTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "vectorTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "matrixTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  },
+  "graphicsTypeColor": {
+    "red": 0,
+    "green": 0,
+    "blue": 0
+  }
+}

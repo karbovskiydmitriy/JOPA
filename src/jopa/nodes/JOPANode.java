@@ -12,11 +12,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.JOPAFormula;
+import jopa.types.JOPANodeType;
 
-public class JOPANode implements Serializable {
-
-	private static final long serialVersionUID = -7460552036692405280L;
-
+public class JOPANode {
 	final int HEADER_HEIGHT = 20;
 	final Color SELECTED_COLOR = CYAN;
 
@@ -25,6 +23,7 @@ public class JOPANode implements Serializable {
 	protected String command;
 	protected transient JOPAFormula formula;
 
+	public JOPANodeType nodeType;
 	public ArrayList<JOPAPort> inputs;
 	public ArrayList<JOPAPort> outputs;
 
