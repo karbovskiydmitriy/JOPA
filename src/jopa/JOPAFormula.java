@@ -2,6 +2,8 @@ package jopa;
 
 import java.util.ArrayList;
 
+import jopa.exceptions.JOPAException;
+
 public class JOPAFormula {
 
 	public String name;

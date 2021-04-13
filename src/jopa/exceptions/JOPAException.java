@@ -1,4 +1,4 @@
-package jopa;
+package jopa.exceptions;
 
 public class JOPAException extends Exception {
 

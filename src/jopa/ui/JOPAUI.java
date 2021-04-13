@@ -15,7 +15,7 @@ import static jopa.JOPAMain.quit;
 import static jopa.JOPAMain.saveWorkspace;
 import static jopa.JOPAMain.startPlayground;
 import static jopa.JOPAMain.stopPlayground;
-import static jopa.JOPAMain.validateFunction;
+import static jopa.JOPAMain.validateFunctions;
 import static jopa.JOPAMain.validateNodes;
 import static jopa.JOPAMain.workspaceSync;
 
@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -50,7 +51,7 @@ public class JOPAUI {
 
 	public synchronized void createWindow() {
 		String title = "Java and OpenGL parallel algorithms application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
-		window = new Frame(title);
+		window = new JFrame(title);
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
@@ -137,7 +138,7 @@ public class JOPAUI {
 				Menu functionMenu = new Menu("function");
 
 				MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
-				MenuItem validateFunctionMenuItem = new MenuItem("validate function");
+				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
 
 				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
 
@@ -146,7 +147,7 @@ public class JOPAUI {
 				});
 
 				validateFunctionMenuItem.addActionListener((e) -> {
-					validateFunction();
+					validateFunctions();
 				});
 
 				functionMenu.add(createNewFunctionMenuItem);
@@ -192,7 +193,7 @@ public class JOPAUI {
 				closePlaygroundMenuItem.addActionListener((e) -> {
 					closePlayground();
 				});
-				
+
 				playgroundMenu.add(createPlaygroundMenuItem);
 				playgroundMenu.add(startPlaygroundMenuItem);
 				playgroundMenu.add(stopPlaygroundMenuItem);
@@ -337,13 +338,50 @@ public class JOPAUI {
 		}
 	}
 
-	public synchronized void addFunction(JOPAFunction function) {
+	public synchronized void addFunction(JOPAFunction function, boolean openEditor) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 //				JOPACanvas canvas = createCanvas();
 //				function.canvas = canvas;
+				if (openEditor) {
+					editFunctionPrototype(function);
+				}
 				tabs.addTab(function.name, canvas);
 			}
+		}
+	}
+
+	public synchronized void editFunctionPrototype(JOPAFunction function) {
+//		JWindow editFunctionWindow = new JWindow();
+
+		JOPAEditFunctionDialog dialog = new JOPAEditFunctionDialog(window, function);
+
+		dialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				System.out.println("end");
+				dialog.removeWindowListener(this);
+//				super.windowClosed(e);
+			}
+		});
+
+		System.out.println("here");
+
+		// Dialog dialog = new Dialog(window);
+		// Button b = new Button("b");
+		// dialog.add(b);
+		// b.addActionListener(al -> dialog.setVisible(false));
+		// dialog.setVisible(true);
+
+	}
+
+	public synchronized void showMessage(String text) {
+		if (window != null) {
+			JOPAMessageWindow messageWindow = new JOPAMessageWindow(window, text, "message");
+			messageWindow.dispose();
+		} else {
+			JOPAMessageWindow messageWindow = new JOPAMessageWindow(new Frame("error"), text, "message");
+			messageWindow.dispose();
 		}
 	}
 

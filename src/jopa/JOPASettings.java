@@ -16,7 +16,8 @@ import jopa.ui.JOPAPalette;
 
 public class JOPASettings {
 
-	final static String DEFAULT_PALETTE_PATH = ".\\configs\\default palette.json";
+	final static String CONFIGS_DIRECTORY_PATH = ".\\configs\\";
+	final static String DEFAULT_PALETTE_PATH = CONFIGS_DIRECTORY_PATH + "default palette.json";
 
 	public JOPAPalette defaultPalette;
 

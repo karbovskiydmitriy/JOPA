@@ -81,14 +81,14 @@ public class JOPAFunction {
 		if (outputs != null) {
 			for (var node : outputs) {
 				if (!node.inputsConnected()) {
-//					System.out.println("function " + name + " nodes not OK");
+					System.out.println("function " + name + " nodes not OK");
 
 					return false;
 				}
 			}
 		}
 
-//		System.out.println("function " + name + " OK");
+		System.out.println("function " + name + " OK");
 
 		return true;
 	}

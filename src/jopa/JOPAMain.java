@@ -10,16 +10,16 @@ public class JOPAMain {
 	public static Object workspaceSync;
 	public static JOPAWorkspace currentWorkspace;
 	public static JOPASettings settings;
-	
+
 	static JOPAUI ui;
-	
+
 	public static void main(String[] args) {
 		if (!checkVersion()) {
 			// TODO gui
 
 			return;
 		}
-		
+
 		settings = new JOPASettings();
 
 		workspaceSync = new Object();
@@ -29,10 +29,6 @@ public class JOPAMain {
 	}
 
 	private static boolean checkVersion() {
-//		String openGLVersion = glGetString(GL_VERSION);
-//		System.out.println(openGLVersion);
-		// TODO gui
-
 		return true;
 	}
 
@@ -58,7 +54,7 @@ public class JOPAMain {
 	public static void openWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				
+
 			}
 		}
 	}
@@ -106,7 +102,9 @@ public class JOPAMain {
 			if (currentWorkspace != null) {
 				if (currentWorkspace.currentFunction != null) {
 					if (currentWorkspace.currentFunction.verifyNodes()) {
-						// TODO gui
+						ui.showMessage("Nodes in current function are OK");
+					} else {
+						ui.showMessage("Nodes in current function are not OK");
 					}
 				}
 			} else {
@@ -121,18 +119,19 @@ public class JOPAMain {
 				if (functionName == null) {
 					functionName = "function_" + (currentWorkspace.functions.size());
 				}
-				ui.addFunction(currentWorkspace.createFunction(functionName));
+				boolean openEditor = currentWorkspace.functions.size() > 0;
+				ui.addFunction(currentWorkspace.createFunction(functionName), openEditor);
 			} else {
 				workspaceNotCreated();
 			}
 		}
 	}
 
-	public static void validateFunction() {
+	public static void validateFunctions() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				currentWorkspace.verifyFunctions();
-				// TODO gui
+				ui.showMessage("functions(s) validated");
 			} else {
 				workspaceNotCreated();
 			}

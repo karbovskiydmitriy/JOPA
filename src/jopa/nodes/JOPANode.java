@@ -18,10 +18,10 @@ public class JOPANode {
 	final int HEADER_HEIGHT = 20;
 	final Color SELECTED_COLOR = CYAN;
 
-	protected Rectangle rect;
-	protected String header;
-	protected String command;
-	protected transient JOPAFormula formula;
+	public Rectangle rect;
+	public String header;
+	public String command;
+	public transient JOPAFormula formula;
 
 	public JOPANodeType nodeType;
 	public ArrayList<JOPAPort> inputs;
@@ -50,8 +50,7 @@ public class JOPANode {
 			}
 			for (int i = 0; i < formula.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPAPort port = new JOPAPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i],
-						true);
+				JOPAPort port = new JOPAPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i], true);
 				outputs.add(port);
 			}
 		}
@@ -108,8 +107,8 @@ public class JOPANode {
 		if (inputs != null) {
 			for (var port : inputs) {
 				if (port.connections.size() == 0) {
-//					System.out.println("node " + header + " not OK");
-					
+					System.out.println("node " + header + " not OK");
+
 					return false;
 				}
 				if (!port.connections.get(0).node.inputsConnected()) {

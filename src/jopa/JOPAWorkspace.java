@@ -199,16 +199,28 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	public boolean verifyFunctions() {
-		for (var function : functions) {
-			if (!function.verifyNodes()) {
-				System.out.println("workspace " + name + " not OK");
+	public boolean verifyFunction(JOPAFunction function) {
+		if (!function.verifyNodes()) {
+			return false;
+		}
 
-				return false;
+		return true;
+	}
+
+	public boolean verifyFunctions() {
+		boolean validated = true;
+
+		for (var function : functions) {
+			if (!verifyFunction(function)) {
+				validated = false;
 			}
 		}
 
-		System.out.println("workspace " + name + " OK");
+		if (validated) {
+			System.out.println("workspace " + name + " OK");
+		} else {
+			System.out.println("workspace " + name + " not OK");
+		}
 
 		return true;
 	}

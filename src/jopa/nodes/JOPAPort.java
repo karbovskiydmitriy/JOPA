@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
