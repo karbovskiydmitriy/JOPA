@@ -189,15 +189,15 @@ public class JOPAMain {
 	}
 
 	public static void about() {
-		// TODO
+		ui.showMessage("JOPA");
 	}
 
 	public static void manual() {
-		// TODO
+		ui.showMessage("MANUAL");
 	}
 
 	private static void workspaceNotCreated() {
-		// TODO
+		ui.showMessage("Project not created!");
 	}
 
 }

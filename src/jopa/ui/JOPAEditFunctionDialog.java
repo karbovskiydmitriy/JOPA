@@ -1,7 +1,7 @@
 package jopa.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
 
@@ -19,6 +19,7 @@ public class JOPAEditFunctionDialog extends JDialog {
 		super(owner);
 
 		selectedFunction = function;
+		setLayout(new BorderLayout());
 		setSize(500, 500);
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -37,10 +38,10 @@ public class JOPAEditFunctionDialog extends JDialog {
 			label.setSize(200, 20);
 			label.setLocation(300, i * 40);
 		}
-		
+
 		Button b = new Button("OK");
 		b.addActionListener(al -> setVisible(false));
-		//add(b);
+		// add(b);
 
 		setVisible(true);
 	}

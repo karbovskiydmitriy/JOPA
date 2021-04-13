@@ -3,12 +3,13 @@ package jopa.playground;
 import java.io.Closeable;
 import java.util.ArrayList;
 
+import jopa.exceptions.JOPAPlaygroundException;
 import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
 
-	private boolean isRunning;
 	private JOPASimulationScript script;
+	private JOPASimulationThread simulationThread;
 
 	private ArrayList<JOPAResource> resources;
 
@@ -23,22 +24,29 @@ public class JOPAPlayground implements Closeable {
 	}
 
 	public synchronized void start() {
-		if (!isRunning) {
-			isRunning = true;
-			System.out.println("Playground started");
+		if (simulationThread == null) {
+			try {
+				setupScript(new JOPASimulationScript(JOPASimulationType.FRAGMENT_SHADER_SIMULATION));
+			} catch (JOPAPlaygroundException e) {
+				e.printStackTrace();
+			}
 			if (script == null) {
 				System.out.println("Script not set up");
 				// TODO
 
 				return;
 			}
-			// TODO
+			System.out.println("Playground started");
+
+			simulationThread = new JOPASimulationThread(script);
+			simulationThread.start();
 		}
 	}
 
 	public synchronized void stop() {
-		if (isRunning) {
-			isRunning = false;
+		if (simulationThread != null) {
+			JOPASimulationThread.isRunning = false;
+			simulationThread = null;
 			System.out.println("Playground stopped");
 			// TODO
 		}
