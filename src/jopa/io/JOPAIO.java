@@ -17,4 +17,16 @@ public class JOPAIO {
 		}
 	}
 
+	public static boolean saveTextFile(String fileName, String text) {
+		try {
+			Files.write(Paths.get(fileName), text.getBytes());
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+
+			return false;
+		}
+
+		return true;
+	}
+
 }

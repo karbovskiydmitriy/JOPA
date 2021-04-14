@@ -8,12 +8,11 @@ public class JOPASimulationThread extends Thread {
 		super(() -> {
 			isRunning = true;
 			while (isRunning) {
-//				System.out.println("simulation!!!");
 				if (!script.execute()) {
-//					System.out.println("oops");
 					isRunning = false;
 				}
 			}
+			System.out.println("Playground stopped");
 		});
 	}
 

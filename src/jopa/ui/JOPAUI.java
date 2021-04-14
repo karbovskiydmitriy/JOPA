@@ -359,20 +359,13 @@ public class JOPAUI {
 		dialog.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				System.out.println("end");
+//				System.out.println("end");
 				dialog.removeWindowListener(this);
-//				super.windowClosed(e);
+				super.windowClosed(e);
 			}
 		});
 
-		System.out.println("here");
-
-		// Dialog dialog = new Dialog(window);
-		// Button b = new Button("b");
-		// dialog.add(b);
-		// b.addActionListener(al -> dialog.setVisible(false));
-		// dialog.setVisible(true);
-
+//		System.out.println("here");
 	}
 
 	public synchronized void showMessage(String text) {

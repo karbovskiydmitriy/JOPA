@@ -26,7 +26,7 @@ public class JOPAPlayground implements Closeable {
 	public synchronized void start() {
 		if (simulationThread == null) {
 			try {
-				setupScript(new JOPASimulationScript(JOPASimulationType.FRAGMENT_SHADER_SIMULATION));
+				setupScript(new JOPASimulationScript(JOPASimulationType.COMPUTE_SHADER_SIMULATION));
 			} catch (JOPAPlaygroundException e) {
 				e.printStackTrace();
 			}
@@ -47,8 +47,6 @@ public class JOPAPlayground implements Closeable {
 		if (simulationThread != null) {
 			JOPASimulationThread.isRunning = false;
 			simulationThread = null;
-			System.out.println("Playground stopped");
-			// TODO
 		}
 	}
 
@@ -56,7 +54,6 @@ public class JOPAPlayground implements Closeable {
 	public synchronized void close() {
 		resources.clear();
 		System.out.println("Playground closed");
-		// TODO
 	}
 
 }

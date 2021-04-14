@@ -1,7 +1,10 @@
 package jopa.playground;
 
+import static jopa.io.JOPAIO.loadTextFile;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
@@ -17,21 +20,35 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL30.GL_RGBA32F;
+import static org.lwjgl.opengl.GL42.glBindImageTexture;
+import static org.lwjgl.opengl.GL42.glTexStorage2D;
+import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import static jopa.io.JOPAIO.*;
-
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.lwjgl.glfw.GLFWVidMode;
 
 import jopa.exceptions.JOPAPlaygroundException;
 
@@ -57,7 +74,7 @@ public class JOPASimulationScript {
 			throw new JOPAPlaygroundException("commands is null");
 		}
 
-		this.commands = new ArrayList<>(commands);
+		this.commands = new ArrayList<String>(commands);
 		this.simulationType = JOPASimulationType.CUSTOM_SIMULATION;
 	}
 
@@ -70,13 +87,9 @@ public class JOPASimulationScript {
 		case NONE:
 			return false;
 		case FRAGMENT_SHADER_SIMULATION:
-			executeDefaultFragmentShaderSimulation();
-
-			return true;
+			return executeDefaultFragmentShaderSimulation();
 		case COMPUTE_SHADER_SIMULATION:
-			executeDefaultComputeShaderSimulation();
-
-			return true;
+			return executeDefaultComputeShaderSimulation();
 		case CUSTOM_SIMULATION:
 			if (nextCommand == null) {
 				reset();
@@ -107,38 +120,57 @@ public class JOPASimulationScript {
 	int state = 0;
 
 	private boolean executeDefaultFragmentShaderSimulation() {
-//		System.out.println("frag");
-
-		if (state == 0) {
+		switch (state) {
+		case 0:
 			defaultFragmentShaderInit();
 			state = 1;
 
 			return true;
-		}
-
-		if (state == 1) {
+		case 1:
 			if (!defaultFragmentShaderTick()) {
 				state = 2;
-				
-				return true;
 			}
-		}
-		
-		if (state == 2) {
+
+			return true;
+		case 2:
 			defaultFragmentShaderDeinit();
-			
 			state = 0;
-			
+
 			return false;
 		}
-		
+
+		return false;
+	}
+
+	private boolean executeDefaultComputeShaderSimulation() {
+		switch (state) {
+		case 0:
+			defaultComputeShaderInit();
+			state = 1;
+
+			return true;
+		case 1:
+			if (!defaultComputeShaderTick()) {
+				state = 2;
+			}
+
+			return true;
+		case 2:
+			defaultComputeShaderDeinit();
+			state = 0;
+
+			return false;
+		}
+
 		return false;
 	}
 
 	private void defaultFragmentShaderInit() {
 		glfwInit();
 
-		window = glfwCreateWindow(1024, 1024, "Default fragment shader showcase", NULL, NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width() / 2, videoMode.height() / 2, "Default fragment shader showcase",
+				NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
@@ -155,7 +187,6 @@ public class JOPASimulationScript {
 		int defaultFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(defaultFragmentShader, loadTextFile(".\\shaders\\examples\\fragment.glsl"));
 		glCompileShader(defaultFragmentShader);
-		System.out.println(glGetShaderInfoLog(defaultFragmentShader));
 		glAttachShader(defaultProgram, defaultFragmentShader);
 		glLinkProgram(defaultProgram);
 		glUseProgram(defaultProgram);
@@ -163,10 +194,6 @@ public class JOPASimulationScript {
 
 	private boolean defaultFragmentShaderTick() {
 		if (!glfwWindowShouldClose(window)) {
-
-			// activate fragment shader program
-			// pass parameters
-
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 1);
@@ -181,10 +208,10 @@ public class JOPASimulationScript {
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -194,8 +221,69 @@ public class JOPASimulationScript {
 		glfwTerminate();
 	}
 
-	private void executeDefaultComputeShaderSimulation() {
-		// TODO copy from tests
+	int image;
+
+	private void defaultComputeShaderInit() {
+		glfwInit();
+
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width() / 2, videoMode.height() / 2, "Default compute shader showcase",
+				NULL, NULL);
+		int[] windowWidht = new int[1];
+		int[] windowHeight = new int[1];
+		glfwGetWindowSize(window, windowWidht, windowHeight);
+
+		glfwMakeContextCurrent(window);
+		glfwSwapInterval(1);
+		glfwShowWindow(window);
+
+		createCapabilities();
+
+		glViewport(0, 0, windowWidht[0], windowHeight[0]);
+		glEnable(GL_TEXTURE_2D);
+
+		image = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, image);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, windowWidht[0], windowHeight[0]);
+
+		int defaultProgram = glCreateProgram();
+		int defaultComputeShader = glCreateShader(GL_COMPUTE_SHADER);
+		glShaderSource(defaultComputeShader, loadTextFile(".\\shaders\\examples\\compute.glsl"));
+		glCompileShader(defaultComputeShader);
+		glAttachShader(defaultProgram, defaultComputeShader);
+		glLinkProgram(defaultProgram);
+		glUseProgram(defaultProgram);
+		glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		glDispatchCompute(windowWidht[0] / 2, windowHeight[0] / 2, defaultComputeShader);
+	}
+
+	private boolean defaultComputeShaderTick() {
+		if (!glfwWindowShouldClose(window)) {
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0, 1);
+			glVertex2i(-1, -1);
+			glTexCoord2f(0, 0);
+			glVertex2i(-1, 1);
+			glTexCoord2f(1, 0);
+			glVertex2i(1, 1);
+			glTexCoord2f(1, 1);
+			glVertex2i(1, -1);
+			glEnd();
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private void defaultComputeShaderDeinit() {
+		setCapabilities(null);
+		glfwDestroyWindow(window);
+		glfwTerminate();
 	}
 
 }

@@ -7,8 +7,6 @@ import jopa.types.JOPAComplexType;
 
 public class JOPAInputNode extends JOPANode {
 
-	private static final long serialVersionUID = 4796528397625482904L;
-	
 	public JOPAComplexType inputType;
 	
 	public JOPAInputNode(Rectangle rect, String header) {

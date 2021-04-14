@@ -1,10 +1,6 @@
 package jopa;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import jopa.io.JOPAIO;
 import jopa.ui.JOPAPalette;
 
 public class JOPASettings {
@@ -30,12 +27,7 @@ public class JOPASettings {
 	private static JOPAPalette loadPalette(String filePath) {
 		String text = null;
 
-		try {
-			Path path = Paths.get(filePath);
-			text = new String(Files.readAllBytes(path));
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
+		text = JOPAIO.loadTextFile(filePath);
 
 		JsonElement jElement = new JsonParser().parse(text);
 		JsonObject paletteObject = jElement.getAsJsonObject();
@@ -80,12 +72,7 @@ public class JOPASettings {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String text = gson.toJson(obj);
 
-		try {
-			Path path = Paths.get(filePath);
-			Files.write(path, text.getBytes());
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
+		JOPAIO.saveTextFile(filePath, text);
 	}
 
 	private static JsonObject serializeObject(Color color) {
