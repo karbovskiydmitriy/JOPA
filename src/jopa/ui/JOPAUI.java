@@ -346,6 +346,8 @@ public class JOPAUI {
 				if (openEditor) {
 					editFunctionPrototype(function);
 				}
+//				Panel panel = new Panel();
+//				panel.add(canvas);
 				tabs.addTab(function.name, canvas);
 			}
 		}

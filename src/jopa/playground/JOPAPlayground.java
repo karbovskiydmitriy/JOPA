@@ -26,7 +26,8 @@ public class JOPAPlayground implements Closeable {
 	public synchronized void start() {
 		if (simulationThread == null) {
 			try {
-				setupScript(new JOPASimulationScript(JOPASimulationType.COMPUTE_SHADER_SIMULATION));
+				JOPASimulationScript script = new JOPASimulationScript(JOPASimulationType.FRAGMENT_SHADER_SIMULATION);
+				setupScript(script);
 			} catch (JOPAPlaygroundException e) {
 				e.printStackTrace();
 			}

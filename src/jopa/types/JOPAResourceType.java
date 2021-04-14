@@ -7,5 +7,6 @@ public enum JOPAResourceType {
 	TEXTURE_HANDLE,
 	SHADER,
 	PROGRAM,
+	GLSL_TYPE,
 	// TODO
 }
