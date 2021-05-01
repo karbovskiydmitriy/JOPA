@@ -58,9 +58,9 @@ import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.lwjgl.glfw.GLFWVidMode;
 
@@ -100,7 +100,7 @@ public class JOPASimulationScript {
 
 		this.commands = new ArrayList<String>(commands);
 		this.simulationType = JOPASimulationType.CUSTOM_SIMULATION;
-		this.resources = new ArrayList<JOPAResource>(List.of(resources));
+		this.resources = new ArrayList<JOPAResource>(Arrays.asList(resources));
 	}
 
 	public void reset() {
@@ -111,7 +111,7 @@ public class JOPASimulationScript {
 		if (resources != null && resources.size() > 0) {
 			int program = glGetInteger(GL_CURRENT_PROGRAM);
 			if (program != 0) {
-				for (var resource : resources) {
+				for (JOPAResource resource : resources) {
 					String name = resource.name;
 					if (name != null && name.length() > 0) {
 						int location = glGetUniformLocation(program, name);
@@ -350,18 +350,17 @@ public class JOPASimulationScript {
 		int defaultFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(defaultFragmentShader, loadTextFile(".\\shaders\\examples\\fragment.glsl"));
 		glCompileShader(defaultFragmentShader);
+		// System.out.println(glGetShaderInfoLog(defaultFragmentShader));
 		glAttachShader(defaultProgram, defaultFragmentShader);
 		glLinkProgram(defaultProgram);
 		glUseProgram(defaultProgram);
 
 		JOPAResource screenSize = new JOPAResource();
-//		screenSize.id = 1;
+		// screenSize.id = 1;
 		screenSize.name = "screenSize";
 		screenSize.type = JOPAResourceType.GLSL_TYPE;
 		screenSize.glslType = JOPAGLSLType.JOPA_INT_VECTOR_2;
-		screenSize.value = new int[] {
-				windowWidht[0], windowHeight[0]
-		};
+		screenSize.value = new int[] { windowWidht[0], windowHeight[0] };
 		this.resources.add(screenSize);
 	}
 

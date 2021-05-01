@@ -210,7 +210,7 @@ public class JOPAWorkspace {
 	public boolean verifyFunctions() {
 		boolean validated = true;
 
-		for (var function : functions) {
+		for (JOPAFunction function : functions) {
 			if (!verifyFunction(function)) {
 				validated = false;
 			}

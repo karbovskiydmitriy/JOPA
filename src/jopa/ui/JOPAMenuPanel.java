@@ -15,7 +15,7 @@ public class JOPAMenuPanel extends Panel {
 		width -= 20;
 		int height = getHeight() - 20;
 		for (int i = 0, offset = 10; i < 10; i++, offset += width + 20) {
-			var b = new Button();
+			Button b = new Button();
 			b.setLocation(offset, 10);
 			b.setSize(width, height);
 			buttons[i] = b;

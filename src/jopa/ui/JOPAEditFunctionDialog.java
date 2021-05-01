@@ -8,6 +8,7 @@ import java.awt.Label;
 import javax.swing.JDialog;
 
 import jopa.JOPAFunction;
+import jopa.nodes.JOPANode;
 
 public class JOPAEditFunctionDialog extends JDialog {
 
@@ -25,15 +26,15 @@ public class JOPAEditFunctionDialog extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		for (int i = 0; i < function.inputs.size(); i++) {
-			var input = function.inputs.get(i);
-			var label = new Label(input.header);
+			JOPANode input = function.inputs.get(i);
+			Label label = new Label(input.header);
 			add(label);
 			label.setSize(200, 20);
 			label.setLocation(0, i * 40);
 		}
 		for (int i = 0; i < function.outputs.size(); i++) {
-			var output = function.outputs.get(i);
-			var label = new Label(output.header);
+			JOPANode output = function.outputs.get(i);
+			Label label = new Label(output.header);
 			add(label);
 			label.setSize(200, 20);
 			label.setLocation(300, i * 40);

@@ -23,9 +23,12 @@ public class JOPAMain {
 		settings = new JOPASettings();
 
 		workspaceSync = new Object();
-
+		
 		setupUI();
 		createNewWorkspace();
+
+		currentWorkspace.createPlayground();
+		currentWorkspace.startPlayground();
 	}
 
 	private static boolean checkVersion() {

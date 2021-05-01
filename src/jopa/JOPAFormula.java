@@ -35,16 +35,12 @@ public class JOPAFormula {
 		this.name = name;
 		this.formula = formula;
 
-		this.inputs = new String[] {
-				"input_0", "input_1"
-		};
-		this.outputs = new String[] {
-				"output_0"
-		};
+		this.inputs = new String[] { "input_0", "input_1" };
+		this.outputs = new String[] { "output_0" };
 	}
 
 	public static JOPAFormula getFormulaByName(String name) {
-		for (var formula : standardFormulas) {
+		for (JOPAFormula formula : standardFormulas) {
 			if (formula.name.equals(name)) {
 				return formula;
 			}

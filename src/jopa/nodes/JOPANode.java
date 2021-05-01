@@ -104,7 +104,7 @@ public class JOPANode {
 
 	public boolean inputsConnected() {
 		if (inputs != null) {
-			for (var port : inputs) {
+			for (JOPAPort port : inputs) {
 				if (port.connections.size() == 0) {
 					System.out.println("node " + header + " not OK");
 
