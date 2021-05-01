@@ -23,8 +23,8 @@ public class JOPANode {
 	public transient JOPAFormula formula;
 
 	public JOPANodeType nodeType;
-	public ArrayList<JOPAPort> inputs;
-	public ArrayList<JOPAPort> outputs;
+	public ArrayList<JOPADataPort> inputs;
+	public ArrayList<JOPADataPort> outputs;
 
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
@@ -36,20 +36,20 @@ public class JOPANode {
 		JOPAFormula formula = JOPAFormula.getFormulaByName(formulaName);
 		this.formula = formula;
 		if (formula != null) {
-			inputs = new ArrayList<JOPAPort>(formula.inputs.length);
-			outputs = new ArrayList<JOPAPort>(formula.outputs.length);
+			inputs = new ArrayList<JOPADataPort>(formula.inputs.length);
+			outputs = new ArrayList<JOPADataPort>(formula.outputs.length);
 			int inputsCount = formula.inputs.length;
 			int outputsCount = formula.outputs.length;
 			float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputsCount + 1);
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
 			for (int i = 0; i < formula.inputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
-				JOPAPort port = new JOPAPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
 				inputs.add(port);
 			}
 			for (int i = 0; i < formula.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPAPort port = new JOPAPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i], true);
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i], true);
 				outputs.add(port);
 			}
 		}
@@ -76,7 +76,7 @@ public class JOPANode {
 //		g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
 		drawFrame(g, selectedNode == this);
 		inputs.forEach(port -> port.draw(g, selectedPort));
 		outputs.forEach(port -> port.draw(g, selectedPort));
@@ -86,14 +86,14 @@ public class JOPANode {
 		return rect.contains(p);
 	}
 
-	public JOPAPort hitPort(Point p) {
-		for (JOPAPort port : inputs) {
+	public JOPADataPort hitPort(Point p) {
+		for (JOPADataPort port : inputs) {
 			if (port.hit(p)) {
 				return port;
 			}
 		}
 
-		for (JOPAPort port : outputs) {
+		for (JOPADataPort port : outputs) {
 			if (port.hit(p)) {
 				return port;
 			}
@@ -104,7 +104,7 @@ public class JOPANode {
 
 	public boolean inputsConnected() {
 		if (inputs != null) {
-			for (JOPAPort port : inputs) {
+			for (JOPADataPort port : inputs) {
 				if (port.connections.size() == 0) {
 					System.out.println("node " + header + " not OK");
 

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAOutputNode;
-import jopa.nodes.JOPAPort;
+import jopa.nodes.JOPADataPort;
 
 public class JOPAFunction {
 
@@ -30,7 +30,7 @@ public class JOPAFunction {
 				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0")));
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
 		inputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		outputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
@@ -56,21 +56,21 @@ public class JOPAFunction {
 		return null;
 	}
 
-	public JOPAPort getPortOnPoint(Point p) {
+	public JOPADataPort getPortOnPoint(Point p) {
 		for (JOPANode node : statements) {
-			JOPAPort port = node.hitPort(p);
+			JOPADataPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : inputs) {
-			JOPAPort port = node.hitPort(p);
+			JOPADataPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 		for (JOPANode node : outputs) {
-			JOPAPort port = node.hitPort(p);
+			JOPADataPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}

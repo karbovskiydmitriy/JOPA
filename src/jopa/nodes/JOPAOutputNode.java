@@ -10,7 +10,7 @@ public class JOPAOutputNode extends JOPANode {
 	}
 	
 	@Override
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
 		drawFrame(g, selectedNode == this);
 		inputs.forEach(port -> port.draw(g, selectedPort));
 	}

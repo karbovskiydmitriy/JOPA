@@ -6,7 +6,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import jopa.nodes.JOPANode;
-import jopa.nodes.JOPAPort;
+import jopa.nodes.JOPADataPort;
 import jopa.playground.JOPAPlayground;
 import jopa.types.JOPAType;
 
@@ -18,7 +18,7 @@ public class JOPAWorkspace {
 	public ArrayList<JOPAFormula> globals;
 	public JOPAPlayground playground;
 	public JOPAFunction currentFunction;
-	public JOPAPort selectedPort;
+	public JOPADataPort selectedPort;
 	public JOPANode selectedNode;
 	public JOPANode draggingNode;
 	public Point cursorPosition;
@@ -90,17 +90,17 @@ public class JOPAWorkspace {
 	public synchronized void draw(Graphics2D g) {
 		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
 		if (selectedPort != null) {
-			JOPAPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
+			JOPADataPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
 		}
 	}
 
 	public synchronized void mousePressed(Point p) {
-		JOPAPort port = getPortOnPoint(p);
+		JOPADataPort port = getPortOnPoint(p);
 		if (port != null) {
 			selectedNode = null;
 			if (selectedPort == null) {
 				selectedPort = port;
-				if (!selectedPort.output) {
+				if (!selectedPort.isOutput) {
 					selectedPort.destroyAllConnections();
 				}
 			}
@@ -115,7 +115,7 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized void mouseReleased(Point p) {
-		JOPAPort port = getPortOnPoint(p);
+		JOPADataPort port = getPortOnPoint(p);
 		if (port != null) {
 			if (makeConnection(port, selectedPort)) {
 				selectedPort = null;
@@ -136,9 +136,9 @@ public class JOPAWorkspace {
 		if (justReleased) {
 			justReleased = false;
 		} else {
-			JOPAPort port = getPortOnPoint(p);
+			JOPADataPort port = getPortOnPoint(p);
 			if (port != null) {
-				if (!port.output) {
+				if (!port.isOutput) {
 					if (port.connections.size() > 0) {
 						port.destroyAllConnections();
 					}
@@ -191,7 +191,7 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	private JOPAPort getPortOnPoint(Point p) {
+	private JOPADataPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
 			return currentFunction.getPortOnPoint(p);
 		}
@@ -225,20 +225,20 @@ public class JOPAWorkspace {
 		return true;
 	}
 
-	private static boolean makeConnection(JOPAPort from, JOPAPort to) {
+	private static boolean makeConnection(JOPADataPort from, JOPADataPort to) {
 		if (from == null || to == null) {
 			return false;
 		}
-		if (from.output == to.output) {
+		if (from.isOutput == to.isOutput) {
 			return false;
 		}
 		if (from.node == to.node) {
 			return false;
 		}
 
-		if (!from.output) {
+		if (!from.isOutput) {
 			from.destroyAllConnections();
-		} else if (!to.output) {
+		} else if (!to.isOutput) {
 			to.destroyAllConnections();
 		}
 
