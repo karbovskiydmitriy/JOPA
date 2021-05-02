@@ -20,7 +20,6 @@ import static jopa.JOPAMain.validateNodes;
 import static jopa.JOPAMain.workspaceSync;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
@@ -226,13 +225,11 @@ public class JOPAUI {
 			window.setMenuBar(menuBar);
 		}
 
-		if (menuPanel == null) {
-			menuPanel = new JOPAMenuPanel(); // TODO stuff
-			window.add(menuPanel);
-			menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
-			menuPanel.setSize(window.getWidth(), 40);
-//			menuPanel.init();
-		}
+		/*
+		 * if (menuPanel == null) { menuPanel = new JOPAMenuPanel(); // TODO stuff
+		 * window.add(menuPanel); menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
+		 * menuPanel.setSize(window.getWidth(), 40); // menuPanel.init(); }
+		 */ // FIXME!!!
 	}
 
 	public synchronized void createTabs() {
@@ -242,28 +239,33 @@ public class JOPAUI {
 			tabs.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-//					if (currentCanvas != null) {
-//						currentCanvas.setEnabled(false); // TODO the switch
-//					}
+					// if (currentCanvas != null) {
+					// currentCanvas.setEnabled(false); // TODO the switch
+					// }
 					int selectedIndex = tabs.getSelectedIndex();
 					if (selectedIndex != -1) {
 						currentWorkspace.selectFunction(selectedIndex);
 					}
-//					if (function != null) {
-//						currentCanvas = function.canvas;
-//						currentCanvas.setEnabled(true);
-//					} else {
-//						currentCanvas = null;
-//					}
+					// if (function != null) {
+					// currentCanvas = function.canvas;
+					// currentCanvas.setEnabled(true);
+					// } else {
+					// currentCanvas = null;
+					// }
 				}
 			});
 			window.add(tabs);
-			int y = menuPanel.getLocation().y + menuPanel.getHeight();
-//			System.out.println(y);
+			int y;
+			if (menuPanel != null) {
+				y = menuPanel.getLocation().y + menuPanel.getHeight();
+			} else {
+				y = 0;
+			}
+			// System.out.println(y);
 			tabs.setLocation(0, y);
 			tabs.setSize(window.getWidth(), window.getHeight() - y);
-//			System.out.println(tabs.getLocation());
-			menuPanel.setVisible(false);
+			// System.out.println(tabs.getLocation());
+			// menuPanel.setVisible(false);
 		}
 	}
 
@@ -342,33 +344,33 @@ public class JOPAUI {
 	public synchronized void addFunction(JOPAFunction function, boolean openEditor) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-//				JOPACanvas canvas = createCanvas();
-//				function.canvas = canvas;
+				// JOPACanvas canvas = createCanvas();
+				// function.canvas = canvas;
 				if (openEditor) {
 					editFunctionPrototype(function);
 				}
-//				Panel panel = new Panel();
-//				panel.add(canvas);
+				// Panel panel = new Panel();
+				// panel.add(canvas);
 				tabs.addTab(function.name, canvas);
 			}
 		}
 	}
 
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
-//		JWindow editFunctionWindow = new JWindow();
+		// JWindow editFunctionWindow = new JWindow();
 
 		JOPAEditFunctionDialog dialog = new JOPAEditFunctionDialog(window, function);
 
 		dialog.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-//				System.out.println("end");
+				// System.out.println("end");
 				dialog.removeWindowListener(this);
 				super.windowClosed(e);
 			}
 		});
 
-//		System.out.println("here");
+		// System.out.println("here");
 	}
 
 	public synchronized void showMessage(String text) {

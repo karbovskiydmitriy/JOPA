@@ -12,9 +12,11 @@ import java.util.ArrayList;
 
 import jopa.JOPAFormula;
 import jopa.ports.JOPADataPort;
+import jopa.ports.JOPAPort;
 import jopa.types.JOPANodeType;
 
 public class JOPANode {
+
 	final int HEADER_HEIGHT = 20;
 	final Color SELECTED_COLOR = CYAN;
 
@@ -80,10 +82,12 @@ public class JOPANode {
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x, rect.y + HEADER_HEIGHT);
-		// g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
+		if (command != null) {
+			g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
+		}
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		drawFrame(g, selectedNode == this);
 		inputs.forEach(port -> port.draw(g, selectedPort));
 		outputs.forEach(port -> port.draw(g, selectedPort));

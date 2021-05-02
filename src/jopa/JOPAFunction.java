@@ -25,9 +25,9 @@ public class JOPAFunction {
 		this.inputs = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0", "INPUT")));
 		this.statements = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "FOOBAR"),
-						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "FOOBAR"),
-						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "FOOBAR")));
+				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "STATEMENT"),
+						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "STATEMENT"),
+						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "STATEMENT")));
 		this.outputs = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0", "OUTPUT")));
 	}

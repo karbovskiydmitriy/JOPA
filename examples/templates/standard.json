@@ -21,5 +21,17 @@
 			"input_0"
 		],
 		"outputs": []
+	},
+	"STATEMENT": {
+		"inputs": [
+			"input_0",
+			"input_1"
+		],
+		"outputs": [
+			"output_0"
+		]
+	},
+	"EMPTY": {
+		
 	}
 }

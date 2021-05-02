@@ -34,7 +34,7 @@ public class JOPADataPort extends JOPAPort {
 		position.translate(x, y);
 	}
 
-	public void draw(Graphics2D g, JOPADataPort selectedPort) {
+	public void draw(Graphics2D g, JOPAPort selectedPort) {
 		if (selectedPort != this) {
 			g.setColor(color);
 		} else {
