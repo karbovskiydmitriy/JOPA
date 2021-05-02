@@ -3,16 +3,15 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import jopa.ports.JOPAControlFlowPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAStartNode extends JOPANode {
+public class JOPAEndControlFlowNode extends JOPANode {
 
-	public JOPAControlFlowPort flowStart;
+	public JOPAEndControlFlowNode flowEnd;
 
-	public JOPAStartNode(Rectangle rect, String header, JOPAControlFlowPort flowStart) {
+	public JOPAEndControlFlowNode(Rectangle rect, String header, JOPAEndControlFlowNode flowEnd) {
 		super(rect, header);
-		this.flowStart = flowStart;
+		this.flowEnd = flowEnd;
 	}
 
 	@Override
