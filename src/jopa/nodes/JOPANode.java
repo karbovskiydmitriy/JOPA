@@ -27,13 +27,18 @@ public class JOPANode {
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
 
+	public JOPANode(Rectangle rect, String header, String template) {
+		this.rect = rect;
+		this.header = header;
+		assignTemplate(template);
+	}
+
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
 		this.header = header;
-		assignFormula("FOOBAR"); // FIXME!!!
 	}
 
-	private void assignFormula(String formulaName) {
+	private void assignTemplate(String formulaName) {
 		JOPAFormula formula = JOPAFormula.getFormulaByName(formulaName);
 		this.formula = formula;
 		if (formula != null) {
@@ -50,7 +55,8 @@ public class JOPANode {
 			}
 			for (int i = 0; i < formula.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i], true);
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i],
+						true);
 				outputs.add(port);
 			}
 		}
@@ -74,7 +80,7 @@ public class JOPANode {
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x, rect.y + HEADER_HEIGHT);
-//		g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
+		// g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {

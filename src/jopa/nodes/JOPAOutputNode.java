@@ -11,6 +11,10 @@ public class JOPAOutputNode extends JOPANode {
 		super(rect, header);
 	}
 	
+	public JOPAOutputNode(Rectangle rect, String header, String template) {
+		super(rect, header, template);
+	}
+	
 	@Override
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
 		drawFrame(g, selectedNode == this);

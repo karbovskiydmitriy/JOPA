@@ -24,20 +24,7 @@ public class JOPAFormula {
 	private static ArrayList<JOPAFormula> standardFormulas;
 
 	static {
-		standardFormulas = new ArrayList<JOPAFormula>();
-		try {
-			String standardTemplates = loadStandardTemplate("standard.json");
-			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
-			JsonObject templatesObject = templatesElement.getAsJsonObject();
-			JOPAFormula foobar = getFormulaFromTemplate(templatesObject, "FOOBAR");
-			if (foobar != null) {
-				standardFormulas.add(foobar);
-			}
-		} catch (JOPAException e) {
-			System.err.println(e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		initStandardTemplates();
 	}
 
 	public JOPAFormula(String name, String formula) throws JOPAException {
@@ -88,10 +75,10 @@ public class JOPAFormula {
 		}
 
 		if (this.inputs == null) {
-			this.inputs = new String[] { "input_0", "input_1" };
+			this.inputs = new String[] { "stub_input_0" };
 		}
 		if (this.outputs == null) {
-			this.outputs = new String[] { "output_0" };
+			this.outputs = new String[] { "stub_output_0" };
 		}
 	}
 
@@ -103,6 +90,25 @@ public class JOPAFormula {
 		}
 
 		return null;
+	}
+
+	private static void initStandardTemplates() {
+		standardFormulas = new ArrayList<JOPAFormula>();
+		try {
+			String standardTemplates = loadStandardTemplate("standard.json");
+			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
+			JsonObject templatesObject = templatesElement.getAsJsonObject();
+			for (String name : templatesObject.keySet()) {
+				JOPAFormula foobar = getFormulaFromTemplate(templatesObject, name);
+				if (foobar != null) {
+					standardFormulas.add(foobar);
+				}
+			}
+		} catch (JOPAException e) {
+			System.err.println(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static JOPAFormula getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {

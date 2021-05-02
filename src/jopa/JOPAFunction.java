@@ -22,13 +22,13 @@ public class JOPAFunction {
 	public JOPAFunction(String name) {
 		this.name = name;
 		this.inputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0")));
+				Arrays.asList(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0", "INPUT")));
 		this.statements = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0"),
-						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1"),
-						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2")));
+				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "FOOBAR"),
+						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "FOOBAR"),
+						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "FOOBAR")));
 		this.outputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0")));
+				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0", "OUTPUT")));
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
