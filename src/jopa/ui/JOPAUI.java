@@ -40,6 +40,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import jopa.JOPAFunction;
+import jopa.ui.dialogs.JOPAEditFunctionDialog;
 
 public class JOPAUI {
 

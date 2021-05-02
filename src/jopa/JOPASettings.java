@@ -17,6 +17,7 @@ public class JOPASettings {
 	final static String DEFAULT_PALETTE_PATH = CONFIGS_DIRECTORY_PATH + "default palette.json";
 
 	public JOPAPalette defaultPalette;
+	public boolean showPortTypes;
 
 	public JOPASettings() {
 		defaultPalette = loadPalette(DEFAULT_PALETTE_PATH);

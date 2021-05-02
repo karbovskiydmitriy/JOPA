@@ -1,5 +1,7 @@
 package jopa;
 
+import static jopa.io.JOPALoader.loadStandardTemplate;
+
 import java.util.ArrayList;
 
 import com.google.gson.JsonArray;
@@ -10,8 +12,6 @@ import com.google.gson.JsonParser;
 import jopa.exceptions.JOPAException;
 
 public class JOPAFormula {
-
-	public static final String FOOBAR = "{inputs:[\"input_0\",\"input_1\",\"input_2\"],outputs:[\"output_0\"]}";
 
 	public final String formula;
 
@@ -26,9 +26,17 @@ public class JOPAFormula {
 	static {
 		standardFormulas = new ArrayList<JOPAFormula>();
 		try {
-			standardFormulas.add(new JOPAFormula("FOOBAR", FOOBAR));
+			String standardTemplates = loadStandardTemplate("standard.json");
+			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
+			JsonObject templatesObject = templatesElement.getAsJsonObject();
+			JOPAFormula foobar = getFormulaFromTemplate(templatesObject, "FOOBAR");
+			if (foobar != null) {
+				standardFormulas.add(foobar);
+			}
 		} catch (JOPAException e) {
 			System.err.println(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -91,6 +99,22 @@ public class JOPAFormula {
 		for (JOPAFormula formula : standardFormulas) {
 			if (formula.name.equals(name)) {
 				return formula;
+			}
+		}
+
+		return null;
+	}
+
+	private static JOPAFormula getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
+		if (object == null || name == null || name.length() == 0) {
+			return null;
+		}
+
+		JsonElement element = object.get(name);
+		if (element != null) {
+			JsonObject formulaObject = element.getAsJsonObject();
+			if (formulaObject != null) {
+				return new JOPAFormula(name, formulaObject.toString());
 			}
 		}
 

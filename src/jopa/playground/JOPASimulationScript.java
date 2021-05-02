@@ -1,6 +1,6 @@
 package jopa.playground;
 
-import static jopa.io.JOPAIO.loadTextFile;
+import static jopa.io.JOPALoader.loadStandardShader;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
@@ -348,7 +348,7 @@ public class JOPASimulationScript {
 
 		int defaultProgram = glCreateProgram();
 		int defaultFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(defaultFragmentShader, loadTextFile(".\\shaders\\examples\\fragment.glsl"));
+		glShaderSource(defaultFragmentShader, loadStandardShader("fragment.glsl"));
 		glCompileShader(defaultFragmentShader);
 		// System.out.println(glGetShaderInfoLog(defaultFragmentShader));
 		glAttachShader(defaultProgram, defaultFragmentShader);
@@ -420,7 +420,7 @@ public class JOPASimulationScript {
 
 		int defaultProgram = glCreateProgram();
 		int defaultComputeShader = glCreateShader(GL_COMPUTE_SHADER);
-		glShaderSource(defaultComputeShader, loadTextFile(".\\shaders\\examples\\compute.glsl"));
+		glShaderSource(defaultComputeShader, loadStandardShader("compute.glsl"));
 		glCompileShader(defaultComputeShader);
 		glAttachShader(defaultProgram, defaultComputeShader);
 		glLinkProgram(defaultProgram);
