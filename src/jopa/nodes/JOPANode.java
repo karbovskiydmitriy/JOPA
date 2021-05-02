@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import jopa.JOPAFormula;
+import jopa.ports.JOPADataPort;
 import jopa.types.JOPANodeType;
 
 public class JOPANode {

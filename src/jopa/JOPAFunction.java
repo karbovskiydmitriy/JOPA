@@ -9,7 +9,8 @@ import java.util.Arrays;
 import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAOutputNode;
-import jopa.nodes.JOPADataPort;
+import jopa.nodes.JOPAStatementNode;
+import jopa.ports.JOPADataPort;
 
 public class JOPAFunction {
 
@@ -23,9 +24,9 @@ public class JOPAFunction {
 		this.inputs = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0")));
 		this.statements = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPANode(new Rectangle(350, 50, 100, 100), "STATEMENT_0"),
-						new JOPANode(new Rectangle(350, 200, 100, 100), "STATEMENT_1"),
-						new JOPANode(new Rectangle(350, 350, 100, 100), "STATEMENT_2")));
+				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0"),
+						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1"),
+						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2")));
 		this.outputs = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0")));
 	}

@@ -29,8 +29,8 @@ public class JOPASettings {
 
 		text = JOPAIO.loadTextFile(filePath);
 
-		JsonElement jElement = new JsonParser().parse(text);
-		JsonObject paletteObject = jElement.getAsJsonObject();
+		JsonElement element = new JsonParser().parse(text);
+		JsonObject paletteObject = element.getAsJsonObject();
 
 		JOPAPalette palette = new JOPAPalette();
 		palette.backgroundColor = deserializeColor(paletteObject.get("backgroundColor"));

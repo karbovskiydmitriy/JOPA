@@ -6,8 +6,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import jopa.nodes.JOPANode;
-import jopa.nodes.JOPADataPort;
 import jopa.playground.JOPAPlayground;
+import jopa.ports.JOPADataPort;
 import jopa.types.JOPAType;
 
 public class JOPAWorkspace {

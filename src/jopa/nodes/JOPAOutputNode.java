@@ -3,6 +3,8 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import jopa.ports.JOPADataPort;
+
 public class JOPAOutputNode extends JOPANode {
 	
 	public JOPAOutputNode(Rectangle rect, String header) {
