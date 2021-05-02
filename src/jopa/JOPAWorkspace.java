@@ -193,7 +193,7 @@ public class JOPAWorkspace {
 
 	private JOPADataPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
-			return currentFunction.getPortOnPoint(p);
+			return currentFunction.getDataPortOnPoint(p);
 		}
 
 		return null;

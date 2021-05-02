@@ -10,6 +10,7 @@ import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAOutputNode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.ports.JOPAControlFlowPort;
 import jopa.ports.JOPADataPort;
 
 public class JOPAFunction {
@@ -57,7 +58,7 @@ public class JOPAFunction {
 		return null;
 	}
 
-	public JOPADataPort getPortOnPoint(Point p) {
+	public JOPADataPort getDataPortOnPoint(Point p) {
 		for (JOPANode node : statements) {
 			JOPADataPort port = node.hitPort(p);
 			if (port != null) {
@@ -78,6 +79,10 @@ public class JOPAFunction {
 		}
 
 		return null;
+	}
+
+	public JOPAControlFlowPort getControlFlowPortOnPoint(Point p) {
+		return null; // TODO
 	}
 
 	public boolean verifyNodes() {

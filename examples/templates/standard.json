@@ -1,0 +1,25 @@
+{
+	"FOOBAR": {
+		"inputs": [
+			"input_0",
+			"input_1",
+			"input_2"
+		],
+		"outputs": [
+			"output_0"
+		]
+	},
+	"INPUT": {
+		"inputs": [],
+		"outputs": [
+			"output_0",
+			"output_1"
+		]
+	},
+	"OUTPUT": {
+		"inputs": [
+			"input_0"
+		],
+		"outputs": []
+	}
+}
