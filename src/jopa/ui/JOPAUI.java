@@ -1,23 +1,23 @@
 package jopa.ui;
 
-import static jopa.JOPAMain.about;
-import static jopa.JOPAMain.closePlayground;
-import static jopa.JOPAMain.createNewFunction;
-import static jopa.JOPAMain.createNewNode;
-import static jopa.JOPAMain.createNewWorkspace;
-import static jopa.JOPAMain.createPlayground;
-import static jopa.JOPAMain.currentWorkspace;
-import static jopa.JOPAMain.destroyWorkspace;
-import static jopa.JOPAMain.generateShader;
-import static jopa.JOPAMain.manual;
-import static jopa.JOPAMain.openWorkspace;
-import static jopa.JOPAMain.quit;
-import static jopa.JOPAMain.saveWorkspace;
-import static jopa.JOPAMain.startPlayground;
-import static jopa.JOPAMain.stopPlayground;
-import static jopa.JOPAMain.validateFunctions;
-import static jopa.JOPAMain.validateNodes;
-import static jopa.JOPAMain.workspaceSync;
+import static jopa.main.JOPAMain.about;
+import static jopa.main.JOPAMain.closePlayground;
+import static jopa.main.JOPAMain.createNewFunction;
+import static jopa.main.JOPAMain.createNewNode;
+import static jopa.main.JOPAMain.createNewWorkspace;
+import static jopa.main.JOPAMain.createPlayground;
+import static jopa.main.JOPAMain.currentWorkspace;
+import static jopa.main.JOPAMain.destroyWorkspace;
+import static jopa.main.JOPAMain.generateShader;
+import static jopa.main.JOPAMain.manual;
+import static jopa.main.JOPAMain.openWorkspace;
+import static jopa.main.JOPAMain.quit;
+import static jopa.main.JOPAMain.saveWorkspace;
+import static jopa.main.JOPAMain.startPlayground;
+import static jopa.main.JOPAMain.stopPlayground;
+import static jopa.main.JOPAMain.validateFunctions;
+import static jopa.main.JOPAMain.validateNodes;
+import static jopa.main.JOPAMain.workspaceSync;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -38,7 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jopa.JOPAFunction;
+import jopa.main.JOPAFunction;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 
 public class JOPAUI {

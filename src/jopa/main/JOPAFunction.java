@@ -1,4 +1,4 @@
-package jopa;
+package jopa.main;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -6,9 +6,11 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jopa.nodes.JOPAEndControlFlowNode;
 import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAOutputNode;
+import jopa.nodes.JOPAStartControlFlowNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAControlFlowPort;
 import jopa.ports.JOPADataPort;
@@ -19,23 +21,29 @@ public class JOPAFunction {
 	public ArrayList<JOPANode> inputs;
 	public ArrayList<JOPANode> statements;
 	public ArrayList<JOPANode> outputs;
+	public JOPAStartControlFlowNode startNode;
+	public JOPAEndControlFlowNode endNode;
 
 	public JOPAFunction(String name) {
 		this.name = name;
 		this.inputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAInputNode(new Rectangle(50, 50, 100, 100), "INPUT_0", "INPUT")));
+				Arrays.asList(new JOPAInputNode(new Rectangle(50, 200, 100, 100), "INPUT_0", "INPUT")));
 		this.statements = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "STATEMENT"),
 						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "STATEMENT"),
-						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "STATEMENT")));
+						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "EMPTY")));
 		this.outputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 50, 100, 100), "OUTPUT_0", "OUTPUT")));
+				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 200, 100, 100), "OUTPUT_0", "OUTPUT")));
+		this.startNode = new JOPAStartControlFlowNode(new Rectangle(50, 50, 100, 100));
+		this.endNode = new JOPAEndControlFlowNode(new Rectangle(650, 50, 100, 100));
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
 		inputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		outputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
+		startNode.draw(g, selectedNode, selectedPort);
+		endNode.draw(g, selectedNode, selectedPort);
 	}
 
 	public JOPANode getNodeOnPoint(Point p) {

@@ -1,4 +1,4 @@
-package jopa;
+package jopa.main;
 
 import jopa.types.JOPAGLSLType;
 

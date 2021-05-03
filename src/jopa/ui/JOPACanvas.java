@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import jopa.JOPAMain;
+import jopa.main.JOPAMain;
 
 public class JOPACanvas extends JPanel {
 

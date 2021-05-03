@@ -7,7 +7,7 @@ import java.awt.Label;
 
 import javax.swing.JDialog;
 
-import jopa.JOPAFunction;
+import jopa.main.JOPAFunction;
 import jopa.nodes.JOPANode;
 
 public class JOPAEditFunctionDialog extends JOPADialog {

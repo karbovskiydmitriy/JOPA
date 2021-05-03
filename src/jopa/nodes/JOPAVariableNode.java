@@ -2,7 +2,7 @@ package jopa.nodes;
 
 import java.awt.Rectangle;
 
-import jopa.JOPAVariable;
+import jopa.main.JOPAVariable;
 
 public class JOPAVariableNode extends JOPANode {
 

@@ -1,4 +1,4 @@
-package jopa;
+package jopa.main;
 
 import java.awt.Rectangle;
 

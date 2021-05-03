@@ -1,18 +1,19 @@
 package jopa.nodes;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import jopa.ports.JOPAControlFlowPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAStartNode extends JOPANode {
+public class JOPAStartControlFlowNode extends JOPANode {
 
 	public JOPAControlFlowPort flowStart;
 
-	public JOPAStartNode(Rectangle rect, String header, JOPAControlFlowPort flowStart) {
-		super(rect, header);
-		this.flowStart = flowStart;
+	public JOPAStartControlFlowNode(Rectangle rect) {
+		super(rect, "Start");
+		this.flowStart = new JOPAControlFlowPort(this, new Point(), "start", true);
 	}
 
 	@Override

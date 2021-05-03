@@ -10,7 +10,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import jopa.JOPAFormula;
+import jopa.main.JOPAFormula;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPANodeType;
@@ -89,8 +89,12 @@ public class JOPANode {
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		drawFrame(g, selectedNode == this);
-		inputs.forEach(port -> port.draw(g, selectedPort));
-		outputs.forEach(port -> port.draw(g, selectedPort));
+		if (inputs != null) {
+			inputs.forEach(port -> port.draw(g, selectedPort));
+		}
+		if (outputs != null) {
+			outputs.forEach(port -> port.draw(g, selectedPort));
+		}
 	}
 
 	public boolean hit(Point p) {

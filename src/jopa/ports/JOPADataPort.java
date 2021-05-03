@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jopa.JOPAMain;
+import jopa.main.JOPAMain;
 import jopa.nodes.JOPANode;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAType;
