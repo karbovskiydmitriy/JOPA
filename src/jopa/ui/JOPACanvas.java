@@ -14,12 +14,9 @@ public class JOPACanvas extends JPanel {
 
 	private static final long serialVersionUID = -5988361450482572777L;
 
-	private float scale;
 	private JOPAGraphics2D graphics2D;
 
 	public JOPACanvas() {
-		scale = 1.0f;
-
 		addMouseWheelListener(new MouseAdapter() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
@@ -27,12 +24,13 @@ public class JOPACanvas extends JPanel {
 				if (e.getModifiers() == MouseWheelEvent.CTRL_DOWN_MASK) {
 					rotation *= 2.0f;
 				}
-				scale += rotation / 10;
-				if (scale <= 0.1f) {
-					scale = 0.1f;
-				} else if (scale >= 10.0f) {
-					scale = 10.0f;
+				graphics2D.scale += rotation / 10;
+				if (graphics2D.scale <= 0.1f) {
+					graphics2D.scale = 0.1f;
+				} else if (graphics2D.scale >= 10.0f) {
+					graphics2D.scale = 10.0f;
 				}
+				JOPAMain.ui.repaint();
 			}
 		});
 

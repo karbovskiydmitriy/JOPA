@@ -47,7 +47,7 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawGlyphVector(GlyphVector g, float x, float y) {
-		implementation.drawGlyphVector(g, x, y);
+		implementation.drawGlyphVector(g, f(x), f(y));
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
-		implementation.drawImage(img, op, x, y);
+		implementation.drawImage(img, op, i(x), i(y));
 	}
 
 	@Override
@@ -72,22 +72,22 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawString(String str, int x, int y) {
-		implementation.drawString(str, x, y);
+		implementation.drawString(str, i(x), i(y));
 	}
 
 	@Override
 	public void drawString(String str, float x, float y) {
-		implementation.drawString(str, x, y);
+		implementation.drawString(str, f(x), f(y));
 	}
 
 	@Override
 	public void drawString(AttributedCharacterIterator iterator, int x, int y) {
-		implementation.drawString(iterator, x, y);
+		implementation.drawString(iterator, i(x), i(y));
 	}
 
 	@Override
 	public void drawString(AttributedCharacterIterator iterator, float x, float y) {
-		implementation.drawString(iterator, x, y);
+		implementation.drawString(iterator, f(x), f(y));
 	}
 
 	@Override
@@ -217,17 +217,17 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void clearRect(int x, int y, int width, int height) {
-		implementation.clearRect(x, y, width, height);
+		implementation.clearRect(i(x), i(y), i(width), i(height));
 	}
 
 	@Override
 	public void clipRect(int x, int y, int width, int height) {
-		implementation.clipRect(x, y, width, height);
+		implementation.clipRect(i(x), i(y), i(width), i(height));
 	}
 
 	@Override
 	public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-		implementation.copyArea(x, y, width, height, dx, dy);
+		implementation.copyArea(i(x), i(y), i(width), i(height), i(dx), i(dy));
 	}
 
 	@Override
@@ -242,27 +242,27 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-		implementation.drawArc(x, y, width, height, startAngle, arcAngle);
+		implementation.drawArc(i(x), i(y), i(width), i(height), i(startAngle), i(arcAngle));
 	}
 
 	@Override
 	public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
-		return implementation.drawImage(img, x, y, observer);
+		return implementation.drawImage(img, i(x), i(y), observer);
 	}
 
 	@Override
 	public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
-		return implementation.drawImage(img, x, y, bgcolor, observer);
+		return implementation.drawImage(img, i(x), i(y), bgcolor, observer);
 	}
 
 	@Override
 	public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
-		return implementation.drawImage(img, x, y, width, height, observer);
+		return implementation.drawImage(img, i(x), i(y), i(width), i(height), observer);
 	}
 
 	@Override
 	public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
-		return implementation.drawImage(img, x, y, width, height, bgcolor, observer);
+		return implementation.drawImage(img, i(x), i(y), i(width), i(height), observer);
 	}
 
 	@Override
@@ -279,12 +279,12 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
-		implementation.drawLine(x1, y1, x2, y2);
+		implementation.drawLine(i(x1), i(y1), i(x2), i(y2));
 	}
 
 	@Override
 	public void drawOval(int x, int y, int width, int height) {
-		implementation.drawOval(x, y, width, height);
+		implementation.drawOval(i(x), i(y), i(width), i(height));
 	}
 
 	@Override
@@ -299,17 +299,17 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-		implementation.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
+		implementation.drawRoundRect(i(x), i(y), i(width), i(height), i(arcWidth), i(arcHeight));
 	}
 
 	@Override
 	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-		implementation.fillArc(x, y, width, height, startAngle, arcAngle);
+		implementation.fillArc(i(x), i(y), i(width), i(height), i(startAngle), i(arcAngle));
 	}
 
 	@Override
 	public void fillOval(int x, int y, int width, int height) {
-		implementation.fillOval(x, y, width, height);
+		implementation.fillOval(i(x), i(y), i(width), i(height));
 	}
 
 	@Override
@@ -319,12 +319,12 @@ public class JOPAGraphics2D extends Graphics2D {
 
 	@Override
 	public void fillRect(int x, int y, int width, int height) {
-		implementation.fillRect(x, y, width, height);
+		implementation.fillRect(i(x), i(y), i(width), i(height));
 	}
 
 	@Override
 	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-		implementation.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
+		implementation.fillRoundRect(i(x), i(y), i(width), i(height), i(arcWidth), i(arcHeight));
 	}
 
 	@Override
@@ -380,6 +380,14 @@ public class JOPAGraphics2D extends Graphics2D {
 	@Override
 	public void setXORMode(Color c1) {
 		implementation.setXORMode(c1);
+	}
+
+	private int i(int value) {
+		return (int) (value / scale);
+	}
+
+	private float f(float value) {
+		return value / scale;
 	}
 
 }

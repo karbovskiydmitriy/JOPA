@@ -11,7 +11,7 @@ public class JOPAMain {
 	public static JOPAWorkspace currentWorkspace;
 	public static JOPASettings settings;
 
-	static JOPAUI ui;
+	public static JOPAUI ui;
 
 	public static void main(String[] args) {
 		if (!checkVersion()) {
