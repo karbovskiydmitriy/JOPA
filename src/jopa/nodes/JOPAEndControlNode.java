@@ -4,16 +4,16 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import jopa.ports.JOPAControlFlowPort;
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAEndControlFlowNode extends JOPANode {
+public class JOPAEndControlNode extends JOPANode {
 
-	public JOPAControlFlowPort flowEnd;
+	public JOPAControlPort flowEnd;
 
-	public JOPAEndControlFlowNode(Rectangle rect, String template) {
+	public JOPAEndControlNode(Rectangle rect, String template) {
 		super(rect, "End", template);
-		this.flowEnd = new JOPAControlFlowPort(this, new Point(rect.x, rect.y), "end", false);
+		this.flowEnd = new JOPAControlPort(this, "end", false);
 	}
 
 	@Override
@@ -30,15 +30,11 @@ public class JOPAEndControlFlowNode extends JOPANode {
 
 	@Override
 	public JOPAPort hitPort(Point p) {
-		JOPAPort port = super.hitPort(p);
-		if (port != null) {
-			return port;
-		}
 		if (flowEnd.hit(p)) {
 			return flowEnd;
 		}
 
-		return null;
+		return super.hitPort(p);
 	}
 
 }

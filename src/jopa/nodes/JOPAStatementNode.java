@@ -4,19 +4,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import jopa.ports.JOPAControlFlowPort;
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
 public class JOPAStatementNode extends JOPANode {
 
-	public JOPAControlFlowPort incomingControlFlow;
-	public JOPAControlFlowPort outcomingControlFlow;
+	public JOPAControlPort incomingControlFlow;
+	public JOPAControlPort outcomingControlFlow;
 
 	public JOPAStatementNode(Rectangle rect, String header, String template) {
 		super(rect, header, template);
-		incomingControlFlow = new JOPAControlFlowPort(this, new Point(rect.x, rect.y), "in", false);
-		outcomingControlFlow = new JOPAControlFlowPort(this,
-				new Point(rect.x + rect.width - JOPAControlFlowPort.CONTROL_FLOW_PORT_WIDTH, rect.y), "out", true);
+		incomingControlFlow = new JOPAControlPort(this, "in", false);
+		outcomingControlFlow = new JOPAControlPort(this, "out", true);
 	}
 
 	@Override
@@ -35,10 +34,6 @@ public class JOPAStatementNode extends JOPANode {
 
 	@Override
 	public JOPAPort hitPort(Point p) {
-		JOPAPort port = super.hitPort(p);
-		if (port != null) {
-			return port;
-		}
 		if (incomingControlFlow.hit(p)) {
 			return incomingControlFlow;
 		}
@@ -46,7 +41,7 @@ public class JOPAStatementNode extends JOPANode {
 			return outcomingControlFlow;
 		}
 
-		return null;
+		return super.hitPort(p);
 	}
 
 }

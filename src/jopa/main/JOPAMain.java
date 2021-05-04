@@ -130,11 +130,18 @@ public class JOPAMain {
 		}
 	}
 
-	public static void validateFunctions() {
+	public static void validateFunction() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				currentWorkspace.verifyFunctions();
-				ui.showMessage("functions(s) validated");
+				if (currentWorkspace.currentFunction != null) {
+					if (currentWorkspace.verifyFunction(currentWorkspace.currentFunction)) {
+						ui.showMessage("functions passed validation");
+					} else {
+						ui.showMessage("function contains errors");
+					}
+				} else {
+					ui.showMessage("Function not selected!");
+				}
 			} else {
 				workspaceNotCreated();
 			}
@@ -144,7 +151,17 @@ public class JOPAMain {
 	public static void generateShader() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-
+				ui.notImplemented();
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+	
+	public static void showShaderCode() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				ui.notImplemented();
 			} else {
 				workspaceNotCreated();
 			}

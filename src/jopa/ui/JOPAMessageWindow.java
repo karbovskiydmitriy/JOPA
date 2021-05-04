@@ -2,6 +2,8 @@ package jopa.ui;
 
 import java.awt.Label;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -21,18 +23,27 @@ public class JOPAMessageWindow extends JDialog {
 		add(textLabel);
 		setModal(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setVisible(true);
+		
+		textLabel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent ce) {
+				textLabel.requestFocusInWindow();
+			}
+		});
 
 		// not invoking ?
-		addKeyListener(new KeyAdapter() {
+		// FIXME!!!
+		textLabel.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
+				System.out.println(e);
 				if (e.getKeyCode() == 27) {
 					dispose();
 				}
-//				System.out.println(e.getKeyCode());
 			}
 		});
+
+		setVisible(true);
 	}
 
 }

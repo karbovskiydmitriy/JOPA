@@ -4,17 +4,16 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import jopa.ports.JOPAControlFlowPort;
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAStartControlFlowNode extends JOPANode {
+public class JOPAStartControlNode extends JOPANode {
 
-	public JOPAControlFlowPort flowStart;
+	public JOPAControlPort flowStart;
 
-	public JOPAStartControlFlowNode(Rectangle rect, String template) {
+	public JOPAStartControlNode(Rectangle rect, String template) {
 		super(rect, "Start", template);
-		this.flowStart = new JOPAControlFlowPort(this,
-				new Point(rect.x + rect.width - JOPAControlFlowPort.CONTROL_FLOW_PORT_WIDTH, rect.y), "start", true);
+		this.flowStart = new JOPAControlPort(this, "start", true);
 	}
 
 	@Override
@@ -31,15 +30,11 @@ public class JOPAStartControlFlowNode extends JOPANode {
 
 	@Override
 	public JOPAPort hitPort(Point p) {
-		JOPAPort port = super.hitPort(p);
-		if (port != null) {
-			return port;
-		}
 		if (flowStart.hit(p)) {
 			return flowStart;
 		}
 
-		return null;
+		return super.hitPort(p);
 	}
 
 }

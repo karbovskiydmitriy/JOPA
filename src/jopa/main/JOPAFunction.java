@@ -6,9 +6,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jopa.nodes.JOPAEndControlFlowNode;
+import jopa.nodes.JOPAEndControlNode;
 import jopa.nodes.JOPANode;
-import jopa.nodes.JOPAStartControlFlowNode;
+import jopa.nodes.JOPAStartControlNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAPort;
 
@@ -16,13 +16,13 @@ public class JOPAFunction {
 
 	public String name;
 	public ArrayList<JOPANode> statements;
-	public JOPAStartControlFlowNode startNode;
-	public JOPAEndControlFlowNode endNode;
+	public JOPAStartControlNode startNode;
+	public JOPAEndControlNode endNode;
 
 	public JOPAFunction(String name) {
 		this.name = name;
-		this.startNode = new JOPAStartControlFlowNode(new Rectangle(50, 50, 100, 100), "TEST_INPUT");
-		this.endNode = new JOPAEndControlFlowNode(new Rectangle(650, 50, 100, 100), "TEST_OUTPUT");
+		this.startNode = new JOPAStartControlNode(new Rectangle(50, 50, 100, 100), "TEST_INPUT");
+		this.endNode = new JOPAEndControlNode(new Rectangle(650, 50, 100, 100), "TEST_OUTPUT");
 		this.statements = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "TEST_STATEMENT"),
 						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "TEST_STATEMENT"),

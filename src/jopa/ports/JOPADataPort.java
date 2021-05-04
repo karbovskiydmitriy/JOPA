@@ -12,7 +12,6 @@ import java.util.Arrays;
 import jopa.main.JOPAMain;
 import jopa.nodes.JOPANode;
 import jopa.types.JOPAGLSLType;
-import jopa.types.JOPAType;
 
 public class JOPADataPort extends JOPAPort {
 
@@ -60,7 +59,7 @@ public class JOPADataPort extends JOPAPort {
 	public boolean hit(Point p) {
 		return (p.distanceSq(position) <= PORT_RADIUS * PORT_RADIUS);
 	}
-	
+
 	@Override
 	public void destroyAllConnections() {
 		connections.forEach(port -> port.connections.remove(this));
@@ -139,17 +138,6 @@ public class JOPADataPort extends JOPAPort {
 			return JOPAMain.settings.defaultPalette.vectorTypeColor;
 		default:
 			return JOPAMain.settings.defaultPalette.portColor;
-		}
-	}
-
-	public static Color getColorForType(JOPAType type) {
-		if (type == null) {
-			return Color.BLACK;
-		}
-
-		switch (type.name) {
-		default:
-			return Color.BLACK;
 		}
 	}
 

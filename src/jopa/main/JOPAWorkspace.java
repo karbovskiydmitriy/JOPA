@@ -218,9 +218,9 @@ public class JOPAWorkspace {
 		}
 
 		if (validated) {
-			System.out.println("workspace " + name + " OK");
+			JOPAMain.ui.showMessage("Workspace passed validation");
 		} else {
-			System.out.println("workspace " + name + " not OK");
+			JOPAMain.ui.showMessage("Workspace contains errors");
 		}
 
 		return true;

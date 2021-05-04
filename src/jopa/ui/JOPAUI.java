@@ -9,13 +9,14 @@ import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentWorkspace;
 import static jopa.main.JOPAMain.destroyWorkspace;
 import static jopa.main.JOPAMain.generateShader;
+import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.manual;
 import static jopa.main.JOPAMain.openWorkspace;
 import static jopa.main.JOPAMain.quit;
 import static jopa.main.JOPAMain.saveWorkspace;
 import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
-import static jopa.main.JOPAMain.validateFunctions;
+import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.workspaceSync;
 
@@ -84,25 +85,11 @@ public class JOPAUI {
 				closeFileMenuItem.setShortcut(new MenuShortcut('W'));
 				quitFileMenuItem.setShortcut(new MenuShortcut('Q'));
 
-				newFileMenuItem.addActionListener((e) -> {
-					createNewWorkspace();
-				});
-
-				openFileMenuItem.addActionListener((e) -> {
-					openWorkspace();
-				});
-
-				saveFileMenuItem.addActionListener((e) -> {
-					saveWorkspace();
-				});
-
-				closeFileMenuItem.addActionListener((e) -> {
-					destroyWorkspace();
-				});
-
-				quitFileMenuItem.addActionListener((e) -> {
-					quit();
-				});
+				newFileMenuItem.addActionListener(e -> createNewWorkspace());
+				openFileMenuItem.addActionListener(e -> openWorkspace());
+				saveFileMenuItem.addActionListener(e -> saveWorkspace());
+				closeFileMenuItem.addActionListener(e -> destroyWorkspace());
+				quitFileMenuItem.addActionListener(e -> quit());
 
 				fileMenu.add(newFileMenuItem);
 				fileMenu.add(openFileMenuItem);
@@ -120,13 +107,8 @@ public class JOPAUI {
 				MenuItem createNewNodeMenuItem = new MenuItem("create new node");
 				MenuItem validateNodeMenuItem = new MenuItem("validate nodes");
 
-				createNewNodeMenuItem.addActionListener((e) -> {
-					createNewNode();
-				});
-
-				validateNodeMenuItem.addActionListener((e) -> {
-					validateNodes();
-				});
+				createNewNodeMenuItem.addActionListener(e -> createNewNode());
+				validateNodeMenuItem.addActionListener(e -> validateNodes());
 
 				nodeMenu.add(createNewNodeMenuItem);
 				nodeMenu.add(validateNodeMenuItem);
@@ -141,14 +123,8 @@ public class JOPAUI {
 				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
 
 				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
-
-				createNewFunctionMenuItem.addActionListener((e) -> {
-					createNewFunction(null);
-				});
-
-				validateFunctionMenuItem.addActionListener((e) -> {
-					validateFunctions();
-				});
+				createNewFunctionMenuItem.addActionListener(e -> createNewFunction(null));
+				validateFunctionMenuItem.addActionListener(e -> validateFunction());
 
 				functionMenu.add(createNewFunctionMenuItem);
 				functionMenu.add(validateFunctionMenuItem);
@@ -160,12 +136,13 @@ public class JOPAUI {
 				Menu generateMenu = new Menu("shader");
 
 				MenuItem generateShaderMenuItem = new MenuItem("generate shader");
+				MenuItem showShaderCodeMenuItem = new MenuItem("show shader code");
 
-				generateShaderMenuItem.addActionListener((e) -> {
-					generateShader();
-				});
+				generateShaderMenuItem.addActionListener(e -> generateShader());
+				showShaderCodeMenuItem.addActionListener(e -> showShaderCode());
 
 				generateMenu.add(generateShaderMenuItem);
+				generateMenu.add(showShaderCodeMenuItem);
 
 				menuBar.add(generateMenu);
 			}
@@ -178,21 +155,10 @@ public class JOPAUI {
 				MenuItem stopPlaygroundMenuItem = new MenuItem("stop playground");
 				MenuItem closePlaygroundMenuItem = new MenuItem("close playground");
 
-				createPlaygroundMenuItem.addActionListener((e) -> {
-					createPlayground();
-				});
-
-				startPlaygroundMenuItem.addActionListener((e) -> {
-					startPlayground();
-				});
-
-				stopPlaygroundMenuItem.addActionListener((e) -> {
-					stopPlayground();
-				});
-
-				closePlaygroundMenuItem.addActionListener((e) -> {
-					closePlayground();
-				});
+				createPlaygroundMenuItem.addActionListener(e -> createPlayground());
+				startPlaygroundMenuItem.addActionListener(e -> startPlayground());
+				stopPlaygroundMenuItem.addActionListener(e -> stopPlayground());
+				closePlaygroundMenuItem.addActionListener(e -> closePlayground());
 
 				playgroundMenu.add(createPlaygroundMenuItem);
 				playgroundMenu.add(startPlaygroundMenuItem);
@@ -208,13 +174,8 @@ public class JOPAUI {
 				MenuItem aboutHelpMenuItem = new MenuItem("about");
 				MenuItem manualHelpMenuItem = new MenuItem("manual");
 
-				aboutHelpMenuItem.addActionListener((e) -> {
-					about();
-				});
-
-				manualHelpMenuItem.addActionListener((e) -> {
-					manual();
-				});
+				aboutHelpMenuItem.addActionListener(e -> about());
+				manualHelpMenuItem.addActionListener(e -> manual());
 
 				helpMenu.add(aboutHelpMenuItem);
 				helpMenu.add(manualHelpMenuItem);
@@ -336,7 +297,6 @@ public class JOPAUI {
 				}
 			});
 
-			// canvas.setSize(window.getSize());
 			canvas.repaint();
 		}
 	}
@@ -357,20 +317,15 @@ public class JOPAUI {
 	}
 
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
-		// JWindow editFunctionWindow = new JWindow();
-
 		JOPAEditFunctionDialog dialog = new JOPAEditFunctionDialog(window, function);
 
 		dialog.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				// System.out.println("end");
 				dialog.removeWindowListener(this);
 				super.windowClosed(e);
 			}
 		});
-
-		// System.out.println("here");
 	}
 
 	public synchronized void showMessage(String text) {
@@ -381,6 +336,10 @@ public class JOPAUI {
 			JOPAMessageWindow messageWindow = new JOPAMessageWindow(new Frame("error"), text, "message");
 			messageWindow.dispose();
 		}
+	}
+
+	public synchronized void notImplemented() {
+		showMessage("TODO");
 	}
 
 	public synchronized void repaint() {

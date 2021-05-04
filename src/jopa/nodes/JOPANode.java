@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import jopa.main.JOPAFormula;
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPANodeType;
@@ -81,7 +82,7 @@ public class JOPANode {
 		g.setColor(BLACK);
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
-		g.drawString(header, rect.x, rect.y + HEADER_HEIGHT);
+		g.drawString(header, rect.x + JOPAControlPort.WIDTH, rect.y + HEADER_HEIGHT);
 		if (command != null) {
 			g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
 		}

@@ -21,7 +21,7 @@ public abstract class JOPAPort {
 		this.isOutput = isOutput;
 		this.name = name;
 	}
-	
+
 	public abstract boolean hit(Point p);
 	public abstract void destroyAllConnections();
 
