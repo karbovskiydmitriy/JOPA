@@ -3,12 +3,10 @@ package jopa.ui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Frame;
-import java.awt.Label;
 
 import javax.swing.JDialog;
 
 import jopa.main.JOPAFunction;
-import jopa.nodes.JOPANode;
 
 public class JOPAEditFunctionDialog extends JOPADialog {
 
@@ -25,7 +23,7 @@ public class JOPAEditFunctionDialog extends JOPADialog {
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-		for (int i = 0; i < function.inputs.size(); i++) {
+		/*for (int i = 0; i < function.inputs.size(); i++) {
 			JOPANode input = function.inputs.get(i);
 			Label label = new Label(input.header);
 			add(label);
@@ -38,7 +36,7 @@ public class JOPAEditFunctionDialog extends JOPADialog {
 			add(label);
 			label.setSize(200, 20);
 			label.setLocation(300, i * 40);
-		}
+		}*/
 
 		Button b = new Button("OK");
 		b.addActionListener(al -> setVisible(false));

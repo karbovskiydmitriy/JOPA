@@ -1,5 +1,5 @@
 {
-	"FOOBAR": {
+	"TEST_FOOBAR": {
 		"inputs": [
 			"input_0",
 			"input_1",
@@ -9,20 +9,20 @@
 			"output_0"
 		]
 	},
-	"INPUT": {
+	"TEST_INPUT": {
 		"inputs": [],
 		"outputs": [
 			"output_0",
 			"output_1"
 		]
 	},
-	"OUTPUT": {
+	"TEST_OUTPUT": {
 		"inputs": [
 			"input_0"
 		],
 		"outputs": []
 	},
-	"STATEMENT": {
+	"TEST_STATEMENT": {
 		"inputs": [
 			"input_0",
 			"input_1"
@@ -31,7 +31,7 @@
 			"output_0"
 		]
 	},
-	"EMPTY": {
+	"TEST_EMPTY": {
 		"inputs": [],
 		"outputs": []
 	}

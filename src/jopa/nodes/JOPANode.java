@@ -17,13 +17,13 @@ import jopa.types.JOPANodeType;
 
 public class JOPANode {
 
-	final int HEADER_HEIGHT = 20;
-	final Color SELECTED_COLOR = CYAN;
+	private static final int HEADER_HEIGHT = 20;
+	private static final Color SELECTED_COLOR = CYAN;
 
 	public Rectangle rect;
 	public String header;
 	public String command;
-	public transient JOPAFormula formula;
+	public transient JOPAFormula template;
 
 	public JOPANodeType nodeType;
 	public ArrayList<JOPADataPort> inputs;
@@ -41,23 +41,23 @@ public class JOPANode {
 	}
 
 	private void assignTemplate(String formulaName) {
-		JOPAFormula formula = JOPAFormula.getFormulaByName(formulaName);
-		this.formula = formula;
-		if (formula != null) {
-			inputs = new ArrayList<JOPADataPort>(formula.inputs.length);
-			outputs = new ArrayList<JOPADataPort>(formula.outputs.length);
-			int inputsCount = formula.inputs.length;
-			int outputsCount = formula.outputs.length;
+		JOPAFormula template = JOPAFormula.getFormulaByName(formulaName);
+		this.template = template;
+		if (template != null) {
+			inputs = new ArrayList<JOPADataPort>(template.inputs.length);
+			outputs = new ArrayList<JOPADataPort>(template.outputs.length);
+			int inputsCount = template.inputs.length;
+			int outputsCount = template.outputs.length;
 			float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputsCount + 1);
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
-			for (int i = 0; i < formula.inputs.length; i++) {
+			for (int i = 0; i < template.inputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), formula.inputs[i], false);
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), template.inputs[i], false);
 				inputs.add(port);
 			}
-			for (int i = 0; i < formula.outputs.length; i++) {
+			for (int i = 0; i < template.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), formula.outputs[i],
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), template.outputs[i],
 						true);
 				outputs.add(port);
 			}
@@ -101,7 +101,7 @@ public class JOPANode {
 		return rect.contains(p);
 	}
 
-	public JOPADataPort hitPort(Point p) {
+	public JOPAPort hitPort(Point p) {
 		for (JOPADataPort port : inputs) {
 			if (port.hit(p)) {
 				return port;

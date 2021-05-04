@@ -7,41 +7,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import jopa.nodes.JOPAEndControlFlowNode;
-import jopa.nodes.JOPAInputNode;
 import jopa.nodes.JOPANode;
-import jopa.nodes.JOPAOutputNode;
 import jopa.nodes.JOPAStartControlFlowNode;
 import jopa.nodes.JOPAStatementNode;
-import jopa.ports.JOPAControlFlowPort;
-import jopa.ports.JOPADataPort;
+import jopa.ports.JOPAPort;
 
 public class JOPAFunction {
 
 	public String name;
-	public ArrayList<JOPANode> inputs;
 	public ArrayList<JOPANode> statements;
-	public ArrayList<JOPANode> outputs;
 	public JOPAStartControlFlowNode startNode;
 	public JOPAEndControlFlowNode endNode;
 
 	public JOPAFunction(String name) {
 		this.name = name;
-		this.inputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAInputNode(new Rectangle(50, 200, 100, 100), "INPUT_0", "INPUT")));
+		this.startNode = new JOPAStartControlFlowNode(new Rectangle(50, 50, 100, 100), "TEST_INPUT");
+		this.endNode = new JOPAEndControlFlowNode(new Rectangle(650, 50, 100, 100), "TEST_OUTPUT");
 		this.statements = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "STATEMENT"),
-						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "STATEMENT"),
-						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "EMPTY")));
-		this.outputs = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAOutputNode(new Rectangle(650, 200, 100, 100), "OUTPUT_0", "OUTPUT")));
-		this.startNode = new JOPAStartControlFlowNode(new Rectangle(50, 50, 100, 100));
-		this.endNode = new JOPAEndControlFlowNode(new Rectangle(650, 50, 100, 100));
+				Arrays.asList(new JOPAStatementNode(new Rectangle(350, 50, 100, 100), "STATEMENT_0", "TEST_STATEMENT"),
+						new JOPAStatementNode(new Rectangle(350, 200, 100, 100), "STATEMENT_1", "TEST_STATEMENT"),
+						new JOPAStatementNode(new Rectangle(350, 350, 100, 100), "STATEMENT_2", "TEST_EMPTY")));
 	}
 
-	public void draw(Graphics2D g, JOPANode selectedNode, JOPADataPort selectedPort) {
-		inputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
+	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
-		outputs.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		startNode.draw(g, selectedNode, selectedPort);
 		endNode.draw(g, selectedNode, selectedPort);
 	}
@@ -52,59 +41,47 @@ public class JOPAFunction {
 				return node;
 			}
 		}
-		for (JOPANode node : inputs) {
-			if (node.hit(p)) {
-				return node;
-			}
+		if (startNode.hit(p)) {
+			return startNode;
 		}
-		for (JOPANode node : outputs) {
-			if (node.hit(p)) {
-				return node;
-			}
+		if (endNode.hit(p)) {
+			return endNode;
 		}
 
 		return null;
 	}
 
-	public JOPADataPort getDataPortOnPoint(Point p) {
+	public JOPAPort getPortOnPoint(Point p) {
 		for (JOPANode node : statements) {
-			JOPADataPort port = node.hitPort(p);
+			JOPAPort port = node.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
-		for (JOPANode node : inputs) {
-			JOPADataPort port = node.hitPort(p);
+
+		if (startNode != null) {
+			JOPAPort port = startNode.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
-		for (JOPANode node : outputs) {
-			JOPADataPort port = node.hitPort(p);
+
+		if (endNode != null) {
+			JOPAPort port = endNode.hitPort(p);
 			if (port != null) {
 				return port;
 			}
 		}
 
 		return null;
-	}
-
-	public JOPAControlFlowPort getControlFlowPortOnPoint(Point p) {
-		return null; // TODO
 	}
 
 	public boolean verifyNodes() {
-		if (outputs != null) {
-			for (JOPANode node : outputs) {
-				if (!node.inputsConnected()) {
-					System.out.println("function " + name + " nodes not OK");
-
-					return false;
-				}
+		if (endNode != null) {
+			if (!endNode.inputsConnected()) {
+				return false;
 			}
 		}
-
-		System.out.println("function " + name + " OK");
 
 		return true;
 	}

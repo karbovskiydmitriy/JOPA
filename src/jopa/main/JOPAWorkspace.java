@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import jopa.nodes.JOPANode;
 import jopa.playground.JOPAPlayground;
 import jopa.ports.JOPADataPort;
+import jopa.ports.JOPAPort;
 import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
@@ -18,7 +19,7 @@ public class JOPAWorkspace {
 	public ArrayList<JOPAFormula> globals;
 	public JOPAPlayground playground;
 	public JOPAFunction currentFunction;
-	public JOPADataPort selectedPort;
+	public JOPAPort selectedPort;
 	public JOPANode selectedNode;
 	public JOPANode draggingNode;
 	public Point cursorPosition;
@@ -95,7 +96,7 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized void mousePressed(Point p) {
-		JOPADataPort port = getPortOnPoint(p);
+		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
 			selectedNode = null;
 			if (selectedPort == null) {
@@ -115,7 +116,7 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized void mouseReleased(Point p) {
-		JOPADataPort port = getPortOnPoint(p);
+		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
 			if (makeConnection(port, selectedPort)) {
 				selectedPort = null;
@@ -136,7 +137,7 @@ public class JOPAWorkspace {
 		if (justReleased) {
 			justReleased = false;
 		} else {
-			JOPADataPort port = getPortOnPoint(p);
+			JOPAPort port = getPortOnPoint(p);
 			if (port != null) {
 				if (!port.isOutput) {
 					if (port.connections.size() > 0) {
@@ -191,9 +192,9 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	private JOPADataPort getPortOnPoint(Point p) {
+	private JOPAPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
-			return currentFunction.getDataPortOnPoint(p);
+			return currentFunction.getPortOnPoint(p);
 		}
 
 		return null;
@@ -225,7 +226,7 @@ public class JOPAWorkspace {
 		return true;
 	}
 
-	private static boolean makeConnection(JOPADataPort from, JOPADataPort to) {
+	private static boolean makeConnection(JOPAPort from, JOPAPort to) {
 		if (from == null || to == null) {
 			return false;
 		}
