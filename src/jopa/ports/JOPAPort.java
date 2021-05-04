@@ -30,9 +30,9 @@ public abstract class JOPAPort {
 		position.translate(x, y);
 	}
 
-	public static void drawConnection(Graphics2D g, Point a, Point b, Color color) {
+	public static void drawConnection(Graphics2D g, int x1, int y1, int x2, int y2, Color color) {
 		g.setColor(color);
-		g.drawLine(a.x, a.y, b.x, b.y);
+		g.drawLine(x1, y1, x2, y2);
 	}
 
 	public boolean makeConnection(JOPAPort to) {

@@ -114,11 +114,7 @@ public class JOPAMain {
 	public static void createNewFunction(String functionName) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				if (functionName == null) {
-					functionName = "function_" + (currentWorkspace.functions.size());
-				}
-				boolean openEditor = currentWorkspace.functions.size() > 0;
-				ui.addFunction(currentWorkspace.createFunction(functionName), openEditor);
+				ui.addFunction(currentWorkspace.createFunction(functionName));
 			} else {
 				workspaceNotCreated();
 			}

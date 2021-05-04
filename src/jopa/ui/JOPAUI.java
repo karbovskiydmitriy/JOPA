@@ -9,11 +9,11 @@ import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentWorkspace;
 import static jopa.main.JOPAMain.destroyWorkspace;
 import static jopa.main.JOPAMain.generateShader;
-import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.manual;
 import static jopa.main.JOPAMain.openWorkspace;
 import static jopa.main.JOPAMain.quit;
 import static jopa.main.JOPAMain.saveWorkspace;
+import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
 import static jopa.main.JOPAMain.validateFunction;
@@ -40,11 +40,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import jopa.main.JOPAFunction;
+import jopa.nodes.JOPANode;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
+import jopa.ui.dialogs.JOPAEditNodeDialog;
 
 public class JOPAUI {
 
-	private Frame window;
+	private JFrame window;
 	private MenuBar menuBar;
 	private Panel menuPanel;
 	private JTabbedPane tabs;
@@ -286,9 +288,10 @@ public class JOPAUI {
 					}
 				}
 			});
-			canvas.addKeyListener(new KeyAdapter() {
+			window.addKeyListener(new KeyAdapter() {
 				@Override
-				public void keyTyped(KeyEvent e) {
+				public void keyPressed(KeyEvent e) {
+					System.out.println(e);
 					synchronized (workspaceSync) {
 						if (currentWorkspace != null) {
 							currentWorkspace.keyTyped(e.getKeyCode());
@@ -301,14 +304,14 @@ public class JOPAUI {
 		}
 	}
 
-	public synchronized void addFunction(JOPAFunction function, boolean openEditor) {
+	public synchronized void addFunction(JOPAFunction function) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				// JOPACanvas canvas = createCanvas();
 				// function.canvas = canvas;
-				if (openEditor) {
-					editFunctionPrototype(function);
-				}
+				// if (openEditor) {
+				// editFunctionPrototype(function);
+				// }
 				// Panel panel = new Panel();
 				// panel.add(canvas);
 				tabs.addTab(function.name, canvas);
@@ -317,15 +320,11 @@ public class JOPAUI {
 	}
 
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
-		JOPAEditFunctionDialog dialog = new JOPAEditFunctionDialog(window, function);
+		new JOPAEditFunctionDialog(window, function);
+	}
 
-		dialog.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(WindowEvent e) {
-				dialog.removeWindowListener(this);
-				super.windowClosed(e);
-			}
-		});
+	public synchronized void editNode(JOPANode node) {
+		new JOPAEditNodeDialog(window, node);
 	}
 
 	public synchronized void showMessage(String text) {
@@ -339,7 +338,7 @@ public class JOPAUI {
 	}
 
 	public synchronized void notImplemented() {
-		showMessage("TODO");
+		showMessage("TODO"); // TODO
 	}
 
 	public synchronized void repaint() {

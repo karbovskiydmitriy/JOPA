@@ -2,7 +2,6 @@ package jopa.main;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -25,8 +24,7 @@ public class JOPAFunction {
 		this.endNode = new JOPAEndControlNode(650, 50, "TEST_OUTPUT");
 		this.statements = new ArrayList<JOPANode>(
 				Arrays.asList(new JOPAStatementNode(350, 50, "STATEMENT_0", "TEST_STATEMENT"),
-						new JOPAStatementNode(350, 200, "STATEMENT_1", "TEST_STATEMENT"),
-						new JOPAStatementNode(350, 350, "STATEMENT_2", "TEST_EMPTY")));
+						new JOPAStatementNode(350, 200, "STATEMENT_1", "TEST_STATEMENT")));
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
@@ -74,6 +72,14 @@ public class JOPAFunction {
 		}
 
 		return null;
+	}
+	
+	public boolean removeNode(JOPANode node) {
+		if (statements.remove(node)) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	public boolean verifyNodes() {

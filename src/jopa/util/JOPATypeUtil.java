@@ -5,7 +5,7 @@ import java.awt.Color;
 import jopa.main.JOPAMain;
 import jopa.types.JOPAGLSLType;
 
-public final class JOPAColorUtil {
+public final class JOPATypeUtil {
 
 	public static String getNameForType(JOPAGLSLType type) {
 		if (type == null) {

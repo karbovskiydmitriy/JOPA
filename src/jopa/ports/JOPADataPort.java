@@ -1,7 +1,7 @@
 package jopa.ports;
 
-import static jopa.util.JOPAColorUtil.getColorForType;
-import static jopa.util.JOPAColorUtil.getNameForType;
+import static jopa.util.JOPATypeUtil.getColorForType;
+import static jopa.util.JOPATypeUtil.getNameForType;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -53,7 +53,7 @@ public class JOPADataPort extends JOPAPort {
 		}
 		if (isOutput) {
 			for (JOPAPort port : connections) {
-				drawConnection(g, position, port.position, color);
+				drawConnection(g, position.x, position.y, port.position.x, port.position.y, color);
 			}
 		}
 	}

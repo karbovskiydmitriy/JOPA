@@ -6,8 +6,8 @@ public class JOPAShowShaderDialog extends JOPADialog {
 
 	private static final long serialVersionUID = 1L;
 
-	JOPAShowShaderDialog(Frame owner) {
-		super(owner);
+	public JOPAShowShaderDialog(Frame owner) {
+		super(owner, "Generated shader");
 	}
 
 }

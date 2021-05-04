@@ -16,7 +16,7 @@ public class JOPAStartControlNode extends JOPANode {
 	}
 
 	public JOPAStartControlNode(int x, int y, String template) {
-		super(x, y, template);
+		super(x, y, "Start", template);
 	}
 
 	@Override

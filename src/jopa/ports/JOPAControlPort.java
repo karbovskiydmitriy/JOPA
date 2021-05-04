@@ -29,7 +29,8 @@ public class JOPAControlPort extends JOPAPort {
 		g.drawRect(position.x, position.y, WIDTH, HEIGHT);
 		if (isOutput) {
 			for (JOPAPort port : connections) {
-				drawConnection(g, position, port.position, Color.BLACK);
+				drawConnection(g, position.x + WIDTH / 2, position.y + HEIGHT / 2, port.position.x + WIDTH / 2,
+						port.position.y + HEIGHT / 2, Color.BLACK);
 			}
 		}
 	}
@@ -46,8 +47,7 @@ public class JOPAControlPort extends JOPAPort {
 	}
 
 	private static Point getControlPortPosition(Rectangle rect, boolean isOutput) {
-		return isOutput ? new Point(rect.x + rect.width - JOPAControlPort.WIDTH, rect.y)
-				: new Point(rect.x, rect.y);
+		return isOutput ? new Point(rect.x + rect.width - JOPAControlPort.WIDTH, rect.y) : new Point(rect.x, rect.y);
 	}
 
 }

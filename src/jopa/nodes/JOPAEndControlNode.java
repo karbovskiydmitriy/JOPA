@@ -16,7 +16,7 @@ public class JOPAEndControlNode extends JOPANode {
 	}
 
 	public JOPAEndControlNode(int x, int y, String template) {
-		super(x, y, template);
+		super(x, y, "End", template);
 	}
 
 	@Override

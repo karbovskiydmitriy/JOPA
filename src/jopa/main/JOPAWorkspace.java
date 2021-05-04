@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import jopa.io.JOPASerializer;
 import jopa.nodes.JOPANode;
 import jopa.playground.JOPAPlayground;
 import jopa.ports.JOPADataPort;
@@ -13,28 +14,32 @@ import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
 
-	public String name;
-	public ArrayList<JOPAFunction> functions;
-	public ArrayList<JOPAType> types;
-	public ArrayList<JOPATemplate> globals;
-	public JOPAPlayground playground;
+	private long lastSelectTick;
+
+	private Point prevPoint;
+	private JOPAPort selectedPort;
+	private JOPANode selectedNode;
+	private JOPANode draggingNode;
+	private Point cursorPosition;
+	private String name;
+	private ArrayList<JOPAFunction> functions;
+	private ArrayList<JOPAType> types;
+	// private ArrayList<JOPATemplate> globals;
+	private JOPAPlayground playground;
+
 	public JOPAFunction currentFunction;
-	public JOPAPort selectedPort;
-	public JOPANode selectedNode;
-	public JOPANode draggingNode;
-	public Point cursorPosition;
-	public Point prevPoint;
-	public boolean isDragging;
-	public boolean justReleased;
 
 	public JOPAWorkspace(String name) {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
-		this.globals = new ArrayList<JOPATemplate>();
+		// this.globals = new ArrayList<JOPATemplate>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
+		if (name == null) {
+			name = "function_" + functions.size();
+		}
 		JOPAFunction function = new JOPAFunction(name);
 		functions.add(function);
 
@@ -91,7 +96,8 @@ public class JOPAWorkspace {
 	public synchronized void draw(Graphics2D g) {
 		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
 		if (selectedPort != null) {
-			JOPADataPort.drawConnection(g, selectedPort.position, cursorPosition, Color.BLACK);
+			JOPADataPort.drawConnection(g, selectedPort.position.x, selectedPort.position.y, cursorPosition.x,
+					cursorPosition.y, Color.BLACK);
 		}
 	}
 
@@ -109,7 +115,8 @@ public class JOPAWorkspace {
 			JOPANode node = getNodeOnPoint(p);
 			if (node != null) {
 				selectedNode = node;
-				isDragging = true;
+				draggingNode = node;
+				// isDragging = true;
 				prevPoint = p;
 			}
 		}
@@ -128,55 +135,65 @@ public class JOPAWorkspace {
 		} else {
 			selectedPort = null;
 		}
-		isDragging = false;
-		selectedNode = null;
-		justReleased = true;
+		// isDragging = false;
+		draggingNode = null;
 	}
 
 	public synchronized void mouseClicked(Point p) {
-		if (justReleased) {
-			justReleased = false;
-		} else {
-			JOPAPort port = getPortOnPoint(p);
-			if (port != null) {
-				if (!port.isOutput) {
-					if (port.connections.size() > 0) {
-						port.destroyAllConnections();
-					}
+		JOPAPort port = getPortOnPoint(p);
+		if (port != null) {
+			if (!port.isOutput) {
+				if (port.connections.size() > 0) {
+					port.destroyAllConnections();
 				}
-				selectedNode = null;
-				if (selectedPort == null) {
-					selectedPort = port;
-				} else {
-					if (port.makeConnection(selectedPort)) {
-						selectedPort = null;
-					} else {
-						selectedPort = null;
-					}
-				}
+			}
+			selectedNode = null;
+			if (selectedPort == null) {
+				selectedPort = port;
 			} else {
-				JOPANode node = getNodeOnPoint(p);
-				if (node != null) {
+				if (port.makeConnection(selectedPort)) {
+					selectedPort = null;
+				} else {
 					selectedPort = null;
 				}
+			}
+		} else {
+			JOPANode node = getNodeOnPoint(p);
+			if (node != null) {
+				selectedPort = null;
+				if (selectedNode == node) {
+					long currentTime = System.currentTimeMillis();
+					if (currentTime - lastSelectTick <= 500) {
+						JOPAMain.ui.editNode(node);
+					}
+					lastSelectTick = currentTime;
+				}
+				selectedNode = node;
 			}
 		}
 	}
 
 	public synchronized void mouseMoved(Point p) {
 		cursorPosition = p;
-		if (selectedNode != null) {
+		if (draggingNode != null) {
 			selectedPort = null;
-			selectedNode.move(p.x - prevPoint.x, p.y - prevPoint.y);
+			draggingNode.move(p.x - prevPoint.x, p.y - prevPoint.y);
 			prevPoint = p;
 		}
 	}
 
 	public synchronized void keyTyped(int keyCode) {
 		switch (keyCode) {
-		case 9:
+		case 8:
+			if (draggingNode != null) {
+				currentFunction.removeNode(draggingNode);
+			} else if (selectedNode != null) {
+				currentFunction.removeNode(selectedNode);
+			}
+			break;
+		case 10:
 			if (selectedNode != null) {
-				functions.forEach(function -> function.statements.remove(selectedNode));
+				JOPAMain.ui.editNode(selectedNode);
 			}
 			break;
 		default:
@@ -200,7 +217,7 @@ public class JOPAWorkspace {
 		return null;
 	}
 
-	public boolean verifyFunction(JOPAFunction function) {
+	public synchronized boolean verifyFunction(JOPAFunction function) {
 		if (!function.verifyNodes()) {
 			return false;
 		}
@@ -208,7 +225,7 @@ public class JOPAWorkspace {
 		return true;
 	}
 
-	public boolean verifyFunctions() {
+	public synchronized boolean verifyFunctions() {
 		boolean validated = true;
 
 		for (JOPAFunction function : functions) {
@@ -224,6 +241,14 @@ public class JOPAWorkspace {
 		}
 
 		return true;
+	}
+
+	public static synchronized JOPAWorkspace loadFromFile(String fileName) {
+		return JOPASerializer.readFromfile(fileName);
+	}
+
+	public static synchronized boolean saveToFile(String fileName, JOPAWorkspace project) {
+		return JOPASerializer.saveToFile(project.name + ".jopa", project);
 	}
 
 }
