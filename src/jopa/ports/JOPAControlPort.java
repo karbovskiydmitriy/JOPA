@@ -27,6 +27,11 @@ public class JOPAControlPort extends JOPAPort {
 			g.setColor(JOPAMain.settings.defaultPalette.selectedPortColor);
 		}
 		g.drawRect(position.x, position.y, WIDTH, HEIGHT);
+		if (isOutput) {
+			for (JOPAPort port : connections) {
+				drawConnection(g, position, port.position, Color.BLACK);
+			}
+		}
 	}
 
 	@Override

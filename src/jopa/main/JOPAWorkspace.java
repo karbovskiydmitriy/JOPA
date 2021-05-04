@@ -118,7 +118,7 @@ public class JOPAWorkspace {
 	public synchronized void mouseReleased(Point p) {
 		JOPAPort port = getPortOnPoint(p);
 		if (port != null) {
-			if (makeConnection(port, selectedPort)) {
+			if (port.makeConnection(selectedPort)) {
 				selectedPort = null;
 			} else {
 				if (selectedPort != port) {
@@ -148,7 +148,7 @@ public class JOPAWorkspace {
 				if (selectedPort == null) {
 					selectedPort = port;
 				} else {
-					if (makeConnection(selectedPort, port)) {
+					if (port.makeConnection(selectedPort)) {
 						selectedPort = null;
 					} else {
 						selectedPort = null;
@@ -222,29 +222,6 @@ public class JOPAWorkspace {
 		} else {
 			JOPAMain.ui.showMessage("Workspace contains errors");
 		}
-
-		return true;
-	}
-
-	private static boolean makeConnection(JOPAPort from, JOPAPort to) {
-		if (from == null || to == null) {
-			return false;
-		}
-		if (from.isOutput == to.isOutput) {
-			return false;
-		}
-		if (from.node == to.node) {
-			return false;
-		}
-
-		if (!from.isOutput) {
-			from.destroyAllConnections();
-		} else if (!to.isOutput) {
-			to.destroyAllConnections();
-		}
-
-		from.connections.add(to);
-		to.connections.add(from);
 
 		return true;
 	}

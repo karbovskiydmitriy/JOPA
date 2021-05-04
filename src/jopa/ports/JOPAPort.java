@@ -23,6 +23,7 @@ public abstract class JOPAPort {
 	}
 
 	public abstract boolean hit(Point p);
+
 	public abstract void destroyAllConnections();
 
 	public void move(int x, int y) {
@@ -32,6 +33,32 @@ public abstract class JOPAPort {
 	public static void drawConnection(Graphics2D g, Point a, Point b, Color color) {
 		g.setColor(color);
 		g.drawLine(a.x, a.y, b.x, b.y);
+	}
+
+	public boolean makeConnection(JOPAPort to) {
+		if (to == null) {
+			return false;
+		}
+		if (isOutput == to.isOutput) {
+			return false;
+		}
+		if (node == to.node) {
+			return false;
+		}
+		if (!getClass().equals(to.getClass())) {
+			return false;
+		}
+
+		if (!isOutput) {
+			destroyAllConnections();
+		} else if (!to.isOutput) {
+			to.destroyAllConnections();
+		}
+
+		connections.add(to);
+		to.connections.add(this);
+
+		return true;
 	}
 
 }
