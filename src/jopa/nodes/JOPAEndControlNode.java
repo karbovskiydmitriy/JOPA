@@ -13,6 +13,14 @@ public class JOPAEndControlNode extends JOPANode {
 
 	public JOPAEndControlNode(Rectangle rect, String template) {
 		super(rect, "End", template);
+	}
+
+	public JOPAEndControlNode(int x, int y, String template) {
+		super(x, y, template);
+	}
+
+	@Override
+	protected void init() {
 		this.flowEnd = new JOPAControlPort(this, "end", false);
 	}
 

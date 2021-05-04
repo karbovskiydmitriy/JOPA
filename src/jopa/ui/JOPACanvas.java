@@ -17,7 +17,7 @@ public class JOPACanvas extends JPanel {
 	private JOPAGraphics2D graphics2D;
 
 	public JOPACanvas() {
-		addMouseWheelListener(new MouseAdapter() {
+		MouseAdapter ma = new MouseAdapter() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				float rotation = (float) e.getPreciseWheelRotation();
@@ -32,7 +32,8 @@ public class JOPACanvas extends JPanel {
 				}
 				JOPAMain.ui.repaint();
 			}
-		});
+		};
+		addMouseWheelListener(ma);
 
 		graphics2D = new JOPAGraphics2D();
 	}

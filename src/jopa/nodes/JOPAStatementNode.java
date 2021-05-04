@@ -14,6 +14,14 @@ public class JOPAStatementNode extends JOPANode {
 
 	public JOPAStatementNode(Rectangle rect, String header, String template) {
 		super(rect, header, template);
+	}
+
+	public JOPAStatementNode(int x, int y, String header, String template) {
+		super(x, y, header, template);
+	}
+	
+	@Override
+	protected void init() {
 		incomingControlFlow = new JOPAControlPort(this, "in", false);
 		outcomingControlFlow = new JOPAControlPort(this, "out", true);
 	}

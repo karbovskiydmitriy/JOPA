@@ -7,20 +7,23 @@
 		],
 		"outputs": [
 			"output_0"
-		]
+		],
+		"template": []
 	},
 	"TEST_INPUT": {
 		"inputs": [],
 		"outputs": [
 			"output_0",
 			"output_1"
-		]
+		],
+		"template": []
 	},
 	"TEST_OUTPUT": {
 		"inputs": [
 			"input_0"
 		],
-		"outputs": []
+		"outputs": [],
+		"template": []
 	},
 	"TEST_STATEMENT": {
 		"inputs": [
@@ -29,10 +32,12 @@
 		],
 		"outputs": [
 			"output_0"
-		]
+		],
+		"template": []
 	},
 	"TEST_EMPTY": {
 		"inputs": [],
-		"outputs": []
+		"outputs": [],
+		"template": []
 	}
 }

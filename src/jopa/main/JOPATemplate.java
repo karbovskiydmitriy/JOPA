@@ -11,7 +11,7 @@ import com.google.gson.JsonParser;
 
 import jopa.exceptions.JOPAException;
 
-public class JOPAFormula {
+public class JOPATemplate {
 
 	public final String formula;
 
@@ -21,13 +21,13 @@ public class JOPAFormula {
 	public String template;
 	public boolean isPure;
 
-	private static ArrayList<JOPAFormula> standardFormulas;
+	private static ArrayList<JOPATemplate> standardFormulas;
 
 	static {
 		initStandardTemplates();
 	}
 
-	public JOPAFormula(String name, String formula) throws JOPAException {
+	public JOPATemplate(String name, String formula) throws JOPAException {
 		if (name == null || formula == null) {
 			throw new JOPAException("Formula string must be non-null!");
 		}
@@ -82,8 +82,8 @@ public class JOPAFormula {
 		}
 	}
 
-	public static JOPAFormula getFormulaByName(String name) {
-		for (JOPAFormula formula : standardFormulas) {
+	public static JOPATemplate getFormulaByName(String name) {
+		for (JOPATemplate formula : standardFormulas) {
 			if (formula.name.equals(name)) {
 				return formula;
 			}
@@ -93,13 +93,13 @@ public class JOPAFormula {
 	}
 
 	private static void initStandardTemplates() {
-		standardFormulas = new ArrayList<JOPAFormula>();
+		standardFormulas = new ArrayList<JOPATemplate>();
 		try {
 			String standardTemplates = loadStandardTemplate("standard.json");
 			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
 			JsonObject templatesObject = templatesElement.getAsJsonObject();
 			for (String name : templatesObject.keySet()) {
-				JOPAFormula foobar = getFormulaFromTemplate(templatesObject, name);
+				JOPATemplate foobar = getFormulaFromTemplate(templatesObject, name);
 				if (foobar != null) {
 					standardFormulas.add(foobar);
 				}
@@ -111,7 +111,7 @@ public class JOPAFormula {
 		}
 	}
 
-	private static JOPAFormula getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
+	private static JOPATemplate getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
 		if (object == null || name == null || name.length() == 0) {
 			return null;
 		}
@@ -120,7 +120,7 @@ public class JOPAFormula {
 		if (element != null) {
 			JsonObject formulaObject = element.getAsJsonObject();
 			if (formulaObject != null) {
-				return new JOPAFormula(name, formulaObject.toString());
+				return new JOPATemplate(name, formulaObject.toString());
 			}
 		}
 

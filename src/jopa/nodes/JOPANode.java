@@ -10,13 +10,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import jopa.main.JOPAFormula;
+import jopa.main.JOPATemplate;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPANodeType;
 
-public class JOPANode {
+public abstract class JOPANode {
 
 	private static final int HEADER_HEIGHT = 20;
 	private static final Color SELECTED_COLOR = CYAN;
@@ -24,7 +24,7 @@ public class JOPANode {
 	public Rectangle rect;
 	public String header;
 	public String command;
-	public transient JOPAFormula template;
+	public transient JOPATemplate template;
 
 	public JOPANodeType nodeType;
 	public ArrayList<JOPADataPort> inputs;
@@ -34,15 +34,34 @@ public class JOPANode {
 		this.rect = rect;
 		this.header = header;
 		assignTemplate(template);
+		init();
 	}
 
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
 		this.header = header;
+		assignTemplate("TEST_EMPTY");
+		init();
 	}
 
+	public JOPANode(int x, int y, String header, String template) {
+		this.rect = new Rectangle(x, y, 100, 100);
+		this.header = header;
+		assignTemplate(template);
+		init();
+	}
+
+	public JOPANode(int x, int y, String header) {
+		this.rect = new Rectangle(x, y, 100, 100);
+		this.header = header;
+		assignTemplate("TEST_EMPTY");
+		init();
+	}
+
+	protected abstract void init();
+
 	private void assignTemplate(String formulaName) {
-		JOPAFormula template = JOPAFormula.getFormulaByName(formulaName);
+		JOPATemplate template = JOPATemplate.getFormulaByName(formulaName);
 		this.template = template;
 		if (template != null) {
 			inputs = new ArrayList<JOPADataPort>(template.inputs.length);

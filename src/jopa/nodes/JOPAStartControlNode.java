@@ -13,6 +13,14 @@ public class JOPAStartControlNode extends JOPANode {
 
 	public JOPAStartControlNode(Rectangle rect, String template) {
 		super(rect, "Start", template);
+	}
+
+	public JOPAStartControlNode(int x, int y, String template) {
+		super(x, y, template);
+	}
+
+	@Override
+	protected void init() {
 		this.flowStart = new JOPAControlPort(this, "start", true);
 	}
 

@@ -3,12 +3,24 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPALoopNode extends JOPANode {
+public class JOPALoopNode extends JOPAStatementNode {
 
-	public JOPALoopNode(Rectangle rect, String header) {
-		super(rect, header);
+	public JOPAControlPort loopIterationFlow;
+
+	public JOPALoopNode(Rectangle rect, String header, String template) {
+		super(rect, header, template);
+	}
+
+	public JOPALoopNode(Rectangle rect, String template) {
+		super(rect, "LOOP", template);
+	}
+
+	@Override
+	protected void init() {
+		loopIterationFlow = new JOPAControlPort(this, "loop iteration", true);
 	}
 
 	@Override

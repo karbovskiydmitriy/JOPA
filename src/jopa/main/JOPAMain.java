@@ -1,8 +1,7 @@
 package jopa.main;
 
-import java.awt.Rectangle;
-
 import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAStatementNode;
 import jopa.ui.JOPAUI;
 
 public class JOPAMain {
@@ -10,7 +9,6 @@ public class JOPAMain {
 	public static Object workspaceSync;
 	public static JOPAWorkspace currentWorkspace;
 	public static JOPASettings settings;
-
 	public static JOPAUI ui;
 
 	public static void main(String[] args) {
@@ -26,13 +24,10 @@ public class JOPAMain {
 
 		setupUI();
 		createNewWorkspace();
-
-		// currentWorkspace.createPlayground();
-		// currentWorkspace.startPlayground();
 	}
 
 	private static boolean checkVersion() {
-		return true;
+		return true; // TODO
 	}
 
 	private static void setupUI() {
@@ -92,7 +87,7 @@ public class JOPAMain {
 	public static void createNewNode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				JOPANode node = new JOPANode(new Rectangle(0, 0, 100, 100), "HEADER");
+				JOPANode node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
 				currentWorkspace.currentFunction.statements.add(node);
 			} else {
 				workspaceNotCreated();
@@ -157,7 +152,7 @@ public class JOPAMain {
 			}
 		}
 	}
-	
+
 	public static void showShaderCode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {

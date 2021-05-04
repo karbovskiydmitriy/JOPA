@@ -16,7 +16,7 @@ public class JOPAWorkspace {
 	public String name;
 	public ArrayList<JOPAFunction> functions;
 	public ArrayList<JOPAType> types;
-	public ArrayList<JOPAFormula> globals;
+	public ArrayList<JOPATemplate> globals;
 	public JOPAPlayground playground;
 	public JOPAFunction currentFunction;
 	public JOPAPort selectedPort;
@@ -31,7 +31,7 @@ public class JOPAWorkspace {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
-		this.globals = new ArrayList<JOPAFormula>();
+		this.globals = new ArrayList<JOPATemplate>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
