@@ -18,7 +18,7 @@ public class JOPAConstantsNode extends JOPANode {
 	}
 	
 	@Override
-	protected boolean check() {
+	public boolean check() {
 		return true;
 	}
 

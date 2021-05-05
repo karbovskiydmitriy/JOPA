@@ -24,7 +24,7 @@ public class JOPALoopNode extends JOPAStatementNode {
 	}
 
 	@Override
-	protected boolean check() {
+	public boolean check() {
 		if (flowInconsistency()) {
 			return false;
 		}

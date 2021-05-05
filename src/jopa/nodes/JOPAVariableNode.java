@@ -20,7 +20,7 @@ public class JOPAVariableNode extends JOPANode {
 	}
 	
 	@Override
-	protected boolean check() {
+	public boolean check() {
 		return true;
 	}
 

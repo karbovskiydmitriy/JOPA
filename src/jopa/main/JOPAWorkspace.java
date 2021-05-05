@@ -14,7 +14,6 @@ import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
-import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
 
@@ -27,7 +26,8 @@ public class JOPAWorkspace {
 	private Point cursorPosition;
 	private String name;
 	private ArrayList<JOPAFunction> functions;
-	private ArrayList<JOPAType> types;
+	// private JOPAFunction mainFunction;
+	// private ArrayList<JOPAType> types;
 	private JOPAPlayground playground;
 	private String generatedShader;
 
@@ -36,14 +36,20 @@ public class JOPAWorkspace {
 	public JOPAWorkspace(String name) {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
-		this.types = new ArrayList<JOPAType>();
+		// this.types = new ArrayList<JOPAType>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
-		if (name == null) {
-			name = "function_" + functions.size();
+		JOPAFunction function;
+		if (functions.size() == 0) {
+			function = new JOPAFunction("main");
+			// mainFunction = function;
+		} else {
+			if (name == null) {
+				name = "function_" + functions.size();
+			}
+			function = new JOPAFunction(name);
 		}
-		JOPAFunction function = new JOPAFunction(name);
 		functions.add(function);
 
 		return function;
@@ -85,16 +91,16 @@ public class JOPAWorkspace {
 		}
 	}
 
-	public synchronized JOPAType createNewType(String name) {
-		JOPAType type = new JOPAType(name);
-		types.add(type);
-
-		return type;
-	}
-
-	public synchronized boolean deleteType(String name) {
-		return types.removeIf(type -> type.name.equals(name));
-	}
+	// public synchronized JOPAType createNewType(String name) {
+	// JOPAType type = new JOPAType(name);
+	// types.add(type);
+	//
+	// return type;
+	// }
+	//
+	// public synchronized boolean deleteType(String name) {
+	// return types.removeIf(type -> type.name.equals(name));
+	// }
 
 	public synchronized void draw(Graphics2D g) {
 		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
@@ -208,6 +214,7 @@ public class JOPAWorkspace {
 
 		case 'E':
 			JOPAMain.settings.highlightIncorrectNodes = !JOPAMain.settings.highlightIncorrectNodes;
+			JOPAMain.ui.repaint();
 			break;
 		case 'S':
 			showGeneratedShader();
@@ -252,25 +259,30 @@ public class JOPAWorkspace {
 	}
 
 	public synchronized boolean verifyFunctions() {
-		boolean validated = true;
-
 		for (JOPAFunction function : functions) {
 			if (!verifyFunction(function)) {
-				validated = false;
+				return false;
 			}
 		}
-
-		if (validated) {
-			JOPAMain.ui.showMessage("Workspace passed validation");
-		} else {
-			JOPAMain.ui.showMessage("Workspace contains errors");
-		}
-
+		
 		return true;
 	}
 
-	public synchronized boolean generateShader() {
-		return false;
+	public synchronized void generateShader() {
+		if (verifyFunctions()) {
+			String shaderCode = "#version 130\n\n";
+			// TODO types
+			// TODO constants
+			for (JOPAFunction function : functions) {
+				shaderCode += function.getPrototype() + ";";
+			}
+			for (JOPAFunction function : functions) {
+				shaderCode += "\n\n" + function.generateCode();
+			}
+			this.generatedShader = shaderCode;
+		} else {
+			JOPAMain.ui.showMessage("Project contains error!");
+		}
 	}
 
 	public synchronized void showGeneratedShader() {

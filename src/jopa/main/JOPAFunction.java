@@ -11,32 +11,49 @@ import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartControlNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAPort;
+import jopa.types.JOPAGLSLType;
+
+import static jopa.util.JOPATypeUtil.*;
 
 public class JOPAFunction {
 
 	public String name;
+	public JOPAGLSLType returnType;
+	public ArrayList<JOPAVariable> args;
 	public JOPAStartControlNode startNode;
 	public JOPAEndControlNode endNode;
 	public JOPAConstantsNode constantsNode;
-	public ArrayList<JOPANode> statements;
+	public ArrayList<JOPANode> statementNodes;
 
 	public JOPAFunction(String name) {
 		this.name = name;
+		this.returnType = JOPAGLSLType.JOPA_VOID;
+		this.args = new ArrayList<JOPAVariable>();
 		this.startNode = new JOPAStartControlNode(50, 50, "FRAGMENT_INPUT");
 		this.endNode = new JOPAEndControlNode(650, 50, "FRAGMENT_OUTPUT");
 		this.constantsNode = new JOPAConstantsNode(50, 200, "CONSTANTS");
-		this.statements = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
+		this.statementNodes = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
+		init();
+	}
+
+	private void init() {
+		JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
+		startNode.flowStart.makeConnection(statement.incomingControlFlow);
+		statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
+		startNode.outputs.get(0).makeConnection(statement.inputs.get(0));
+		startNode.outputs.get(2).makeConnection(statement.inputs.get(1));
+		statement.outputs.get(0).makeConnection(endNode.inputs.get(0));
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
-		statements.forEach(node -> node.draw(g, selectedNode, selectedPort));
+		statementNodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
 		startNode.draw(g, selectedNode, selectedPort);
 		constantsNode.draw(g, selectedNode, selectedPort);
 		endNode.draw(g, selectedNode, selectedPort);
 	}
 
 	public JOPANode getNodeOnPoint(Point p) {
-		for (JOPANode node : statements) {
+		for (JOPANode node : statementNodes) {
 			if (node.hit(p)) {
 				return node;
 			}
@@ -57,7 +74,7 @@ public class JOPAFunction {
 	public JOPAPort getPortOnPoint(Point p) {
 		JOPAPort port;
 
-		for (JOPANode node : statements) {
+		for (JOPANode node : statementNodes) {
 			port = node.hitPort(p);
 			if (port != null) {
 				return port;
@@ -81,7 +98,7 @@ public class JOPAFunction {
 
 	public boolean removeNode(JOPANode node) {
 		if (node.remove()) {
-			if (statements.remove(node)) {
+			if (statementNodes.remove(node)) {
 				return true;
 			}
 		}
@@ -90,13 +107,49 @@ public class JOPAFunction {
 	}
 
 	public boolean verifyNodes() {
-		if (endNode != null) {
-			if (!endNode.inputsConnected()) {
+		if (!startNode.check()) {
+			return false;
+		}
+		if (!endNode.check()) {
+			return false;
+		}
+		for (JOPANode statementNode : statementNodes) {
+			if (!statementNode.check()) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	public String getPrototype() {
+		if (returnType == null) {
+			return null;
+		}
+		if (name == null || name.length() == 0) {
+			return null;
+		}
+
+		String prototypeText = getNameForType(returnType) + " " + name + "(";
+		for (int i = 0; i < args.size(); i++) {
+			JOPAVariable arg = args.get(i);
+			prototypeText += arg.toString();
+			boolean notTheLast = i < args.size() - 1;
+			if (notTheLast) {
+				prototypeText += ", ";
+			}
+		}
+		prototypeText += ")";
+
+		return prototypeText;
+	}
+
+	public String generateCode() {
+		if (!verifyNodes()) {
+			return null;
+		}
+
+		return getPrototype() + "\n{\n\t// TODO CODE\n}";
 	}
 
 }

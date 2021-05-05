@@ -35,7 +35,7 @@ public class JOPAStatementNode extends JOPANode {
 	}
 
 	@Override
-	protected boolean check() {
+	public boolean check() {
 		if (flowInconsistency()) {
 			return false;
 		}
@@ -43,12 +43,12 @@ public class JOPAStatementNode extends JOPANode {
 			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean flowInconsistency() {
-		return incomingControlFlow.connections.size() != 1 && outcomingControlFlow.connections.size() != 1;
+		return incomingControlFlow.connections.size() == 0 || outcomingControlFlow.connections.size() != 1;
 	}
 
 	@Override

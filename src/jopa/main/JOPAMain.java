@@ -7,6 +7,8 @@ import jopa.ui.JOPAUI;
 
 public class JOPAMain {
 
+	private static final String TEST_PROJECT_NAME = ".\\projects\\test.jopa";
+
 	public static Object workspaceSync;
 	public static JOPAWorkspace currentWorkspace;
 	public static JOPASettings settings;
@@ -56,7 +58,7 @@ public class JOPAMain {
 				// TODO
 			}
 			// TODO
-			currentWorkspace = JOPAWorkspace.loadFromFile(".\\projects\\test.jopa");
+			currentWorkspace = JOPAWorkspace.loadFromFile(TEST_PROJECT_NAME);
 		}
 	}
 
@@ -64,7 +66,7 @@ public class JOPAMain {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				// TODO
-				JOPAWorkspace.saveToFile(".\\projects\\test.jopa", currentWorkspace);
+				JOPAWorkspace.saveToFile(TEST_PROJECT_NAME, currentWorkspace);
 			} else {
 				workspaceNotCreated();
 			}
@@ -92,7 +94,7 @@ public class JOPAMain {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
 				JOPANode node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
-				currentWorkspace.currentFunction.statements.add(node);
+				currentWorkspace.currentFunction.statementNodes.add(node);
 			} else {
 				workspaceNotCreated();
 			}
@@ -124,7 +126,7 @@ public class JOPAMain {
 			}
 		}
 	}
-
+	
 	public static void validateFunction() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
@@ -146,7 +148,7 @@ public class JOPAMain {
 	public static void generateShader() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				ui.notImplemented();
+				currentWorkspace.generateShader();
 			} else {
 				workspaceNotCreated();
 			}

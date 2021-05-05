@@ -21,6 +21,7 @@ import jopa.types.JOPANodeType;
 public abstract class JOPANode {
 
 	private static final int HEADER_HEIGHT = 20;
+	private static final int DEFAULT_SIZE = 100;
 
 	public Rectangle rect;
 	public String header;
@@ -45,14 +46,14 @@ public abstract class JOPANode {
 	}
 
 	public JOPANode(int x, int y, String header, String template) {
-		this.rect = new Rectangle(x, y, 100, 100);
+		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
 		assignTemplate(template);
 		init();
 	}
 
 	public JOPANode(int x, int y, String header) {
-		this.rect = new Rectangle(x, y, 100, 100);
+		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
 		assignTemplate("EMPTY");
 		init();
@@ -60,7 +61,7 @@ public abstract class JOPANode {
 
 	protected abstract void init();
 
-	protected abstract boolean check();
+	public abstract boolean check();
 
 	public abstract boolean remove();
 

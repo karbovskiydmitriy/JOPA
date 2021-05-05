@@ -2,6 +2,7 @@ package jopa.types;
 
 public enum JOPAGLSLType {
 	JOPA_NONE,
+	JOPA_VOID,
 	JOPA_BOOL,
 	JOPA_INT,
 	JOPA_UINT,

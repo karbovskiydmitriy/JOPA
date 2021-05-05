@@ -13,6 +13,8 @@ public final class JOPATypeUtil {
 		}
 
 		switch (type) {
+		case JOPA_VOID:
+			return "void";
 		case JOPA_BOOL:
 			return "bool";
 		case JOPA_INT:
@@ -56,6 +58,8 @@ public final class JOPATypeUtil {
 		}
 
 		switch (typeName) {
+		case "void":
+			return JOPAGLSLType.JOPA_VOID;
 		case "bool":
 			return JOPAGLSLType.JOPA_BOOL;
 		case "int":

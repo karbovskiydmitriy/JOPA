@@ -25,7 +25,7 @@ public class JOPAEndControlNode extends JOPANode {
 	}
 
 	@Override
-	protected boolean check() {
+	public boolean check() {
 		if (flowInconsistency()) {
 			return false;
 		}
