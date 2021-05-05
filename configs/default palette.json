@@ -11,13 +11,8 @@
   },
   "selectedNodeColor": {
     "red": 0,
-    "green": 0,
-    "blue": 0
-  },
-  "highlightedNodeColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "green": 255,
+    "blue": 255
   },
   "portColor": {
     "red": 127,
@@ -29,44 +24,39 @@
     "green": 50,
     "blue": 40
   },
-  "highlightedPortColor": {
-    "red": 10,
-    "green": 50,
-    "blue": 40
-  },
   "boolTypeColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "red": 255,
+    "green": 255,
+    "blue": 255
   },
   "intTypeColor": {
-    "red": 0,
+    "red": 255,
     "green": 0,
     "blue": 0
   },
   "uintTypeColor": {
-    "red": 0,
+    "red": 127,
     "green": 0,
     "blue": 0
   },
   "floatTypeColor": {
     "red": 0,
     "green": 0,
-    "blue": 0
+    "blue": 255
   },
   "vectorTypeColor": {
-    "red": 0,
-    "green": 0,
-    "blue": 0
+    "red": 150,
+    "green": 150,
+    "blue": 150
   },
   "matrixTypeColor": {
     "red": 0,
-    "green": 0,
-    "blue": 0
+    "green": 150,
+    "blue": 150
   },
   "graphicsTypeColor": {
     "red": 0,
-    "green": 0,
+    "green": 255,
     "blue": 0
   }
 }

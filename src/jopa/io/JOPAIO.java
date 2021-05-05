@@ -29,4 +29,12 @@ public class JOPAIO {
 		return true;
 	}
 
+	public static byte[] loadBinaryFile(String fileName) {
+		return null;
+	}
+
+	public static boolean saveBinaryFile(String fileName, byte[] data) {
+		return false;
+	}
+
 }

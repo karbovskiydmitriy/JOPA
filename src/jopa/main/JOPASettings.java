@@ -17,7 +17,8 @@ public class JOPASettings {
 	final static String DEFAULT_PALETTE_PATH = CONFIGS_DIRECTORY_PATH + "default palette.json";
 
 	public JOPAPalette defaultPalette;
-	public boolean showPortTypes = false;
+	public boolean showPortTypes = true;
+	public boolean highlightIncorrectNodes = false;
 
 	public JOPASettings() {
 		defaultPalette = loadPalette(DEFAULT_PALETTE_PATH);
@@ -37,10 +38,8 @@ public class JOPASettings {
 		palette.backgroundColor = deserializeColor(paletteObject.get("backgroundColor"));
 		palette.nodeColor = deserializeColor(paletteObject.get("nodeColor"));
 		palette.selectedNodeColor = deserializeColor(paletteObject.get("selectedNodeColor"));
-		palette.highlightedNodeColor = deserializeColor(paletteObject.get("highlightedNodeColor"));
 		palette.portColor = deserializeColor(paletteObject.get("portColor"));
 		palette.selectedPortColor = deserializeColor(paletteObject.get("selectedPortColor"));
-		palette.highlightedPortColor = deserializeColor(paletteObject.get("highlightedPortColor"));
 		palette.boolTypeColor = deserializeColor(paletteObject.get("boolTypeColor"));
 		palette.intTypeColor = deserializeColor(paletteObject.get("intTypeColor"));
 		palette.uintTypeColor = deserializeColor(paletteObject.get("uintTypeColor"));
@@ -58,10 +57,8 @@ public class JOPASettings {
 		obj.add("backgroundColor", serializeObject(palette.backgroundColor));
 		obj.add("nodeColor", serializeObject(palette.nodeColor));
 		obj.add("selectedNodeColor", serializeObject(palette.selectedNodeColor));
-		obj.add("highlightedNodeColor", serializeObject(palette.highlightedNodeColor));
 		obj.add("portColor", serializeObject(palette.portColor));
 		obj.add("selectedPortColor", serializeObject(palette.selectedPortColor));
-		obj.add("highlightedPortColor", serializeObject(palette.highlightedPortColor));
 		obj.add("boolTypeColor", serializeObject(palette.boolTypeColor));
 		obj.add("intTypeColor", serializeObject(palette.intTypeColor));
 		obj.add("uintTypeColor", serializeObject(palette.uintTypeColor));

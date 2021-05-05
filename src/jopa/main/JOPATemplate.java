@@ -73,7 +73,6 @@ public class JOPATemplate {
 							template = templateElement.getAsString();
 						}
 					}
-					System.out.println(template);
 				}
 			}
 		} catch (IllegalStateException e) {

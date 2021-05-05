@@ -23,7 +23,21 @@ public class JOPAStartControlNode extends JOPANode {
 	protected void init() {
 		this.flowStart = new JOPAControlPort(this, "start", true);
 	}
-	
+
+	@Override
+	protected boolean check() {
+		if (flowInconsistency()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return flowStart.connections.size() != 1;
+	}
+
 	@Override
 	public boolean remove() {
 		return false;

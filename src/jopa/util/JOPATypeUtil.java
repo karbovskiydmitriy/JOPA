@@ -50,6 +50,49 @@ public final class JOPATypeUtil {
 		}
 	}
 
+	public static JOPAGLSLType getTypeForName(String typeName) {
+		if (typeName == null) {
+			return null;
+		}
+
+		switch (typeName) {
+		case "bool":
+			return JOPAGLSLType.JOPA_BOOL;
+		case "int":
+			return JOPAGLSLType.JOPA_INT;
+		case "uint":
+			return JOPAGLSLType.JOPA_UINT;
+		case "float":
+			return JOPAGLSLType.JOPA_FLOAT;
+		case "bvec2":
+			return JOPAGLSLType.JOPA_BOOL_VECTOR_2;
+		case "bvec3":
+			return JOPAGLSLType.JOPA_BOOL_VECTOR_3;
+		case "bvec4":
+			return JOPAGLSLType.JOPA_BOOL_VECTOR_4;
+		case "ivec2":
+			return JOPAGLSLType.JOPA_INT_VECTOR_2;
+		case "ivec3":
+			return JOPAGLSLType.JOPA_INT_VECTOR_3;
+		case "ivec4":
+			return JOPAGLSLType.JOPA_INT_VECTOR_4;
+		case "uvec2":
+			return JOPAGLSLType.JOPA_UINT_VECTOR_2;
+		case "uvec3":
+			return JOPAGLSLType.JOPA_UINT_VECTOR_3;
+		case "uvec4":
+			return JOPAGLSLType.JOPA_UINT_VECTOR_4;
+		case "vec2":
+			return JOPAGLSLType.JOPA_FLOAT_VECTOR_2;
+		case "vec3":
+			return JOPAGLSLType.JOPA_FLOAT_VECTOR_3;
+		case "vec4":
+			return JOPAGLSLType.JOPA_FLOAT_VECTOR_4;
+		default:
+			return JOPAGLSLType.JOPA_NONE;
+		}
+	}
+
 	public static Color getColorForType(JOPAGLSLType type) {
 		if (type == null) {
 			return JOPAMain.settings.defaultPalette.portColor;
@@ -61,9 +104,9 @@ public final class JOPATypeUtil {
 		case JOPA_INT:
 			return JOPAMain.settings.defaultPalette.intTypeColor;
 		case JOPA_UINT:
-			return JOPAMain.settings.defaultPalette.boolTypeColor;
+			return JOPAMain.settings.defaultPalette.uintTypeColor;
 		case JOPA_FLOAT:
-			return JOPAMain.settings.defaultPalette.boolTypeColor;
+			return JOPAMain.settings.defaultPalette.floatTypeColor;
 		case JOPA_BOOL_VECTOR_2:
 		case JOPA_BOOL_VECTOR_3:
 		case JOPA_BOOL_VECTOR_4:
@@ -81,5 +124,5 @@ public final class JOPATypeUtil {
 			return JOPAMain.settings.defaultPalette.portColor;
 		}
 	}
-	
+
 }

@@ -16,6 +16,11 @@ public class JOPAConstantsNode extends JOPANode {
 	protected void init() {
 		// TODO
 	}
+	
+	@Override
+	protected boolean check() {
+		return true;
+	}
 
 	@Override
 	public boolean remove() {

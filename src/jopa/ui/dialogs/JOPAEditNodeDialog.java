@@ -10,7 +10,6 @@ public class JOPAEditNodeDialog extends JOPADialog {
 
 	public JOPAEditNodeDialog(Frame owner, JOPANode node) {
 		super(owner, "Edit node");
-		setSize(500, 500);
 		setVisible(true);
 	}
 

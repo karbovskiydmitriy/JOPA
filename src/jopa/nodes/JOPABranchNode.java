@@ -10,17 +10,33 @@ public class JOPABranchNode extends JOPANode {
 	public JOPABranchNode(Rectangle rect, String header) {
 		super(rect, header);
 	}
-	
+
 	@Override
 	protected void init() {
-		// TODO	
+		// TODO
 	}
-	
+
 	@Override
 	public boolean remove() {
 		// TODO
-		
+
 		return false;
+	}
+
+	@Override
+	protected boolean check() {
+		if (flowInconsistency()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		// TODO
+
+		return true;
 	}
 
 	@Override

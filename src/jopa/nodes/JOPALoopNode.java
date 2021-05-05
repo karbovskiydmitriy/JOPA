@@ -24,6 +24,20 @@ public class JOPALoopNode extends JOPAStatementNode {
 	}
 
 	@Override
+	protected boolean check() {
+		if (flowInconsistency()) {
+			return false;
+		}
+
+		return super.check();
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return loopIterationFlow.connections.size() != 1;
+	}
+
+	@Override
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		super.draw(g, selectedNode, selectedPort);
 	}

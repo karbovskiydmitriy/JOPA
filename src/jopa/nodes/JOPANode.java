@@ -1,15 +1,16 @@
 package jopa.nodes;
 
 import static java.awt.Color.BLACK;
-import static java.awt.Color.CYAN;
+import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
+import static jopa.util.JOPATypeUtil.getTypeForName;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import jopa.main.JOPAMain;
 import jopa.main.JOPATemplate;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
@@ -20,13 +21,11 @@ import jopa.types.JOPANodeType;
 public abstract class JOPANode {
 
 	private static final int HEADER_HEIGHT = 20;
-	private static final Color SELECTED_COLOR = CYAN;
 
 	public Rectangle rect;
 	public String header;
 	public String command;
 	public transient JOPATemplate template;
-
 	public JOPANodeType nodeType;
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
@@ -41,7 +40,7 @@ public abstract class JOPANode {
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
 		this.header = header;
-		assignTemplate("TEST_EMPTY");
+		assignTemplate("EMPTY");
 		init();
 	}
 
@@ -55,13 +54,19 @@ public abstract class JOPANode {
 	public JOPANode(int x, int y, String header) {
 		this.rect = new Rectangle(x, y, 100, 100);
 		this.header = header;
-		assignTemplate("TEST_EMPTY");
+		assignTemplate("EMPTY");
 		init();
 	}
 
 	protected abstract void init();
 
+	protected abstract boolean check();
+
 	public abstract boolean remove();
+
+	protected boolean flowInconsistency() {
+		return false;
+	}
 
 	private void assignTemplate(String formulaName) {
 		JOPATemplate template = JOPATemplate.getFormulaByName(formulaName);
@@ -75,15 +80,31 @@ public abstract class JOPANode {
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
 			for (int i = 0; i < template.inputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
+				String input = template.inputs[i];
 				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
-				String name = template.inputs[i];
+				String name = input;
+				if (input.contains(":")) {
+					String[] parts = input.split(":");
+					if (parts.length == 2) {
+						type = getTypeForName(parts[0]);
+						name = parts[1];
+					}
+				}
 				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), type, name, false);
 				inputs.add(port);
 			}
 			for (int i = 0; i < template.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
+				String output = template.outputs[i];
 				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
-				String name = template.outputs[i];
+				String name = output;
+				if (output.contains(":")) {
+					String[] parts = output.split(":");
+					if (parts.length == 2) {
+						type = getTypeForName(parts[0]);
+						name = parts[1];
+					}
+				}
 				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), type, name, true);
 				outputs.add(port);
 			}
@@ -101,10 +122,15 @@ public abstract class JOPANode {
 		g.setColor(WHITE);
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
 		if (isSelected) {
-			g.setColor(SELECTED_COLOR);
+			g.setColor(JOPAMain.settings.defaultPalette.selectedNodeColor);
 			g.fillRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		}
-		g.setColor(BLACK);
+		boolean isCorrect = check();
+		if (JOPAMain.settings.highlightIncorrectNodes && !isCorrect) {
+			g.setColor(RED);
+		} else {
+			g.setColor(BLACK);
+		}
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x + JOPAControlPort.WIDTH, rect.y + HEADER_HEIGHT);
@@ -147,8 +173,6 @@ public abstract class JOPANode {
 		if (inputs != null) {
 			for (JOPADataPort port : inputs) {
 				if (port.connections.size() == 0) {
-					System.out.println("node " + header + " not OK");
-
 					return false;
 				}
 				if (!port.connections.get(0).node.inputsConnected()) {

@@ -25,6 +25,26 @@ public class JOPAEndControlNode extends JOPANode {
 	}
 
 	@Override
+	protected boolean check() {
+		if (flowInconsistency()) {
+			return false;
+		}
+		if (inputs.size() < 1) {
+			return false;
+		}
+		if (!inputsConnected()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return flowEnd.connections.size() != 1;
+	}
+
+	@Override
 	public boolean remove() {
 		return false;
 	}

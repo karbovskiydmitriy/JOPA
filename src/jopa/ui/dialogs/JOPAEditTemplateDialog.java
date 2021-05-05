@@ -10,6 +10,7 @@ public class JOPAEditTemplateDialog extends JOPADialog {
 
 	public JOPAEditTemplateDialog(Frame owner, JOPATemplate template) {
 		super(owner, "Edit template");
+		setVisible(true);
 	}
 
 }

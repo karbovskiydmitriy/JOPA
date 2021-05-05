@@ -35,6 +35,23 @@ public class JOPAStatementNode extends JOPANode {
 	}
 
 	@Override
+	protected boolean check() {
+		if (flowInconsistency()) {
+			return false;
+		}
+		if (!inputsConnected()) {
+			return false;
+		}
+
+		return false;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return incomingControlFlow.connections.size() != 1 && outcomingControlFlow.connections.size() != 1;
+	}
+
+	@Override
 	public boolean remove() {
 		inputs.forEach(port -> port.destroyAllConnections());
 		outputs.forEach(port -> port.destroyAllConnections());

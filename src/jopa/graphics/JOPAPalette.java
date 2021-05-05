@@ -7,10 +7,8 @@ public class JOPAPalette {
 	public Color backgroundColor;
 	public Color nodeColor;
 	public Color selectedNodeColor;
-	public Color highlightedNodeColor;
 	public Color portColor;
 	public Color selectedPortColor;
-	public Color highlightedPortColor;
 	public Color boolTypeColor;
 	public Color intTypeColor;
 	public Color uintTypeColor;

@@ -52,15 +52,18 @@ public class JOPAMain {
 	public static void openWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-
+				// TODO
 			}
+			// TODO
+			currentWorkspace = JOPAWorkspace.loadFromFile(".\\projects\\test.jopa");
 		}
 	}
 
 	public static void saveWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-
+				// TODO
+				JOPAWorkspace.saveToFile(".\\projects\\test.jopa", currentWorkspace);
 			} else {
 				workspaceNotCreated();
 			}

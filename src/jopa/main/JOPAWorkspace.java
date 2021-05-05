@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
 import jopa.nodes.JOPAConstantsNode;
+import jopa.nodes.JOPAEndControlNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
@@ -26,7 +27,6 @@ public class JOPAWorkspace {
 	private String name;
 	private ArrayList<JOPAFunction> functions;
 	private ArrayList<JOPAType> types;
-	// private ArrayList<JOPATemplate> globals;
 	private JOPAPlayground playground;
 	private String generatedShader;
 
@@ -36,7 +36,6 @@ public class JOPAWorkspace {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
 		this.types = new ArrayList<JOPAType>();
-		// this.globals = new ArrayList<JOPATemplate>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -119,7 +118,6 @@ public class JOPAWorkspace {
 			if (node != null) {
 				selectedNode = node;
 				draggingNode = node;
-				// isDragging = true;
 				prevPoint = p;
 			}
 		}
@@ -138,7 +136,6 @@ public class JOPAWorkspace {
 		} else {
 			selectedPort = null;
 		}
-		// isDragging = false;
 		draggingNode = null;
 	}
 
@@ -172,6 +169,10 @@ public class JOPAWorkspace {
 							JOPAMain.ui.editNode(node);
 						} else if (nodeType.equals(JOPAConstantsNode.class)) {
 							JOPAMain.ui.editConstants(currentFunction);
+						} else if (nodeType.equals(JOPAStatementNode.class)) {
+							JOPAMain.ui.editFunctionPrototype(currentFunction);
+						} else if (nodeType.equals(JOPAEndControlNode.class)) {
+							JOPAMain.ui.editFunctionPrototype(currentFunction);
 						}
 					}
 					lastSelectTick = currentTime;
@@ -202,6 +203,23 @@ public class JOPAWorkspace {
 			if (selectedNode != null) {
 				JOPAMain.ui.editNode(selectedNode);
 			}
+			break;
+
+		case 'E':
+			JOPAMain.settings.highlightIncorrectNodes = !JOPAMain.settings.highlightIncorrectNodes;
+			break;
+		case 'S':
+			showGeneratedShader();
+			break;
+		case 'G':
+			generateShader();
+			break;
+		case 'R':
+			JOPAMain.ui.repaint();
+			break;
+		case 'T':
+			JOPAMain.settings.showPortTypes = !JOPAMain.settings.showPortTypes;
+			JOPAMain.ui.repaint();
 			break;
 		default:
 			break;
@@ -250,6 +268,10 @@ public class JOPAWorkspace {
 		return true;
 	}
 
+	public synchronized boolean generateShader() {
+		return false;
+	}
+
 	public synchronized void showGeneratedShader() {
 		if (generatedShader != null) {
 			JOPAMain.ui.showShader(generatedShader);
@@ -263,7 +285,7 @@ public class JOPAWorkspace {
 	}
 
 	public static synchronized boolean saveToFile(String fileName, JOPAWorkspace project) {
-		return JOPASerializer.saveToFile(project.name + ".jopa", project);
+		return JOPASerializer.saveToFile(project.name, project);
 	}
 
 }

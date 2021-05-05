@@ -8,6 +8,7 @@ public class JOPAShowTemplatesDialog extends JOPADialog {
 
 	public JOPAShowTemplatesDialog(Frame owner) {
 		super(owner, "Templates list");
+		setVisible(true);
 	}
 
 }
