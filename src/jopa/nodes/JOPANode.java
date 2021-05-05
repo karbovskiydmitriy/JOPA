@@ -14,6 +14,7 @@ import jopa.main.JOPATemplate;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
+import jopa.types.JOPAGLSLType;
 import jopa.types.JOPANodeType;
 
 public abstract class JOPANode {
@@ -59,6 +60,7 @@ public abstract class JOPANode {
 	}
 
 	protected abstract void init();
+
 	public abstract boolean remove();
 
 	private void assignTemplate(String formulaName) {
@@ -73,13 +75,16 @@ public abstract class JOPANode {
 			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
 			for (int i = 0; i < template.inputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), template.inputs[i], false);
+				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
+				String name = template.inputs[i];
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), type, name, false);
 				inputs.add(port);
 			}
 			for (int i = 0; i < template.outputs.length; i++) {
 				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), template.outputs[i],
-						true);
+				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
+				String name = template.outputs[i];
+				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), type, name, true);
 				outputs.add(port);
 			}
 		}

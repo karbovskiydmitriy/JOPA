@@ -1,4 +1,4 @@
-package jopa.ui;
+package jopa.graphics;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelEvent;
 
 import javax.swing.JPanel;
 
-import jopa.main.JOPAGraphics2D;
 import jopa.main.JOPAMain;
 
 public class JOPACanvas extends JPanel {

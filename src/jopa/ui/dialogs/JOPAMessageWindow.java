@@ -1,4 +1,4 @@
-package jopa.ui;
+package jopa.ui.dialogs;
 
 import java.awt.Label;
 import java.awt.Window;

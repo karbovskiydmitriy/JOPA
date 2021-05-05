@@ -1,31 +1,11 @@
 {
 	"nodes": {
-		"TEST_INPUT": {
+		"EMPTY": {
 			"inputs": [],
-			"outputs": [
-				"output_0",
-				"output_1"
-			],
-			"template": null
-		},
-		"TEST_OUTPUT": {
-			"inputs": [
-				"input_0"
-			],
 			"outputs": [],
 			"template": null
 		},
-		"TEST_STATEMENT": {
-			"inputs": [
-				"input_0",
-				"input_1"
-			],
-			"outputs": [
-				"output_0"
-			],
-			"template": null
-		},
-		"TEST_EMPTY": {
+		"CONSTANTS": {
 			"inputs": [],
 			"outputs": [],
 			"template": null
@@ -33,9 +13,9 @@
 		"FRAGMENT_INPUT": {
 			"inputs": [],
 			"outputs": [
+				"gl_FragCoord",
 				"time",
-				"windowSize",
-				"gl_FragCoord"
+				"windowSize"
 			],
 			"template": null
 		},
@@ -48,6 +28,7 @@
 		},
 		"FRAGMENT_TEST": {
 			"inputs": [
+				"coord",
 				"size"
 			],
 			"outputs": [

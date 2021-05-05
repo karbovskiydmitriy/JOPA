@@ -65,6 +65,15 @@ public class JOPATemplate {
 							}
 						}
 					}
+					JsonElement templateElement = object.get("template");
+					if (templateElement != null) {
+						if (templateElement.isJsonNull()) {
+							template = "";
+						} else {
+							template = templateElement.getAsString();
+						}
+					}
+					System.out.println(template);
 				}
 			}
 		} catch (IllegalStateException e) {

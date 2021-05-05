@@ -6,7 +6,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
+import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
@@ -165,7 +167,12 @@ public class JOPAWorkspace {
 				if (selectedNode == node) {
 					long currentTime = System.currentTimeMillis();
 					if (currentTime - lastSelectTick <= 500) {
-						JOPAMain.ui.editNode(node);
+						Class<?> nodeType = node.getClass();
+						if (nodeType.equals(JOPAStatementNode.class)) {
+							JOPAMain.ui.editNode(node);
+						} else if (nodeType.equals(JOPAConstantsNode.class)) {
+							JOPAMain.ui.editConstants(currentFunction);
+						}
 					}
 					lastSelectTick = currentTime;
 				}
@@ -186,10 +193,9 @@ public class JOPAWorkspace {
 	public synchronized void keyTyped(int keyCode) {
 		switch (keyCode) {
 		case 8:
-			if (draggingNode != null) {
-				currentFunction.removeNode(draggingNode);
-			} else if (selectedNode != null) {
+			if (selectedNode != null) {
 				currentFunction.removeNode(selectedNode);
+				JOPAMain.ui.repaint();
 			}
 			break;
 		case 10:

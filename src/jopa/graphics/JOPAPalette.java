@@ -1,4 +1,4 @@
-package jopa.ui;
+package jopa.graphics;
 
 import java.awt.Color;
 

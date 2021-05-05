@@ -1,4 +1,4 @@
-package jopa.main;
+package jopa.graphics;
 
 import java.awt.Color;
 import java.awt.Composite;

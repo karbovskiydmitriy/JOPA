@@ -39,10 +39,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
 import jopa.nodes.JOPANode;
+import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditNodeDialog;
+import jopa.ui.dialogs.JOPAMessageWindow;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 
 public class JOPAUI {
@@ -322,6 +325,10 @@ public class JOPAUI {
 
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
 		new JOPAEditFunctionDialog(window, function);
+	}
+	
+	public synchronized void editConstants(JOPAFunction function) {
+		new JOPAEditConstantsDialog(window, function);
 	}
 
 	public synchronized void editNode(JOPANode node) {

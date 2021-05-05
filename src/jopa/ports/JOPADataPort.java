@@ -25,12 +25,13 @@ public class JOPADataPort extends JOPAPort {
 	private String typeName;
 	private Color color;
 
-	public JOPADataPort(JOPANode node, Point position, String name, boolean isOutput, JOPADataPort... connections) {
+	public JOPADataPort(JOPANode node, Point position, JOPAGLSLType type, String name, boolean isOutput,
+			JOPADataPort... connections) {
 		super(node, position, isOutput, name);
 		this.connections = new ArrayList<JOPAPort>(Arrays.asList(connections));
-		this.dataType = JOPAGLSLType.JOPA_NONE;
-		this.typeName = getNameForType(dataType);
-		this.color = getColorForType(dataType);
+		this.dataType = type;
+		this.typeName = getNameForType(type);
+		this.color = getColorForType(type);
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {
