@@ -149,7 +149,11 @@ public class JOPAFunction {
 			return null;
 		}
 
-		return getPrototype() + "\n{\n\t// TODO CODE\n}";
+		String code = getPrototype() + "\n{\n";
+		code += "\t// TODO CODE";
+		code += "\n}";
+
+		return code;
 	}
 
 }

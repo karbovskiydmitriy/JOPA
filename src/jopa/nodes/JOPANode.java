@@ -11,7 +11,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import jopa.main.JOPAMain;
-import jopa.main.JOPATemplate;
+import jopa.main.JOPANodeTemplate;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
@@ -26,7 +26,7 @@ public abstract class JOPANode {
 	public Rectangle rect;
 	public String header;
 	public String command;
-	public transient JOPATemplate template;
+	public transient JOPANodeTemplate template;
 	public JOPANodeType nodeType;
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
@@ -70,7 +70,7 @@ public abstract class JOPANode {
 	}
 
 	private void assignTemplate(String formulaName) {
-		JOPATemplate template = JOPATemplate.getFormulaByName(formulaName);
+		JOPANodeTemplate template = JOPANodeTemplate.getFormulaByName(formulaName);
 		this.template = template;
 		if (template != null) {
 			inputs = new ArrayList<JOPADataPort>(template.inputs.length);

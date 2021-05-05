@@ -46,7 +46,7 @@ public class JOPAMain {
 	public static void createNewWorkspace() {
 		synchronized (workspaceSync) {
 			currentWorkspace = new JOPAWorkspace("New workspace");
-			createNewFunction(null);
+			createNewFunction();
 		}
 
 		ui.repaint();
@@ -90,6 +90,58 @@ public class JOPAMain {
 		}
 	}
 
+	public static void editProject() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				// TODO
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void verifyProject() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				if (currentWorkspace.verifyFunctions()) {
+					ui.showMessage("project passed validation");
+				} else {
+					ui.showMessage("project contains errors");
+				}
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void createNewFunction() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				ui.addFunction(currentWorkspace.createFunction(null));
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
+	public static void validateFunction() {
+		synchronized (workspaceSync) {
+			if (currentWorkspace != null) {
+				if (currentWorkspace.currentFunction != null) {
+					if (currentWorkspace.verifyFunction(currentWorkspace.currentFunction)) {
+						ui.showMessage("function passed validation");
+					} else {
+						ui.showMessage("function contains errors");
+					}
+				} else {
+					ui.showMessage("Function not selected!");
+				}
+			} else {
+				workspaceNotCreated();
+			}
+		}
+	}
+
 	public static void createNewNode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
@@ -110,34 +162,6 @@ public class JOPAMain {
 					} else {
 						ui.showMessage("Nodes in current function are not OK");
 					}
-				}
-			} else {
-				workspaceNotCreated();
-			}
-		}
-	}
-
-	public static void createNewFunction(String functionName) {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				ui.addFunction(currentWorkspace.createFunction(functionName));
-			} else {
-				workspaceNotCreated();
-			}
-		}
-	}
-	
-	public static void validateFunction() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				if (currentWorkspace.currentFunction != null) {
-					if (currentWorkspace.verifyFunction(currentWorkspace.currentFunction)) {
-						ui.showMessage("functions passed validation");
-					} else {
-						ui.showMessage("function contains errors");
-					}
-				} else {
-					ui.showMessage("Function not selected!");
 				}
 			} else {
 				workspaceNotCreated();

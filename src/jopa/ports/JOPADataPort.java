@@ -10,7 +10,6 @@ import java.awt.Point;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import jopa.main.JOPAMain;
 import jopa.nodes.JOPANode;
@@ -20,15 +19,14 @@ public class JOPADataPort extends JOPAPort {
 
 	private final int PORT_RADIUS = 7;
 
-	public JOPAGLSLType dataType;
-
 	private String typeName;
 	private Color color;
 
-	public JOPADataPort(JOPANode node, Point position, JOPAGLSLType type, String name, boolean isOutput,
-			JOPADataPort... connections) {
+	public JOPAGLSLType dataType;
+
+	public JOPADataPort(JOPANode node, Point position, JOPAGLSLType type, String name, boolean isOutput) {
 		super(node, position, isOutput, name);
-		this.connections = new ArrayList<JOPAPort>(Arrays.asList(connections));
+		this.connections = new ArrayList<JOPAPort>();
 		this.dataType = type;
 		this.typeName = getNameForType(type);
 		this.color = getColorForType(type);

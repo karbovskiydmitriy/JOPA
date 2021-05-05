@@ -11,23 +11,20 @@ import com.google.gson.JsonParser;
 
 import jopa.exceptions.JOPAException;
 
-public class JOPATemplate {
-
-	public final String formula;
+public class JOPANodeTemplate {
 
 	public String name;
 	public String inputs[];
 	public String outputs[];
 	public String template;
-	public boolean isPure;
 
-	private static ArrayList<JOPATemplate> standardFormulas;
+	private static ArrayList<JOPANodeTemplate> standardFormulas;
 
 	static {
-		initStandardTemplates();
+		initStandardNodeTemplates();
 	}
 
-	public JOPATemplate(String name, String formula) throws JOPAException {
+	public JOPANodeTemplate(String name, String formula) throws JOPAException {
 		if (name == null || formula == null) {
 			throw new JOPAException("Formula string must be non-null!");
 		}
@@ -36,7 +33,6 @@ public class JOPATemplate {
 		}
 
 		this.name = name;
-		this.formula = formula;
 
 		try {
 			JsonElement element = new JsonParser().parse(formula);
@@ -81,17 +77,10 @@ public class JOPATemplate {
 			System.out.println(e);
 			e.printStackTrace();
 		}
-
-		if (this.inputs == null) {
-			this.inputs = new String[] { "stub_input_0" };
-		}
-		if (this.outputs == null) {
-			this.outputs = new String[] { "stub_output_0" };
-		}
 	}
 
-	public static JOPATemplate getFormulaByName(String name) {
-		for (JOPATemplate formula : standardFormulas) {
+	public static JOPANodeTemplate getFormulaByName(String name) {
+		for (JOPANodeTemplate formula : standardFormulas) {
 			if (formula.name.equals(name)) {
 				return formula;
 			}
@@ -100,19 +89,39 @@ public class JOPATemplate {
 		return null;
 	}
 
-	private static void initStandardTemplates() {
-		standardFormulas = new ArrayList<JOPATemplate>();
+	private static void initStandardNodeTemplates() {
+		standardFormulas = new ArrayList<JOPANodeTemplate>();
 		try {
 			String standardTemplates = loadStandardTemplate("standard.json");
-			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
-			JsonObject templatesObject = templatesElement.getAsJsonObject();
-			JsonElement nodesElement = templatesObject.get("nodes");
-			JsonObject nodesObject = nodesElement.getAsJsonObject();
-			for (String name : nodesObject.keySet()) {
-				JOPATemplate foobar = getFormulaFromTemplate(nodesObject, name);
-				if (foobar != null) {
-					standardFormulas.add(foobar);
+			if (standardTemplates != null) {
+				JsonElement templatesElement = new JsonParser().parse(standardTemplates);
+				if (templatesElement != null) {
+					JsonObject templatesObject = templatesElement.getAsJsonObject();
+					if (templatesObject != null) {
+						JsonElement nodesElement = templatesObject.get("nodes");
+						if (nodesElement != null) {
+							JsonObject nodesObject = nodesElement.getAsJsonObject();
+							if (nodesObject != null) {
+								for (String name : nodesObject.keySet()) {
+									JOPANodeTemplate foobar = getFormulaFromTemplate(nodesObject, name);
+									if (foobar != null) {
+										standardFormulas.add(foobar);
+									}
+								}
+							} else {
+								fileCorrupted();
+							}
+						} else {
+							fileCorrupted();
+						}
+					} else {
+						fileCorrupted();
+					}
+				} else {
+					fileCorrupted();
 				}
+			} else {
+				fileCorrupted();
 			}
 		} catch (JOPAException e) {
 			System.err.println(e.getMessage());
@@ -121,7 +130,11 @@ public class JOPATemplate {
 		}
 	}
 
-	private static JOPATemplate getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
+	private static void fileCorrupted() {
+		JOPAMain.ui.showMessage("templates file is corrupted");
+	}
+
+	private static JOPANodeTemplate getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
 		if (object == null || name == null || name.length() == 0) {
 			return null;
 		}
@@ -130,7 +143,7 @@ public class JOPATemplate {
 		if (element != null) {
 			JsonObject formulaObject = element.getAsJsonObject();
 			if (formulaObject != null) {
-				return new JOPATemplate(name, formulaObject.toString());
+				return new JOPANodeTemplate(name, formulaObject.toString());
 			}
 		}
 

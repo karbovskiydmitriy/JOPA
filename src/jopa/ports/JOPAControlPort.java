@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import jopa.main.JOPAMain;
 import jopa.nodes.JOPANode;
@@ -15,9 +14,9 @@ public class JOPAControlPort extends JOPAPort {
 	public static final int WIDTH = 8;
 	public static final int HEIGHT = 20;
 
-	public JOPAControlPort(JOPANode node, String name, boolean isOutput, JOPAControlPort... connections) {
+	public JOPAControlPort(JOPANode node, String name, boolean isOutput) {
 		super(node, getControlPortPosition(node.rect, isOutput), isOutput, name);
-		this.connections = new ArrayList<JOPAPort>(Arrays.asList(connections));
+		this.connections = new ArrayList<JOPAPort>();
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {

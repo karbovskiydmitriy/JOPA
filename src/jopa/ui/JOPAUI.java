@@ -8,6 +8,7 @@ import static jopa.main.JOPAMain.createNewWorkspace;
 import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentWorkspace;
 import static jopa.main.JOPAMain.destroyWorkspace;
+import static jopa.main.JOPAMain.editProject;
 import static jopa.main.JOPAMain.generateShader;
 import static jopa.main.JOPAMain.manual;
 import static jopa.main.JOPAMain.openWorkspace;
@@ -18,6 +19,7 @@ import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
 import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateNodes;
+import static jopa.main.JOPAMain.verifyProject;
 import static jopa.main.JOPAMain.workspaceSync;
 
 import java.awt.BorderLayout;
@@ -41,11 +43,16 @@ import javax.swing.event.ChangeListener;
 
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
+import jopa.nodes.JOPABranchNode;
+import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationType;
+import jopa.ui.dialogs.JOPAEditBranchNodeGialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
-import jopa.ui.dialogs.JOPAEditNodeDialog;
+import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
+import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAMessageWindow;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 
@@ -109,6 +116,37 @@ public class JOPAUI {
 			}
 
 			{
+				Menu projectMenu = new Menu("project");
+
+				MenuItem editProjectMenuItem = new MenuItem("edit");
+				MenuItem verifyProjectMenuItem = new MenuItem("verify");
+
+				editProjectMenuItem.addActionListener(e -> editProject());
+				verifyProjectMenuItem.addActionListener(e -> verifyProject());
+
+				projectMenu.add(editProjectMenuItem);
+				projectMenu.add(verifyProjectMenuItem);
+
+				menuBar.add(projectMenu);
+			}
+
+			{
+				Menu functionMenu = new Menu("function");
+
+				MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
+				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
+
+				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
+				createNewFunctionMenuItem.addActionListener(e -> createNewFunction());
+				validateFunctionMenuItem.addActionListener(e -> validateFunction());
+
+				functionMenu.add(createNewFunctionMenuItem);
+				functionMenu.add(validateFunctionMenuItem);
+
+				menuBar.add(functionMenu);
+			}
+
+			{
 				Menu nodeMenu = new Menu("node");
 
 				MenuItem createNewNodeMenuItem = new MenuItem("create new node");
@@ -121,22 +159,6 @@ public class JOPAUI {
 				nodeMenu.add(validateNodeMenuItem);
 
 				menuBar.add(nodeMenu);
-			}
-
-			{
-				Menu functionMenu = new Menu("function");
-
-				MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
-				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
-
-				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
-				createNewFunctionMenuItem.addActionListener(e -> createNewFunction(null));
-				validateFunctionMenuItem.addActionListener(e -> validateFunction());
-
-				functionMenu.add(createNewFunctionMenuItem);
-				functionMenu.add(validateFunctionMenuItem);
-
-				menuBar.add(functionMenu);
 			}
 
 			{
@@ -348,7 +370,14 @@ public class JOPAUI {
 	}
 
 	public synchronized void editNode(JOPANode node) {
-		new JOPAEditNodeDialog(window, node);
+		Class<?> type = node.getClass();
+		if (type.equals(JOPAStatementNode.class)) {
+			new JOPAEditStatementNodeDialog(window, (JOPAStatementNode) node);
+		} else if (type.equals(JOPABranchNode.class)) {
+			new JOPAEditBranchNodeGialog(window, (JOPABranchNode) node);
+		} else if (type.equals(JOPALoopNode.class)) {
+			new JOPAEditLoopNodeDialog(window, (JOPALoopNode) node);
+		}
 	}
 
 	public synchronized void showShader(String shaderCode) {
