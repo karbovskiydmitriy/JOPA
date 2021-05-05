@@ -1,19 +1,7 @@
 package jopa.util;
 
-import static jopa.util.JOPACast.safeCast;
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform2fv;
-import static org.lwjgl.opengl.GL20.glUniform2iv;
-import static org.lwjgl.opengl.GL20.glUniform3fv;
-import static org.lwjgl.opengl.GL20.glUniform3iv;
-import static org.lwjgl.opengl.GL20.glUniform4fv;
-import static org.lwjgl.opengl.GL20.glUniform4iv;
-import static org.lwjgl.opengl.GL30.glUniform1ui;
-import static org.lwjgl.opengl.GL40.glUniform1d;
+import static jopa.io.JOPALoader.loadStandardShader;
+import static org.lwjgl.opengl.GL43.*;
 
 import java.util.Collection;
 
@@ -21,6 +9,19 @@ import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 
 public final class JOPAOGLUtil {
+
+	@SuppressWarnings("unchecked")
+	public static <T> T safeCast(Object object, Class<T> type) {
+		if (object == null) {
+			return (T) null;
+		} else {
+			try {
+				return (T) object;
+			} catch (Exception e) {
+				return (T) null;
+			}
+		}
+	}
 
 	public static void passUniforms(Collection<JOPAResource> resources) {
 		if (resources != null && resources.size() > 0) {
@@ -149,5 +150,48 @@ public final class JOPAOGLUtil {
 			}
 		}
 	}
-	
+
+	public static int loadShader(int shaderType, String fileName) {
+		int shader = glCreateShader(shaderType);
+		glShaderSource(shader, loadStandardShader(fileName));
+		glCompileShader(shader);
+		if (glGetShaderi(shaderType, GL_COMPILE_STATUS) == 1) {
+			glDeleteShader(shader);
+
+			return 0;
+		}
+
+		return shader;
+	}
+
+	public static int loadFragmentShader(String fileName) {
+		return loadShader(GL_FRAGMENT_SHADER, fileName);
+	}
+
+	public static int loadComputeShader(String fileName) {
+		return loadShader(GL_COMPUTE_SHADER, fileName);
+	}
+
+	public static int createProgram(int... shaders) {
+		int program = glCreateProgram();
+		for (int shader : shaders) {
+			if (shader > 0) {
+				if (glGetShaderi(shader, GL_COMPILE_STATUS) == 1) {
+					glAttachShader(program, shader);
+				}
+			}
+		}
+		glLinkProgram(program);
+		if (glGetProgrami(program, GL_LINK_STATUS) == 0) {
+			for (int shader : shaders) {
+				glDetachShader(program, shader);
+			}
+			glDeleteProgram(program);
+
+			return 0;
+		}
+
+		return program;
+	}
+
 }

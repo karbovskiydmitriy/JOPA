@@ -45,6 +45,8 @@ import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import static jopa.util.JOPAOGLUtil.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class JOPASimulationScript {
 
 	private ArrayList<String> commands;
 	private Iterator<String> nextCommand;
-	private JOPASimulationType simulationType;
+	private JOPASimulationType executionType;
 	private ArrayList<JOPAResource> resources;
 
 	long window;
@@ -76,17 +78,22 @@ public class JOPASimulationScript {
 			throw new JOPAPlaygroundException("simulation type is NONE");
 		}
 
+		this.executionType = simulationType;
 		this.commands = new ArrayList<String>();
-		this.simulationType = simulationType;
 		this.resources = new ArrayList<JOPAResource>();
 	}
 
-	public synchronized void setSimulation(Collection<String> commands, JOPAResource... resources)
-			throws JOPAPlaygroundException {
+	public void setupScript(Collection<String> commands, JOPAResource... resources) throws JOPAPlaygroundException {
+		if (executionType != JOPASimulationType.CUSTOM) {
+			throw new JOPAPlaygroundException("custom setup is only possible in custom script");
+		}
 		if (commands == null) {
 			throw new JOPAPlaygroundException("commands is null");
 		}
 
+		this.commands.clear();
+		this.commands.addAll(commands);
+		this.resources.clear();
 		this.resources.addAll(Arrays.asList(resources));
 	}
 
@@ -95,7 +102,7 @@ public class JOPASimulationScript {
 	}
 
 	public boolean execute() {
-		switch (simulationType) {
+		switch (executionType) {
 		case NONE:
 			return false;
 		case FRAGMENT:
@@ -192,17 +199,10 @@ public class JOPASimulationScript {
 
 		glViewport(0, 0, windowWidht[0], windowHeight[0]);
 
-		int defaultProgram = glCreateProgram();
-		int defaultFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(defaultFragmentShader, loadStandardShader("fragment.glsl"));
-		glCompileShader(defaultFragmentShader);
-		// System.out.println(glGetShaderInfoLog(defaultFragmentShader));
-		glAttachShader(defaultProgram, defaultFragmentShader);
-		glLinkProgram(defaultProgram);
+		int defaultProgram = createProgram(loadFragmentShader("fragment.glsl"));
 		glUseProgram(defaultProgram);
 
 		JOPAResource screenSize = new JOPAResource();
-		// screenSize.id = 1;
 		screenSize.name = "screenSize";
 		screenSize.type = JOPAResourceType.GLSL_TYPE;
 		screenSize.glslType = JOPAGLSLType.JOPA_INT_VECTOR_2;
@@ -264,15 +264,10 @@ public class JOPASimulationScript {
 		glBindTexture(GL_TEXTURE_2D, image);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, windowWidht[0], windowHeight[0]);
 
-		int defaultProgram = glCreateProgram();
-		int defaultComputeShader = glCreateShader(GL_COMPUTE_SHADER);
-		glShaderSource(defaultComputeShader, loadStandardShader("compute.glsl"));
-		glCompileShader(defaultComputeShader);
-		glAttachShader(defaultProgram, defaultComputeShader);
-		glLinkProgram(defaultProgram);
+		int defaultProgram = createProgram(loadComputeShader("compute.glsl"));
 		glUseProgram(defaultProgram);
 		glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
-		glDispatchCompute(windowWidht[0] / 2, windowHeight[0] / 2, defaultComputeShader);
+		glDispatchCompute(windowWidht[0] / 2, windowHeight[0] / 2, 1);
 	}
 
 	private boolean defaultComputeShaderTick() {
