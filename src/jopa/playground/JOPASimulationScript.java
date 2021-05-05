@@ -64,7 +64,6 @@ public class JOPASimulationScript {
 	private JOPASimulationType simulationType;
 	private ArrayList<JOPAResource> resources;
 
-	// temp variables for simulation purposes
 	long window;
 	int state = 0;
 	int image;
@@ -77,18 +76,18 @@ public class JOPASimulationScript {
 			throw new JOPAPlaygroundException("simulation type is NONE");
 		}
 
+		this.commands = new ArrayList<String>();
 		this.simulationType = simulationType;
 		this.resources = new ArrayList<JOPAResource>();
 	}
 
-	public JOPASimulationScript(Collection<String> commands, JOPAResource... resources) throws JOPAPlaygroundException {
+	public synchronized void setSimulation(Collection<String> commands, JOPAResource... resources)
+			throws JOPAPlaygroundException {
 		if (commands == null) {
 			throw new JOPAPlaygroundException("commands is null");
 		}
 
-		this.commands = new ArrayList<String>(commands);
-		this.simulationType = JOPASimulationType.CUSTOM_SIMULATION;
-		this.resources = new ArrayList<JOPAResource>(Arrays.asList(resources));
+		this.resources.addAll(Arrays.asList(resources));
 	}
 
 	public void reset() {
@@ -99,11 +98,11 @@ public class JOPASimulationScript {
 		switch (simulationType) {
 		case NONE:
 			return false;
-		case FRAGMENT_SHADER_SIMULATION:
+		case FRAGMENT:
 			return executeDefaultFragmentShaderSimulation();
-		case COMPUTE_SHADER_SIMULATION:
+		case COMPUTE:
 			return executeDefaultComputeShaderSimulation();
-		case CUSTOM_SIMULATION:
+		case CUSTOM:
 			if (nextCommand == null) {
 				reset();
 

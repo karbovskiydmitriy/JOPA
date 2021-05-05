@@ -42,6 +42,7 @@ import javax.swing.event.ChangeListener;
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
 import jopa.nodes.JOPANode;
+import jopa.playground.JOPASimulationType;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditNodeDialog;
@@ -156,17 +157,32 @@ public class JOPAUI {
 			{
 				Menu playgroundMenu = new Menu("playground");
 
-				MenuItem createPlaygroundMenuItem = new MenuItem("create playground");
 				MenuItem startPlaygroundMenuItem = new MenuItem("start playground");
 				MenuItem stopPlaygroundMenuItem = new MenuItem("stop playground");
 				MenuItem closePlaygroundMenuItem = new MenuItem("close playground");
 
-				createPlaygroundMenuItem.addActionListener(e -> createPlayground());
 				startPlaygroundMenuItem.addActionListener(e -> startPlayground());
 				stopPlaygroundMenuItem.addActionListener(e -> stopPlayground());
 				closePlaygroundMenuItem.addActionListener(e -> closePlayground());
 
-				playgroundMenu.add(createPlaygroundMenuItem);
+				{
+					Menu createPlaygroundMenuItem = new Menu("create playground");
+
+					MenuItem defaultFragmentShaderMenuItem = new MenuItem("default fragment shader");
+					MenuItem defaultComputeShaderMenuItem = new MenuItem("default compute shader");
+					MenuItem customShaderMenuItem = new MenuItem("custom shader");
+
+					defaultFragmentShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.FRAGMENT));
+					defaultComputeShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.COMPUTE));
+					customShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.CUSTOM));
+
+					createPlaygroundMenuItem.add(defaultFragmentShaderMenuItem);
+					createPlaygroundMenuItem.add(defaultComputeShaderMenuItem);
+					createPlaygroundMenuItem.add(customShaderMenuItem);
+
+					playgroundMenu.add(createPlaygroundMenuItem);
+				}
+
 				playgroundMenu.add(startPlaygroundMenuItem);
 				playgroundMenu.add(stopPlaygroundMenuItem);
 				playgroundMenu.add(closePlaygroundMenuItem);
@@ -326,7 +342,7 @@ public class JOPAUI {
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
 		new JOPAEditFunctionDialog(window, function);
 	}
-	
+
 	public synchronized void editConstants(JOPAFunction function) {
 		new JOPAEditConstantsDialog(window, function);
 	}
@@ -334,7 +350,7 @@ public class JOPAUI {
 	public synchronized void editNode(JOPANode node) {
 		new JOPAEditNodeDialog(window, node);
 	}
-	
+
 	public synchronized void showShader(String shaderCode) {
 		new JOPAShowShaderDialog(window, shaderCode);
 	}

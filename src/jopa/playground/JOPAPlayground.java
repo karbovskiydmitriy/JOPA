@@ -8,12 +8,14 @@ import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
 
+	private JOPASimulationType simulationType;
 	private JOPASimulationScript script;
 	private JOPASimulationThread simulationThread;
 
 	private ArrayList<JOPAResource> resources;
 
-	public JOPAPlayground() {
+	public JOPAPlayground(JOPASimulationType type) {
+		this.simulationType = type;
 		resources = new ArrayList<JOPAResource>();
 		System.out.println("Playground created");
 		// TODO
@@ -26,7 +28,7 @@ public class JOPAPlayground implements Closeable {
 	public synchronized void start() {
 		if (simulationThread == null) {
 			try {
-				JOPASimulationScript script = new JOPASimulationScript(JOPASimulationType.FRAGMENT_SHADER_SIMULATION);
+				JOPASimulationScript script = new JOPASimulationScript(simulationType);
 				setupScript(script);
 			} catch (JOPAPlaygroundException e) {
 				e.printStackTrace();

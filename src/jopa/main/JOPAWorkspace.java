@@ -11,6 +11,7 @@ import jopa.nodes.JOPAEndControlNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
+import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAType;
@@ -58,9 +59,9 @@ public class JOPAWorkspace {
 		}
 	}
 
-	public synchronized void createPlayground() {
+	public synchronized void createPlayground(JOPASimulationType type) {
 		if (playground == null) {
-			playground = new JOPAPlayground();
+			playground = new JOPAPlayground(type);
 		}
 	}
 

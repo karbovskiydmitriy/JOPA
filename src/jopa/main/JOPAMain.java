@@ -2,6 +2,7 @@ package jopa.main;
 
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.playground.JOPASimulationType;
 import jopa.ui.JOPAUI;
 
 public class JOPAMain {
@@ -162,10 +163,10 @@ public class JOPAMain {
 		}
 	}
 
-	public static void createPlayground() {
+	public static void createPlayground(JOPASimulationType type) {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				currentWorkspace.createPlayground();
+				currentWorkspace.createPlayground(type);
 			} else {
 				workspaceNotCreated();
 			}
