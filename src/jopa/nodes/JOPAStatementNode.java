@@ -19,11 +19,29 @@ public class JOPAStatementNode extends JOPANode {
 	public JOPAStatementNode(int x, int y, String header, String template) {
 		super(x, y, header, template);
 	}
-	
+
+	public JOPAStatementNode(Rectangle rect, String template) {
+		super(rect, "STATEMENT", template);
+	}
+
+	public JOPAStatementNode(int x, int y, String template) {
+		super(x, y, "STATEMENT", template);
+	}
+
 	@Override
 	protected void init() {
 		incomingControlFlow = new JOPAControlPort(this, "in", false);
 		outcomingControlFlow = new JOPAControlPort(this, "out", true);
+	}
+
+	@Override
+	public boolean remove() {
+		inputs.forEach(port -> port.destroyAllConnections());
+		outputs.forEach(port -> port.destroyAllConnections());
+		incomingControlFlow.destroyAllConnections();
+		outcomingControlFlow.destroyAllConnections();
+
+		return true;
 	}
 
 	@Override

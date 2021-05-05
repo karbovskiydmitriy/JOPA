@@ -25,6 +25,11 @@ public class JOPAEndControlNode extends JOPANode {
 	}
 
 	@Override
+	public boolean remove() {
+		return false;
+	}
+
+	@Override
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		super.draw(g, selectedNode, selectedPort);
 		flowEnd.draw(g, selectedPort);

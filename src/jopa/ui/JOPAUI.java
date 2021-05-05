@@ -43,6 +43,7 @@ import jopa.main.JOPAFunction;
 import jopa.nodes.JOPANode;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditNodeDialog;
+import jopa.ui.dialogs.JOPAShowShaderDialog;
 
 public class JOPAUI {
 
@@ -325,6 +326,10 @@ public class JOPAUI {
 
 	public synchronized void editNode(JOPANode node) {
 		new JOPAEditNodeDialog(window, node);
+	}
+	
+	public synchronized void showShader(String shaderCode) {
+		new JOPAShowShaderDialog(window, shaderCode);
 	}
 
 	public synchronized void showMessage(String text) {

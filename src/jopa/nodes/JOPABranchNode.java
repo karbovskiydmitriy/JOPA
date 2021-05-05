@@ -15,6 +15,13 @@ public class JOPABranchNode extends JOPANode {
 	protected void init() {
 		// TODO	
 	}
+	
+	@Override
+	public boolean remove() {
+		// TODO
+		
+		return false;
+	}
 
 	@Override
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {

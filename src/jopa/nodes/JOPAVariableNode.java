@@ -16,6 +16,12 @@ public class JOPAVariableNode extends JOPANode {
 
 	@Override
 	protected void init() {
+		// TODO
+	}
+
+	@Override
+	public boolean remove() {
+		return false;
 	}
 
 	@Override

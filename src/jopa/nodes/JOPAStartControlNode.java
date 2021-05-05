@@ -23,6 +23,11 @@ public class JOPAStartControlNode extends JOPANode {
 	protected void init() {
 		this.flowStart = new JOPAControlPort(this, "start", true);
 	}
+	
+	@Override
+	public boolean remove() {
+		return false;
+	}
 
 	@Override
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {

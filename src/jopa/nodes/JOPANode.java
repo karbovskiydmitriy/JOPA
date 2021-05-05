@@ -59,6 +59,7 @@ public abstract class JOPANode {
 	}
 
 	protected abstract void init();
+	public abstract boolean remove();
 
 	private void assignTemplate(String formulaName) {
 		JOPATemplate template = JOPATemplate.getFormulaByName(formulaName);

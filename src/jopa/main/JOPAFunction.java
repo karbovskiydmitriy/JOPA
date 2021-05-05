@@ -20,11 +20,9 @@ public class JOPAFunction {
 
 	public JOPAFunction(String name) {
 		this.name = name;
-		this.startNode = new JOPAStartControlNode(50, 50, "TEST_INPUT");
-		this.endNode = new JOPAEndControlNode(650, 50, "TEST_OUTPUT");
-		this.statements = new ArrayList<JOPANode>(
-				Arrays.asList(new JOPAStatementNode(350, 50, "STATEMENT_0", "TEST_STATEMENT"),
-						new JOPAStatementNode(350, 200, "STATEMENT_1", "TEST_STATEMENT")));
+		this.startNode = new JOPAStartControlNode(50, 50, "FRAGMENT_INPUT");
+		this.endNode = new JOPAEndControlNode(650, 50, "FRAGMENT_OUTPUT");
+		this.statements = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
@@ -73,12 +71,16 @@ public class JOPAFunction {
 
 		return null;
 	}
-	
+
 	public boolean removeNode(JOPANode node) {
-		if (statements.remove(node)) {
-			return true;
+		if (node.remove()) {
+			if (statements.remove(node)) {
+				JOPAMain.ui.repaint();
+
+				return true;
+			}
 		}
-		
+
 		return false;
 	}
 

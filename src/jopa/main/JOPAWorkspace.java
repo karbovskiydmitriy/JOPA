@@ -26,6 +26,7 @@ public class JOPAWorkspace {
 	private ArrayList<JOPAType> types;
 	// private ArrayList<JOPATemplate> globals;
 	private JOPAPlayground playground;
+	private String generatedShader;
 
 	public JOPAFunction currentFunction;
 
@@ -241,6 +242,14 @@ public class JOPAWorkspace {
 		}
 
 		return true;
+	}
+
+	public synchronized void showGeneratedShader() {
+		if (generatedShader != null) {
+			JOPAMain.ui.showShader(generatedShader);
+		} else {
+			JOPAMain.ui.showMessage("Shader not generated!");
+		}
 	}
 
 	public static synchronized JOPAWorkspace loadFromFile(String fileName) {

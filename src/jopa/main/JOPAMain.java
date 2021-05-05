@@ -152,7 +152,7 @@ public class JOPAMain {
 	public static void showShaderCode() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				ui.notImplemented();
+				currentWorkspace.showGeneratedShader();
 			} else {
 				workspaceNotCreated();
 			}

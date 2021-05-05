@@ -1,43 +1,59 @@
 {
-	"TEST_FOOBAR": {
-		"inputs": [
-			"input_0",
-			"input_1",
-			"input_2"
-		],
-		"outputs": [
-			"output_0"
-		],
-		"template": []
-	},
-	"TEST_INPUT": {
-		"inputs": [],
-		"outputs": [
-			"output_0",
-			"output_1"
-		],
-		"template": []
-	},
-	"TEST_OUTPUT": {
-		"inputs": [
-			"input_0"
-		],
-		"outputs": [],
-		"template": []
-	},
-	"TEST_STATEMENT": {
-		"inputs": [
-			"input_0",
-			"input_1"
-		],
-		"outputs": [
-			"output_0"
-		],
-		"template": []
-	},
-	"TEST_EMPTY": {
-		"inputs": [],
-		"outputs": [],
-		"template": []
+	"nodes": {
+		"TEST_INPUT": {
+			"inputs": [],
+			"outputs": [
+				"output_0",
+				"output_1"
+			],
+			"template": null
+		},
+		"TEST_OUTPUT": {
+			"inputs": [
+				"input_0"
+			],
+			"outputs": [],
+			"template": null
+		},
+		"TEST_STATEMENT": {
+			"inputs": [
+				"input_0",
+				"input_1"
+			],
+			"outputs": [
+				"output_0"
+			],
+			"template": null
+		},
+		"TEST_EMPTY": {
+			"inputs": [],
+			"outputs": [],
+			"template": null
+		},
+		"FRAGMENT_INPUT": {
+			"inputs": [],
+			"outputs": [
+				"time",
+				"windowSize",
+				"gl_FragCoord"
+			],
+			"template": null
+		},
+		"FRAGMENT_OUTPUT": {
+			"inputs": [
+				"gl_FragColor"
+			],
+			"outputs": [],
+			"template": null
+		},
+		"FRAGMENT_TEST": {
+			"inputs": [
+				"size"
+			],
+			"outputs": [
+				"color"
+			],
+			"template": null
+		}
 	}
 }

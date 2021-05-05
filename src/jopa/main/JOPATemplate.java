@@ -98,8 +98,10 @@ public class JOPATemplate {
 			String standardTemplates = loadStandardTemplate("standard.json");
 			JsonElement templatesElement = new JsonParser().parse(standardTemplates);
 			JsonObject templatesObject = templatesElement.getAsJsonObject();
-			for (String name : templatesObject.keySet()) {
-				JOPATemplate foobar = getFormulaFromTemplate(templatesObject, name);
+			JsonElement nodesElement = templatesObject.get("nodes");
+			JsonObject nodesObject = nodesElement.getAsJsonObject();
+			for (String name : nodesObject.keySet()) {
+				JOPATemplate foobar = getFormulaFromTemplate(nodesObject, name);
 				if (foobar != null) {
 					standardFormulas.add(foobar);
 				}
