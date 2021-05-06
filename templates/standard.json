@@ -34,7 +34,7 @@
 			"outputs": [
 				"vec4:color"
 			],
-			"template": null
+			"template": "vec2 uv = vec2(coord.xy) / vec2(size);vec4 color = vec4(uv, 0.0, 1.0);"
 		}
 	}
 }

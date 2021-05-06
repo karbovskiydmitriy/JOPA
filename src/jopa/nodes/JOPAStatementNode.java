@@ -47,8 +47,12 @@ public class JOPAStatementNode extends JOPANode {
 	}
 
 	@Override
-	protected boolean flowInconsistency() {
-		return incomingControlFlow.connections.size() == 0 || outcomingControlFlow.connections.size() != 1;
+	public String generateCode() {
+		String connectionsCode = generateConnectionsCode();
+		String templateCode = template.template;
+		String chainCode = outcomingControlFlow.connections.get(0).node.generateCode();
+
+		return connectionsCode + templateCode + chainCode;
 	}
 
 	@Override
@@ -59,6 +63,18 @@ public class JOPAStatementNode extends JOPANode {
 		outcomingControlFlow.destroyAllConnections();
 
 		return true;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		if (incomingControlFlow.connections.size() == 0) {
+			return true;
+		}
+		if (outcomingControlFlow.connections.size() != 1) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override

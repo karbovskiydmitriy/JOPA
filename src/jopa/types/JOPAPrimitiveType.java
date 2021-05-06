@@ -8,4 +8,11 @@ public class JOPAPrimitiveType extends JOPAType {
 		super(name);
 	}
 
+	@Override
+	public String generateCode() {
+		// TODO
+
+		return null;
+	}
+
 }

@@ -7,15 +7,15 @@ import java.awt.Rectangle;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAStartControlNode extends JOPANode {
+public class JOPAStartNode extends JOPANode {
 
 	public JOPAControlPort flowStart;
 
-	public JOPAStartControlNode(Rectangle rect, String template) {
+	public JOPAStartNode(Rectangle rect, String template) {
 		super(rect, "Start", template);
 	}
 
-	public JOPAStartControlNode(int x, int y, String template) {
+	public JOPAStartNode(int x, int y, String template) {
 		super(x, y, "Start", template);
 	}
 
@@ -34,13 +34,20 @@ public class JOPAStartControlNode extends JOPANode {
 	}
 
 	@Override
-	protected boolean flowInconsistency() {
-		return flowStart.connections.size() != 1;
+	public String generateCode() {
+		String chainCode = flowStart.connections.get(0).node.generateCode();
+
+		return chainCode;
 	}
 
 	@Override
 	public boolean remove() {
 		return false;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return flowStart.connections.size() != 1;
 	}
 
 	@Override

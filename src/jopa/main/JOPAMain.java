@@ -229,16 +229,16 @@ public class JOPAMain {
 		}
 	}
 
+	private static void workspaceNotCreated() {
+		ui.showMessage("Project not created!");
+	}
+
 	public static void about() {
 		ui.showMessage("JOPA");
 	}
 
 	public static void manual() {
 		ui.showMessage("MANUAL");
-	}
-
-	private static void workspaceNotCreated() {
-		ui.showMessage("Project not created!");
 	}
 
 }

@@ -1,5 +1,9 @@
 package jopa.main;
 
+import static jopa.main.JOPAFunction.NEW_LINE;
+import static jopa.main.JOPAFunction.TWO_LINES;
+import static jopa.util.JOPATypeUtil.getNameForType;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -7,13 +11,14 @@ import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
 import jopa.nodes.JOPAConstantsNode;
-import jopa.nodes.JOPAEndControlNode;
+import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
+import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
 
@@ -26,8 +31,8 @@ public class JOPAWorkspace {
 	private Point cursorPosition;
 	private String name;
 	private ArrayList<JOPAFunction> functions;
-	// private JOPAFunction mainFunction;
-	// private ArrayList<JOPAType> types;
+	private JOPAFunction mainFunction;
+	private ArrayList<JOPAType> types;
 	private JOPAPlayground playground;
 	private String generatedShader;
 
@@ -36,14 +41,14 @@ public class JOPAWorkspace {
 	public JOPAWorkspace(String name) {
 		this.name = name;
 		this.functions = new ArrayList<JOPAFunction>();
-		// this.types = new ArrayList<JOPAType>();
+		this.types = new ArrayList<JOPAType>();
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
 		JOPAFunction function;
 		if (functions.size() == 0) {
 			function = new JOPAFunction("main");
-			// mainFunction = function;
+			mainFunction = function;
 		} else {
 			if (name == null) {
 				name = "function_" + functions.size();
@@ -178,7 +183,7 @@ public class JOPAWorkspace {
 							JOPAMain.ui.editConstants(currentFunction);
 						} else if (nodeType.equals(JOPAStatementNode.class)) {
 							JOPAMain.ui.editFunctionPrototype(currentFunction);
-						} else if (nodeType.equals(JOPAEndControlNode.class)) {
+						} else if (nodeType.equals(JOPAEndNode.class)) {
 							JOPAMain.ui.editFunctionPrototype(currentFunction);
 						}
 					}
@@ -211,7 +216,6 @@ public class JOPAWorkspace {
 				JOPAMain.ui.editNode(selectedNode);
 			}
 			break;
-
 		case 'E':
 			JOPAMain.settings.highlightIncorrectNodes = !JOPAMain.settings.highlightIncorrectNodes;
 			JOPAMain.ui.repaint();
@@ -264,20 +268,43 @@ public class JOPAWorkspace {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	public synchronized void generateShader() {
 		if (verifyFunctions()) {
-			String shaderCode = "#version 130\n\n";
-			// TODO types
-			// TODO constants
-			for (JOPAFunction function : functions) {
-				shaderCode += function.getPrototype() + ";";
+			String shaderCode = "#version 130";
+			shaderCode += TWO_LINES;
+			if (types.size() > 0) {
+				for (JOPAType type : types) {
+					shaderCode += type.generateCode();
+				}
+				shaderCode += TWO_LINES;
+			}
+			if (mainFunction.constantsNode.outputs.size() > 0) {
+				for (JOPADataPort constant : mainFunction.constantsNode.outputs) {
+					shaderCode += "const " + getNameForType(constant.dataType) + " " + constant.name + " = ;\n"; // TODO
+				}
+				shaderCode += TWO_LINES;
+			}
+			if (mainFunction.startNode.outputs.size() > 0) {
+				for (JOPADataPort variable : mainFunction.startNode.outputs) {
+					String modifier = "uniform ";
+					shaderCode += modifier + getNameForType(variable.dataType) + " " + variable.name + ";\n";
+				}
+				shaderCode += NEW_LINE;
+			}
+			if (functions.size() > 1) {
+				for (JOPAFunction function : functions) {
+					if (function != mainFunction) {
+						shaderCode += function.getPrototype() + ";";
+					}
+				}
+				shaderCode += TWO_LINES;
 			}
 			for (JOPAFunction function : functions) {
-				shaderCode += "\n\n" + function.generateCode();
+				shaderCode += function.generateCode();
 			}
 			this.generatedShader = shaderCode;
 		} else {

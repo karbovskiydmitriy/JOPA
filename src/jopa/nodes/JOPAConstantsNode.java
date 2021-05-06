@@ -21,6 +21,13 @@ public class JOPAConstantsNode extends JOPANode {
 	public boolean check() {
 		return true;
 	}
+	
+	@Override
+	public String generateCode() {
+		// TODO
+		
+		return null;
+	}
 
 	@Override
 	public boolean remove() {

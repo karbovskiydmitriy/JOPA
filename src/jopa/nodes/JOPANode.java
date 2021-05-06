@@ -3,6 +3,7 @@ package jopa.nodes;
 import static java.awt.Color.BLACK;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
+import static jopa.util.JOPATypeUtil.getNameForType;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 
 import java.awt.Graphics2D;
@@ -63,10 +64,24 @@ public abstract class JOPANode {
 
 	public abstract boolean check();
 
+	public abstract String generateCode();
+
 	public abstract boolean remove();
 
 	protected boolean flowInconsistency() {
 		return false;
+	}
+
+	protected String generateConnectionsCode() {
+		String text = "";
+		for (JOPADataPort input : inputs) {
+			String varType = getNameForType(input.dataType);
+			String varName = input.name;
+			String valueName = input.connections.get(0).name;
+			text += varType + " " + varName + " = " + valueName + ";";
+		}
+
+		return text;
 	}
 
 	private void assignTemplate(String formulaName) {

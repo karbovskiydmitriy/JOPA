@@ -18,10 +18,15 @@ public class JOPAVariableNode extends JOPANode {
 	protected void init() {
 		// TODO
 	}
-	
+
 	@Override
 	public boolean check() {
 		return true;
+	}
+
+	@Override
+	public String generateCode() {
+		return variable.toString();
 	}
 
 	@Override

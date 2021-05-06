@@ -1,27 +1,33 @@
 package jopa.main;
 
+import static jopa.util.JOPATypeUtil.getNameForType;
+
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import jopa.nodes.JOPAConstantsNode;
-import jopa.nodes.JOPAEndControlNode;
+import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPANode;
-import jopa.nodes.JOPAStartControlNode;
+import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
-import static jopa.util.JOPATypeUtil.*;
-
 public class JOPAFunction {
+
+	public static final String TAB = "\t";
+	public static final String NEW_LINE = "\n";
+	public static final String TWO_LINES = "\n\n";
+	public static final String BLOCK_START = "\n{\n";
+	public static final String BLOCK_END = "}\n";
 
 	public String name;
 	public JOPAGLSLType returnType;
 	public ArrayList<JOPAVariable> args;
-	public JOPAStartControlNode startNode;
-	public JOPAEndControlNode endNode;
+	public JOPAStartNode startNode;
+	public JOPAEndNode endNode;
 	public JOPAConstantsNode constantsNode;
 	public ArrayList<JOPANode> statementNodes;
 
@@ -29,8 +35,8 @@ public class JOPAFunction {
 		this.name = name;
 		this.returnType = JOPAGLSLType.JOPA_VOID;
 		this.args = new ArrayList<JOPAVariable>();
-		this.startNode = new JOPAStartControlNode(50, 50, "FRAGMENT_INPUT");
-		this.endNode = new JOPAEndControlNode(650, 50, "FRAGMENT_OUTPUT");
+		this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
+		this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
 		this.constantsNode = new JOPAConstantsNode(50, 200, "CONSTANTS");
 		this.statementNodes = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
 		init();
@@ -149,11 +155,29 @@ public class JOPAFunction {
 			return null;
 		}
 
-		String code = getPrototype() + "\n{\n";
-		code += "\t// TODO CODE";
-		code += "\n}";
+		String code = getPrototype();
+		code += BLOCK_START;
+		code += format(startNode.generateCode());
+		code += BLOCK_END;
 
 		return code;
+	}
+
+	private static String getTabs(int count) {
+		char[] tabs = new char[count];
+		Arrays.fill(tabs, '\t');
+
+		return new String(tabs);
+	}
+
+	private static String format(String text) {
+		String[] lines = text.replaceAll(";", ";" + NEW_LINE).toString().split(NEW_LINE);
+		String code = "";
+		for (String line : lines) {
+			code += getTabs(1) + line + NEW_LINE;
+		}
+
+		return code.toString();
 	}
 
 }

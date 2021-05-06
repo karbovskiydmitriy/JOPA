@@ -31,6 +31,13 @@ public class JOPABranchNode extends JOPANode {
 
 		return true;
 	}
+	
+	@Override
+	public String generateCode() {
+		// TODO
+		
+		return null;
+	}
 
 	@Override
 	protected boolean flowInconsistency() {

@@ -7,15 +7,15 @@ import java.awt.Rectangle;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAEndControlNode extends JOPANode {
+public class JOPAEndNode extends JOPANode {
 
 	public JOPAControlPort flowEnd;
 
-	public JOPAEndControlNode(Rectangle rect, String template) {
+	public JOPAEndNode(Rectangle rect, String template) {
 		super(rect, "End", template);
 	}
 
-	public JOPAEndControlNode(int x, int y, String template) {
+	public JOPAEndNode(int x, int y, String template) {
 		super(x, y, "End", template);
 	}
 
@@ -40,13 +40,18 @@ public class JOPAEndControlNode extends JOPANode {
 	}
 
 	@Override
-	protected boolean flowInconsistency() {
-		return flowEnd.connections.size() != 1;
+	public String generateCode() {
+		return generateConnectionsCode();
 	}
 
 	@Override
 	public boolean remove() {
 		return false;
+	}
+
+	@Override
+	protected boolean flowInconsistency() {
+		return flowEnd.connections.size() != 1;
 	}
 
 	@Override

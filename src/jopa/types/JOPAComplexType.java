@@ -8,4 +8,11 @@ public class JOPAComplexType extends JOPAType {
 		super(name);
 	}
 
+	@Override
+	public String generateCode() {
+		// TODO
+
+		return null;
+	}
+
 }
