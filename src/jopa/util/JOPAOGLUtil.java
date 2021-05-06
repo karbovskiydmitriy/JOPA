@@ -1,12 +1,90 @@
 package jopa.util;
 
 import static jopa.io.JOPALoader.loadStandardShader;
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glDetachShader;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniform2fv;
+import static org.lwjgl.opengl.GL20.glUniform2iv;
+import static org.lwjgl.opengl.GL20.glUniform3fv;
+import static org.lwjgl.opengl.GL20.glUniform3iv;
+import static org.lwjgl.opengl.GL20.glUniform4fv;
+import static org.lwjgl.opengl.GL20.glUniform4iv;
+import static org.lwjgl.opengl.GL30.GL_R16I;
+import static org.lwjgl.opengl.GL30.GL_R16UI;
+import static org.lwjgl.opengl.GL30.GL_R32F;
+import static org.lwjgl.opengl.GL30.GL_R32I;
+import static org.lwjgl.opengl.GL30.GL_R32UI;
+import static org.lwjgl.opengl.GL30.GL_R8I;
+import static org.lwjgl.opengl.GL30.GL_R8UI;
+import static org.lwjgl.opengl.GL30.GL_RG16I;
+import static org.lwjgl.opengl.GL30.GL_RG16UI;
+import static org.lwjgl.opengl.GL30.GL_RG32F;
+import static org.lwjgl.opengl.GL30.GL_RG32I;
+import static org.lwjgl.opengl.GL30.GL_RG32UI;
+import static org.lwjgl.opengl.GL30.GL_RG8I;
+import static org.lwjgl.opengl.GL30.GL_RG8UI;
+import static org.lwjgl.opengl.GL30.GL_RGB16I;
+import static org.lwjgl.opengl.GL30.GL_RGB16UI;
+import static org.lwjgl.opengl.GL30.GL_RGB32F;
+import static org.lwjgl.opengl.GL30.GL_RGB32I;
+import static org.lwjgl.opengl.GL30.GL_RGB32UI;
+import static org.lwjgl.opengl.GL30.GL_RGB8I;
+import static org.lwjgl.opengl.GL30.GL_RGB8UI;
+import static org.lwjgl.opengl.GL30.GL_RGBA16I;
+import static org.lwjgl.opengl.GL30.GL_RGBA16UI;
+import static org.lwjgl.opengl.GL30.GL_RGBA32F;
+import static org.lwjgl.opengl.GL30.GL_RGBA32I;
+import static org.lwjgl.opengl.GL30.GL_RGBA32UI;
+import static org.lwjgl.opengl.GL30.GL_RGBA8I;
+import static org.lwjgl.opengl.GL30.GL_RGBA8UI;
+import static org.lwjgl.opengl.GL30.glUniform1ui;
+import static org.lwjgl.opengl.GL40.glUniform1d;
+import static org.lwjgl.opengl.GL42.glTexStorage2D;
+import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
+import org.lwjgl.glfw.GLFWVidMode;
 
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
+import jopa.types.JOPAResourceType;
 
 public final class JOPAOGLUtil {
 
@@ -192,6 +270,147 @@ public final class JOPAOGLUtil {
 		}
 
 		return program;
+	}
+
+	public static long createWindow(int width, int height, boolean isFullscreen, boolean resizeable,
+			ArrayList<JOPAResource> resources) {
+		glfwInit();
+
+		long window;
+		String title = "Default fragment shader showcase";
+		if (!isFullscreen) {
+			glfwWindowHint(GLFW_RESIZABLE, resizeable ? GLFW_TRUE : GLFW_FALSE);
+			window = glfwCreateWindow(width, height, title, NULL, NULL);
+		} else {
+			long monitor = glfwGetPrimaryMonitor();
+			GLFWVidMode videoMode = glfwGetVideoMode(monitor);
+			window = glfwCreateWindow(videoMode.width(), videoMode.height(), title, monitor, NULL);
+		}
+		int[] windowWidht = new int[1];
+		int[] windowHeight = new int[1];
+		glfwGetWindowSize(window, windowWidht, windowHeight);
+
+		glfwMakeContextCurrent(window);
+		glfwSwapInterval(1);
+		glfwShowWindow(window);
+
+		createCapabilities();
+
+		glViewport(0, 0, windowWidht[0], windowHeight[0]);
+
+		if (resources != null) {
+			JOPAResource screenSize = new JOPAResource();
+			screenSize.name = "screenSize";
+			screenSize.type = JOPAResourceType.GLSL_TYPE;
+			screenSize.glslType = JOPAGLSLType.JOPA_INT_VECTOR_2;
+			screenSize.value = new int[] { windowWidht[0], windowHeight[0] };
+			resources.add(screenSize);
+		}
+
+		return window;
+	}
+
+	public static int createTexture(int width, int height, int format) {
+		if (width <= 0 || height <= 0 || format <= 0) {
+			return 0;
+		}
+
+		int image = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, image);
+		glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+
+		return image;
+	}
+
+	public static int getTextureFormat(int channels, Class<?> type, boolean signed) {
+		if (type.equals(int.class)) {
+			if (!signed) {
+				switch (channels) {
+				case 1:
+					return GL_R32UI;
+				case 2:
+					return GL_RG32UI;
+				case 3:
+					return GL_RGB32UI;
+				case 4:
+					return GL_RGBA32UI;
+				}
+			} else {
+				switch (channels) {
+				case 1:
+					return GL_R32I;
+				case 2:
+					return GL_RG32I;
+				case 3:
+					return GL_RGB32I;
+				case 4:
+					return GL_RGBA32I;
+				}
+			}
+		} else if (type.equals(float.class)) {
+			if (!signed) {
+				switch (channels) {
+				case 1:
+					return GL_R32F;
+				case 2:
+					return GL_RG32F;
+				case 3:
+					return GL_RGB32F;
+				case 4:
+					return GL_RGBA32F;
+				}
+			}
+		} else if (type.equals(short.class)) {
+			if (!signed) {
+				switch (channels) {
+				case 1:
+					return GL_R16UI;
+				case 2:
+					return GL_RG16UI;
+				case 3:
+					return GL_RGB16UI;
+				case 4:
+					return GL_RGBA16UI;
+				}
+			} else {
+				switch (channels) {
+				case 1:
+					return GL_R16I;
+				case 2:
+					return GL_RG16I;
+				case 3:
+					return GL_RGB16I;
+				case 4:
+					return GL_RGBA16I;
+				}
+			}
+		} else if (type.equals(byte.class)) {
+			if (!signed) {
+				switch (channels) {
+				case 1:
+					return GL_R8UI;
+				case 2:
+					return GL_RG8UI;
+				case 3:
+					return GL_RGB8UI;
+				case 4:
+					return GL_RGBA8UI;
+				}
+			} else {
+				switch (channels) {
+				case 1:
+					return GL_R8I;
+				case 2:
+					return GL_RG8I;
+				case 3:
+					return GL_RGB8I;
+				case 4:
+					return GL_RGBA8I;
+				}
+			}
+		}
+
+		return 0;
 	}
 
 }
