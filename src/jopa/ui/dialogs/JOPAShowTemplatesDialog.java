@@ -11,4 +11,8 @@ public class JOPAShowTemplatesDialog extends JOPADialog {
 		setVisible(true);
 	}
 
+	@Override
+	protected void closed() {
+	}
+
 }

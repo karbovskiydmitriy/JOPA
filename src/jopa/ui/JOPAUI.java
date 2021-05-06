@@ -74,7 +74,7 @@ public class JOPAUI {
 			}
 		});
 
-		window.setBounds(0, 0, 800, 600);
+		window.setSize(800, 600);
 		window.setEnabled(true);
 		window.setVisible(true);
 		window.setLayout(new BorderLayout());
@@ -137,6 +137,7 @@ public class JOPAUI {
 				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
 
 				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
+
 				createNewFunctionMenuItem.addActionListener(e -> createNewFunction());
 				validateFunctionMenuItem.addActionListener(e -> validateFunction());
 
@@ -162,18 +163,20 @@ public class JOPAUI {
 			}
 
 			{
-				Menu generateMenu = new Menu("shader");
+				Menu shaderMenu = new Menu("shader");
 
 				MenuItem generateShaderMenuItem = new MenuItem("generate shader");
 				MenuItem showShaderCodeMenuItem = new MenuItem("show shader code");
 
+				generateShaderMenuItem.setShortcut(new MenuShortcut('G', true));
+
 				generateShaderMenuItem.addActionListener(e -> generateShader());
 				showShaderCodeMenuItem.addActionListener(e -> showShaderCode());
 
-				generateMenu.add(generateShaderMenuItem);
-				generateMenu.add(showShaderCodeMenuItem);
+				shaderMenu.add(generateShaderMenuItem);
+				shaderMenu.add(showShaderCodeMenuItem);
 
-				menuBar.add(generateMenu);
+				menuBar.add(shaderMenu);
 			}
 
 			{
@@ -392,10 +395,6 @@ public class JOPAUI {
 			JOPAMessageWindow messageWindow = new JOPAMessageWindow(new Frame("error"), text, "message");
 			messageWindow.dispose();
 		}
-	}
-
-	public synchronized void notImplemented() {
-		showMessage("TODO"); // TODO
 	}
 
 	public synchronized void repaint() {

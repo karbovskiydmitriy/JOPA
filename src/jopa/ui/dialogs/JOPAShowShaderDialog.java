@@ -18,4 +18,8 @@ public class JOPAShowShaderDialog extends JOPADialog {
 		setVisible(true);
 	}
 
+	@Override
+	protected void closed() {
+	}
+
 }

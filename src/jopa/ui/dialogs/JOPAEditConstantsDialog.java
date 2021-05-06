@@ -12,5 +12,9 @@ public class JOPAEditConstantsDialog extends JOPADialog {
 		super(owner, "Constants");
 		setVisible(true);
 	}
+
+	@Override
+	protected void closed() {
+	}
 	
 }
