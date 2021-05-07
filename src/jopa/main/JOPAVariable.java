@@ -9,7 +9,6 @@ public class JOPAVariable {
 	public String name;
 	public JOPAGLSLType type;
 	public String modifiers;
-	// public Object value;
 
 	public JOPAVariable(String name, JOPAGLSLType type, String modifiers) {
 		this.name = name;

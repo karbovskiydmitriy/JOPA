@@ -9,32 +9,34 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
-import jopa.ports.JOPADataPort;
+import jopa.main.JOPAConstant;
 import jopa.util.JOPATypeUtil;
 
-public class JOPADataPortEditor extends JOPAEditorComponent<JOPADataPort> {
+public class JOPAConstantEditor extends JOPAEditorComponent<JOPAConstant> {
 
-	private static final long serialVersionUID = -1831292319745863889L;
+	private static final long serialVersionUID = -3736353513643802472L;
 
 	private JComboBox<String> typesComboBox;
 	private JTextField nameField;
+	private JTextField valueField;
 
-	public JOPADataPortEditor(JOPADataPort port) {
-		super(port);
-		setBackground(port.isOutput ? Color.GREEN : Color.GRAY);
+	public JOPAConstantEditor(JOPAConstant constant) {
+		super(constant);
 		typesComboBox = new JComboBox<String>(JOPATypeUtil.getAllTypes());
-		typesComboBox.setSelectedItem(getNameForType(object.dataType));
-		nameField = new JTextField(port.name);
+		typesComboBox.setSelectedItem(getNameForType(constant.type));
+		nameField = new JTextField(constant.name);
+		valueField = new JTextField(constant.value);
 		add(typesComboBox);
 		add(nameField);
+		add(valueField);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
 
 	@Override
 	public void writeBack() {
-		object.dataType = getTypeForName((String) typesComboBox.getSelectedItem());
+		object.type = getTypeForName((String) typesComboBox.getSelectedItem());
 		object.name = nameField.getText();
-		object.update();
+		object.value = valueField.getText();
 	}
 
 }

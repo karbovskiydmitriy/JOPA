@@ -14,7 +14,7 @@ public class JOPAConstantsNode extends JOPANode {
 
 	@Override
 	protected void init() {
-		// TODO
+		// TODO init
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class JOPAConstantsNode extends JOPANode {
 	
 	@Override
 	public String generateCode() {
-		// TODO
+		// TODO generateCode
 		
 		return null;
 	}

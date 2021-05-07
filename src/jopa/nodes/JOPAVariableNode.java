@@ -16,7 +16,7 @@ public class JOPAVariableNode extends JOPANode {
 
 	@Override
 	protected void init() {
-		// TODO
+		// TODO init
 	}
 
 	@Override

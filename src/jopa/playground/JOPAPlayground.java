@@ -18,7 +18,7 @@ public class JOPAPlayground implements Closeable {
 		this.simulationType = type;
 		resources = new ArrayList<JOPAResource>();
 		System.out.println("Playground created");
-		// TODO
+		// TODO playground init?
 	}
 
 	public synchronized void setupScript(JOPASimulationScript script) {
@@ -35,7 +35,7 @@ public class JOPAPlayground implements Closeable {
 			}
 			if (script == null) {
 				System.out.println("Script not set up");
-				// TODO
+				// TODO error handling?
 
 				return;
 			}

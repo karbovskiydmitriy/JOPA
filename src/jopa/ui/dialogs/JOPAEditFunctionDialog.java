@@ -5,14 +5,14 @@ import java.awt.Frame;
 
 import jopa.main.JOPAFunction;
 
-public class JOPAEditFunctionDialog extends JOPADialog {
+public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 
 	private static final long serialVersionUID = -664731452292221L;
 
 	public JOPAFunction selectedFunction;
 
 	public JOPAEditFunctionDialog(Frame owner, JOPAFunction function) {
-		super(owner, "Edit function");
+		super(owner, "Edit function", function);
 
 		selectedFunction = function;
 
@@ -34,7 +34,7 @@ public class JOPAEditFunctionDialog extends JOPADialog {
 
 	@Override
 	protected void closing() {
-		// TODO
+		// TODO closing
 	}
 
 }

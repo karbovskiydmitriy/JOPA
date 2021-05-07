@@ -30,7 +30,7 @@ public class JOPAMain {
 	}
 
 	private static boolean checkVersion() {
-		return true; // TODO
+		return true; // TODO checkVersion
 	}
 
 	private static void setupUI() {
@@ -45,7 +45,8 @@ public class JOPAMain {
 
 	public static void createNewWorkspace() {
 		synchronized (workspaceSync) {
-			currentWorkspace = new JOPAWorkspace("New workspace");
+			// TODO project types
+			currentWorkspace = new JOPAWorkspace("New workspace", JOPAProjectType.NONE);
 			createNewFunction();
 		}
 
@@ -55,9 +56,9 @@ public class JOPAMain {
 	public static void openWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				// TODO
+				// TODO ask
 			}
-			// TODO
+			// TODO file system GUI
 			currentWorkspace = JOPAWorkspace.loadFromFile(TEST_PROJECT_NAME);
 		}
 	}
@@ -65,7 +66,7 @@ public class JOPAMain {
 	public static void saveWorkspace() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				// TODO
+				// TODO file system GUI
 				JOPAWorkspace.saveToFile(TEST_PROJECT_NAME, currentWorkspace);
 			} else {
 				workspaceNotCreated();
@@ -75,7 +76,7 @@ public class JOPAMain {
 
 	public static void destroyWorkspace() {
 		synchronized (workspaceSync) {
-			// TODO
+			// TODO deinit?
 			currentWorkspace = null;
 		}
 
@@ -93,7 +94,7 @@ public class JOPAMain {
 	public static void editProject() {
 		synchronized (workspaceSync) {
 			if (currentWorkspace != null) {
-				// TODO
+				// TODO edition GUI
 			} else {
 				workspaceNotCreated();
 			}

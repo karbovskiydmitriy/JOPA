@@ -5,20 +5,28 @@ import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
-public abstract class JOPADialog extends JDialog {
+import jopa.ui.editors.JOPAEditorComponent;
+
+public abstract class JOPADialog<T> extends JDialog {
 
 	private static final long serialVersionUID = 5368138759243687896L;
 
+	protected T object;
 	protected JPanel area;
-
-	public JOPADialog(Frame owner, String title) {
+	protected ArrayList<JOPAEditorComponent<?>> editors;
+	
+	public JOPADialog(Frame owner, String title, T object) {
 		super(owner);
+		this.object = object;
+		this.editors = new ArrayList<JOPAEditorComponent<?>>();
+
 		setTitle(title);
 		setSize(500, 500);
 		area = new JPanel(new SpringLayout());

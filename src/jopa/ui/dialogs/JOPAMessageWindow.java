@@ -4,8 +4,6 @@ import java.awt.Label;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JDialog;
 
@@ -28,18 +26,6 @@ public class JOPAMessageWindow extends JDialog {
 			@Override
 			public void componentShown(ComponentEvent ce) {
 				textLabel.requestFocusInWindow();
-			}
-		});
-
-		// not invoking ?
-		// FIXME!!!
-		textLabel.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				System.out.println(e);
-				if (e.getKeyCode() == 27) {
-					dispose();
-				}
 			}
 		});
 

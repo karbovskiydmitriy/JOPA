@@ -235,7 +235,7 @@ public class JOPAUI {
 		 * if (menuPanel == null) { menuPanel = new JOPAMenuPanel(); // TODO stuff
 		 * window.add(menuPanel); menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
 		 * menuPanel.setSize(window.getWidth(), 40); // menuPanel.init(); }
-		 */ // FIXME!!!
+		 */ // FIXME panel menu
 	}
 
 	public synchronized void createTabs() {
@@ -314,7 +314,7 @@ public class JOPAUI {
 	}
 
 	public synchronized void editConstants(JOPAFunction function) {
-		new JOPAEditConstantsDialog(window, function);
+		new JOPAEditConstantsDialog(window, currentWorkspace);
 	}
 
 	public synchronized void editNode(JOPANode node) {

@@ -13,12 +13,12 @@ public class JOPABranchNode extends JOPANode {
 
 	@Override
 	protected void init() {
-		// TODO
+		// TODO init
 	}
 
 	@Override
 	public boolean remove() {
-		// TODO
+		// TODO remove
 
 		return false;
 	}
@@ -34,14 +34,14 @@ public class JOPABranchNode extends JOPANode {
 	
 	@Override
 	public String generateCode() {
-		// TODO
+		// TODO generateCode
 		
 		return null;
 	}
 
 	@Override
 	protected boolean flowInconsistency() {
-		// TODO
+		// TODO flowInconsistency
 
 		return true;
 	}

@@ -8,5 +8,5 @@ public enum JOPAResourceType {
 	SHADER,
 	PROGRAM,
 	GLSL_TYPE,
-	// TODO
+	// TODO other types?
 }

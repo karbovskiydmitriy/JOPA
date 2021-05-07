@@ -27,7 +27,7 @@ public class JOPAControlPort extends JOPAPort {
 
 	@Override
 	public void update() {
-		// TODO?
+		// TODO update?
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {

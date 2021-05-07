@@ -10,7 +10,7 @@ public class JOPAComplexType extends JOPAType {
 
 	@Override
 	public String generateCode() {
-		// TODO
+		// TODO generateCode
 
 		return null;
 	}

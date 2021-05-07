@@ -19,12 +19,12 @@ import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
+import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAType;
 
 public class JOPAWorkspace {
 
 	private long lastSelectTick;
-
 	private Point prevPoint;
 	private JOPAPort selectedPort;
 	private JOPANode selectedNode;
@@ -33,16 +33,27 @@ public class JOPAWorkspace {
 	private String name;
 	private ArrayList<JOPAFunction> functions;
 	private JOPAFunction mainFunction;
-	private ArrayList<JOPAType> types;
-	private JOPAPlayground playground;
 	private String generatedShader;
+	private JOPAPlayground playground;
 
+	public JOPAProjectType projectType;
+	public ArrayList<JOPAType> types;
+	public ArrayList<JOPAConstant> constants;
+	public ArrayList<JOPAVariable> publicVariables;
 	public JOPAFunction currentFunction;
 
-	public JOPAWorkspace(String name) {
+	public JOPAWorkspace(String name, JOPAProjectType type) {
 		this.name = name;
-		this.functions = new ArrayList<JOPAFunction>();
+		this.projectType = type;
 		this.types = new ArrayList<JOPAType>();
+		this.constants = new ArrayList<JOPAConstant>();
+		this.publicVariables = new ArrayList<JOPAVariable>();
+		this.functions = new ArrayList<JOPAFunction>();
+		init();
+	}
+
+	private void init() {
+		constants.add(new JOPAConstant("PI", JOPAGLSLType.JOPA_FLOAT, null, "3.14"));
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -288,6 +299,9 @@ public class JOPAWorkspace {
 			if (mainFunction.constantsNode.outputs.size() > 0) {
 				for (JOPADataPort constant : mainFunction.constantsNode.outputs) {
 					shaderCode += "const " + getNameForType(constant.dataType) + " " + constant.name + " = ;\n"; // TODO
+																													// add
+																													// const
+																													// value
 				}
 				shaderCode += TWO_LINES;
 			}

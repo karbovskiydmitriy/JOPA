@@ -2,7 +2,6 @@ package jopa.ui.dialogs;
 
 import java.awt.Frame;
 import java.awt.Toolkit;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,18 +16,42 @@ import jopa.types.JOPAGLSLType;
 import jopa.ui.editors.JOPADataPortEditor;
 import jopa.ui.editors.JOPAEditorComponent;
 
-public class JOPAEditStatementNodeDialog extends JOPADialog {
+public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 	private static final long serialVersionUID = -6507027855437162763L;
 
-	private JOPAStatementNode node;
-	private ArrayList<JOPAEditorComponent<?>> editors;
-
 	public JOPAEditStatementNodeDialog(Frame owner, JOPAStatementNode node) {
-		super(owner, "Edit statement node");
-		this.node = node;
-		this.editors = new ArrayList<JOPAEditorComponent<?>>();
+		super(owner, "Edit statement node", node);
 
+		init();
+		initMenu();
+
+		setVisible(true);
+	}
+
+	@Override
+	protected void closing() {
+		editors.forEach(editor -> editor.writeBack());
+	}
+
+	private void init() {
+		editors.clear();
+		area.removeAll();
+
+		for (int i = 0; i < object.inputs.size(); i++) {
+			JOPADataPort port = object.inputs.get(i);
+			addEditorPair("input[" + i + "]", port);
+		}
+		for (int i = 0; i < object.outputs.size(); i++) {
+			JOPADataPort port = object.outputs.get(i);
+			addEditorPair("output[" + i + "]", port);
+		}
+
+		revalidate();
+		repaint();
+	}
+
+	private void initMenu() {
 		JMenuBar statementMenuBar = new JMenuBar();
 
 		{
@@ -40,7 +63,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newInputMenuItem.addActionListener(e -> {
-				node.createPort(JOPAGLSLType.JOPA_FLOAT, "input_port", false, true);
+				object.createPort(JOPAGLSLType.JOPA_FLOAT, "input_port", false, true);
 				init();
 			});
 
@@ -58,7 +81,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newOutputMenuItem.addActionListener(e -> {
-				node.createPort(JOPAGLSLType.JOPA_FLOAT, "output_port", true, true);
+				object.createPort(JOPAGLSLType.JOPA_FLOAT, "output_port", true, true);
 				init();
 			});
 
@@ -68,28 +91,6 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 		}
 
 		setJMenuBar(statementMenuBar);
-		init();
-		setVisible(true);
-	}
-
-	@Override
-	protected void closing() {
-		editors.forEach(editor -> editor.writeBack());
-	}
-
-	private void init() {
-		editors.clear();
-		area.removeAll();
-		for (int i = 0; i < node.inputs.size(); i++) {
-			JOPADataPort port = node.inputs.get(i);
-			addEditorPair("input[" + i + "]", port);
-		}
-		for (int i = 0; i < node.outputs.size(); i++) {
-			JOPADataPort port = node.outputs.get(i);
-			addEditorPair("output[" + i + "]", port);
-		}
-		revalidate();
-		repaint();
 	}
 
 	protected void addEditorPair(String name, JOPADataPort port) {
@@ -98,7 +99,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
 		deleteButton.addActionListener(e -> {
-			node.deletePort(port);
+			object.deletePort(port);
 			init();
 		});
 		area.add(label);
