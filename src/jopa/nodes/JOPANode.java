@@ -142,7 +142,7 @@ public abstract class JOPANode {
 		adjustPorts();
 	}
 
-	private void adjustPorts() {
+	protected void adjustPorts() {
 		float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputs.size() + 1);
 		float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputs.size() + 1);
 

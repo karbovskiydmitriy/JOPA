@@ -18,7 +18,7 @@ public class JOPAVariable {
 
 	@Override
 	public String toString() {
-		if (modifiers != null) {
+		if (modifiers == null) {
 			return getNameForType(type) + " " + name;
 		} else {
 			return modifiers + " " + getNameForType(type) + " " + name;

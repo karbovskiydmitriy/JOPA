@@ -297,13 +297,8 @@ public class JOPAWorkspace {
 				shaderCode += TWO_LINES;
 			}
 			if (mainFunction.constantsNode.outputs.size() > 0) {
-				for (JOPADataPort constant : mainFunction.constantsNode.outputs) {
-					shaderCode += "const " + getNameForType(constant.dataType) + " " + constant.name + " = ;\n"; // TODO
-																													// add
-																													// const
-																													// value
-				}
-				shaderCode += TWO_LINES;
+				shaderCode += mainFunction.constantsNode.generateCode();
+				shaderCode += NEW_LINE;
 			}
 			if (mainFunction.startNode.outputs.size() > 0) {
 				for (JOPADataPort variable : mainFunction.startNode.outputs) {

@@ -2,7 +2,13 @@ package jopa.nodes;
 
 import java.awt.Rectangle;
 
+import jopa.main.JOPAConstant;
+import jopa.main.JOPAMain;
+import jopa.main.JOPAWorkspace;
+
 public class JOPAConstantsNode extends JOPANode {
+
+	private JOPAWorkspace project;
 
 	public JOPAConstantsNode(Rectangle rect, String template) {
 		super(rect, "CONSTANTS", template);
@@ -14,19 +20,27 @@ public class JOPAConstantsNode extends JOPANode {
 
 	@Override
 	protected void init() {
-		// TODO init
+		project = JOPAMain.currentWorkspace;
+		for (JOPAConstant constant : project.constants) {
+			createPort(constant.type, constant.name, true, false);
+		}
+		adjustPorts();
 	}
-	
+
 	@Override
 	public boolean check() {
 		return true;
 	}
-	
+
 	@Override
 	public String generateCode() {
-		// TODO generateCode
-		
-		return null;
+		String constantsCode = "";
+
+		for (JOPAConstant constant : project.constants) {
+			constantsCode += constant.toString() + ";\n";
+		}
+
+		return constantsCode;
 	}
 
 	@Override
