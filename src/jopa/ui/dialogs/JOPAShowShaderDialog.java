@@ -1,5 +1,6 @@
 package jopa.ui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.TextArea;
 
@@ -11,6 +12,7 @@ public class JOPAShowShaderDialog extends JOPADialog {
 
 	public JOPAShowShaderDialog(Frame owner, String shaderCode) {
 		super(owner, "Generated shader");
+		setLayout(new BorderLayout());
 		TextArea shaderTextTestArea = new TextArea(shaderCode);
 		shaderTextTestArea.setEditable(false);
 		JScrollPane scrolPane = new JScrollPane(shaderTextTestArea);

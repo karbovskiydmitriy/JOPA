@@ -31,8 +31,8 @@
   },
   "intTypeColor": {
     "red": 255,
-    "green": 0,
-    "blue": 0
+    "green": 127,
+    "blue": 127
   },
   "uintTypeColor": {
     "red": 127,

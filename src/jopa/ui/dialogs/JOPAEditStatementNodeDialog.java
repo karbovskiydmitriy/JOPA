@@ -1,6 +1,5 @@
 package jopa.ui.dialogs;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newInputMenuItem.addActionListener(e -> {
-				node.createPort(JOPAGLSLType.JOPA_INT, "input_port", false, true);
+				node.createPort(JOPAGLSLType.JOPA_FLOAT, "input_port", false, true);
 				init();
 			});
 
@@ -59,7 +58,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newOutputMenuItem.addActionListener(e -> {
-				node.createPort(JOPAGLSLType.JOPA_INT, "output_port", true, true);
+				node.createPort(JOPAGLSLType.JOPA_FLOAT, "output_port", true, true);
 				init();
 			});
 

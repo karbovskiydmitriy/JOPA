@@ -31,8 +31,6 @@ import java.awt.MenuShortcut;
 import java.awt.Panel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -280,59 +278,6 @@ public class JOPAUI {
 	public synchronized void createCanvas() {
 		if (canvas == null) {
 			canvas = new JOPACanvas();
-			canvas.setDoubleBuffered(true);
-			canvas.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e) {
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.mousePressed(e.getPoint());
-							canvas.repaint();
-						}
-					}
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.mouseReleased(e.getPoint());
-							canvas.repaint();
-						}
-					}
-				}
-
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.mouseClicked(e.getPoint());
-							canvas.repaint();
-						}
-					}
-				}
-			});
-			canvas.addMouseMotionListener(new MouseAdapter() {
-				@Override
-				public void mouseMoved(MouseEvent e) {
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.mouseMoved(e.getPoint());
-							canvas.repaint();
-						}
-					}
-				}
-
-				@Override
-				public void mouseDragged(MouseEvent e) {
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.mouseMoved(e.getPoint());
-							canvas.repaint();
-						}
-					}
-				}
-			});
 			window.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
