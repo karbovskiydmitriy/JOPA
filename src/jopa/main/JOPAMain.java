@@ -1,7 +1,5 @@
 package jopa.main;
 
-import static jopa.util.JOPAOGLUtil.getVersion;
-
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationType;
@@ -9,43 +7,33 @@ import jopa.ui.JOPAUI;
 
 public class JOPAMain {
 
+	private static final String OPENGL_VERSION_WARNING = "Your system does not support OpenGL 4.3, required for compute shaders!";
+	private static final String SYSTEM_NOT_SUPPORTED = "Your system is not officially supported!";
 	private static final String TEST_PROJECT_NAME = ".\\projects\\test.jopa";
 
-	public static int majorVersion;
-	public static int minorVersion;
-	public static String versionRawString;
 	public static Object projectSync;
+	public static JOPASystem system;
 	public static JOPAProject currentProject;
 	public static JOPASettings settings;
 	public static JOPAUI ui;
 
 	public static void main(String[] args) {
+		system = JOPASystem.init();
+
 		setupUI();
 
-		if (!checkVersion()) {
-			ui.showMessage("Your system does not support OpenGL 4.3, required for compute shaders!");
+		if (!system.checkSystem()) {
+			ui.showMessage(SYSTEM_NOT_SUPPORTED);
+		}
+
+		if (!system.checkVersion()) {
+			ui.showMessage(OPENGL_VERSION_WARNING);
 		}
 
 		settings = new JOPASettings();
 		projectSync = new Object();
 
 		createNewWorkspace();
-	}
-
-	private static boolean checkVersion() {
-		if (versionRawString == null) {
-			versionRawString = getVersion();
-			System.out.println("OpenGL version: " + versionRawString);
-			String[] versionParts = versionRawString.split(" ")[0].split("\\.");
-			majorVersion = Integer.parseInt(versionParts[0]);
-			minorVersion = Integer.parseInt(versionParts[1]);
-		}
-
-		if (majorVersion < 4 && minorVersion < 3) {
-			return false;
-		}
-
-		return true;
 	}
 
 	private static void setupUI() {
