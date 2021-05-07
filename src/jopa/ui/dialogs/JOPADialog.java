@@ -22,22 +22,22 @@ public abstract class JOPADialog extends JDialog {
 		setTitle(title);
 		setSize(500, 500);
 		area = new JPanel(new SpringLayout());
-		add(area);
+		setContentPane(area);
 
 		setModal(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				removeWindowListener(this);
-				closed();
+				closing();
 				super.windowClosed(e);
 			}
 		});
 	}
 
-	protected abstract void closed();
+	protected abstract void closing();
 
 	protected static SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
 		SpringLayout layout = (SpringLayout) parent.getLayout();
@@ -50,12 +50,12 @@ public abstract class JOPADialog extends JDialog {
 		SpringLayout layout;
 		try {
 			layout = (SpringLayout) parent.getLayout();
-		} catch (ClassCastException exc) {
+		} catch (ClassCastException e) {
 			System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+
 			return;
 		}
 
-		// Align all cells in each column and make them the same width.
 		Spring x = Spring.constant(initialX);
 		for (int c = 0; c < cols; c++) {
 			Spring width = Spring.constant(0);
@@ -70,7 +70,6 @@ public abstract class JOPADialog extends JDialog {
 			x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
 		}
 
-		// Align all cells in each row and make them the same height.
 		Spring y = Spring.constant(initialY);
 		for (int r = 0; r < rows; r++) {
 			Spring height = Spring.constant(0);
@@ -85,7 +84,6 @@ public abstract class JOPADialog extends JDialog {
 			y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
 		}
 
-		// Set the parent's size.
 		SpringLayout.Constraints pCons = layout.getConstraints(parent);
 		pCons.setConstraint(SpringLayout.SOUTH, y);
 		pCons.setConstraint(SpringLayout.EAST, x);

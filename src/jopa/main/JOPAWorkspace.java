@@ -13,6 +13,7 @@ import jopa.io.JOPASerializer;
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPANode;
+import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationType;
@@ -183,6 +184,8 @@ public class JOPAWorkspace {
 							JOPAMain.ui.editConstants(currentFunction);
 						} else if (nodeType.equals(JOPAStatementNode.class)) {
 							JOPAMain.ui.editFunctionPrototype(currentFunction);
+						} else if (nodeType.equals(JOPAStartNode.class)) {
+							JOPAMain.ui.editFunctionPrototype(currentFunction);
 						} else if (nodeType.equals(JOPAEndNode.class)) {
 							JOPAMain.ui.editFunctionPrototype(currentFunction);
 						}
@@ -308,7 +311,7 @@ public class JOPAWorkspace {
 			}
 			this.generatedShader = shaderCode;
 		} else {
-			JOPAMain.ui.showMessage("Project contains error!");
+			JOPAMain.ui.showMessage("project contains error!");
 		}
 	}
 
@@ -316,7 +319,7 @@ public class JOPAWorkspace {
 		if (generatedShader != null) {
 			JOPAMain.ui.showShader(generatedShader);
 		} else {
-			JOPAMain.ui.showMessage("Shader not generated!");
+			JOPAMain.ui.showMessage("shader not generated!");
 		}
 	}
 

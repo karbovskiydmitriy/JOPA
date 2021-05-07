@@ -19,7 +19,7 @@ public class JOPAShowShaderDialog extends JOPADialog {
 	}
 
 	@Override
-	protected void closed() {
+	protected void closing() {
 	}
 
 }

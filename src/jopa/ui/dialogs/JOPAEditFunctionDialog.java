@@ -33,7 +33,7 @@ public class JOPAEditFunctionDialog extends JOPADialog {
 	}
 
 	@Override
-	protected void closed() {
+	protected void closing() {
 		// TODO
 	}
 

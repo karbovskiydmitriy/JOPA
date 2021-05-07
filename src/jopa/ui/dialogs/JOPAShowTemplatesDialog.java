@@ -12,7 +12,7 @@ public class JOPAShowTemplatesDialog extends JOPADialog {
 	}
 
 	@Override
-	protected void closed() {
+	protected void closing() {
 	}
 
 }
