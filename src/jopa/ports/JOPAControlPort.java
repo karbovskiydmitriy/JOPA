@@ -19,6 +19,16 @@ public class JOPAControlPort extends JOPAPort {
 		this.connections = new ArrayList<JOPAPort>();
 	}
 
+	@Override
+	public boolean hit(Point p) {
+		return position.x <= p.x && position.x + WIDTH >= p.x && position.y <= p.y && position.y + HEIGHT >= p.y;
+	}
+	
+	@Override
+	public void update() {
+		// TODO?
+	}
+
 	public void draw(Graphics2D g, JOPAPort selectedPort) {
 		if (selectedPort != this) {
 			g.setColor(Color.BLACK);
@@ -32,11 +42,6 @@ public class JOPAControlPort extends JOPAPort {
 						port.position.y + HEIGHT / 2, Color.BLACK);
 			}
 		}
-	}
-
-	@Override
-	public boolean hit(Point p) {
-		return position.x <= p.x && position.x + WIDTH >= p.x && position.y <= p.y && position.y + HEIGHT >= p.y;
 	}
 
 	@Override

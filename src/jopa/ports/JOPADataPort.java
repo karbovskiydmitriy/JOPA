@@ -28,8 +28,18 @@ public class JOPADataPort extends JOPAPort {
 		super(node, position, isOutput, name);
 		this.connections = new ArrayList<JOPAPort>();
 		this.dataType = type;
-		this.typeName = getNameForType(type);
-		this.color = getColorForType(type);
+		update();
+	}
+
+	@Override
+	public boolean hit(Point p) {
+		return (p.distanceSq(position) <= PORT_RADIUS * PORT_RADIUS);
+	}
+
+	@Override
+	public void update() {
+		typeName = getNameForType(dataType);
+		color = getColorForType(dataType);
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {
@@ -55,11 +65,6 @@ public class JOPADataPort extends JOPAPort {
 				drawConnection(g, position.x, position.y, port.position.x, port.position.y, color);
 			}
 		}
-	}
-
-	@Override
-	public boolean hit(Point p) {
-		return (p.distanceSq(position) <= PORT_RADIUS * PORT_RADIUS);
 	}
 
 	@Override

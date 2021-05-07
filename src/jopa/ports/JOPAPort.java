@@ -24,6 +24,8 @@ public abstract class JOPAPort {
 
 	public abstract boolean hit(Point p);
 
+	public abstract void update();
+
 	public abstract void destroyAllConnections();
 
 	public void move(int x, int y) {

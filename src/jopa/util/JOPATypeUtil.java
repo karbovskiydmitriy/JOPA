@@ -7,6 +7,9 @@ import jopa.types.JOPAGLSLType;
 
 public final class JOPATypeUtil {
 
+	private static final String[] glslTypes = { "void", "bool", "int", "uint", "float", "bvec2", "bvec3", "bvec4",
+			"ivec2", "ivec3", "ivec4", "uvec2", "uvec3", "uvec4", "vec2", "vec3", "vec4", "TODO" };
+
 	public static String getNameForType(JOPAGLSLType type) {
 		if (type == null) {
 			return null;
@@ -127,6 +130,10 @@ public final class JOPATypeUtil {
 		default:
 			return JOPAMain.settings.defaultPalette.portColor;
 		}
+	}
+
+	public static String[] getAllTypes() {
+		return glslTypes;
 	}
 
 }
