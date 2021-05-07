@@ -6,7 +6,7 @@ import static jopa.util.JOPAOGLUtil.createWindow;
 import static jopa.util.JOPAOGLUtil.getTextureFormat;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
-import static jopa.util.JOPAOGLUtil.passUniforms;
+import static jopa.util.JOPAOGLUtil.*;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -189,9 +189,7 @@ public class JOPASimulationScript {
 	}
 
 	private void defaultFragmentShaderDeinit() {
-		setCapabilities(null);
-		glfwDestroyWindow(window);
-		glfwTerminate();
+		destroyWindow(window);
 	}
 
 	private void defaultComputeShaderInit() {
@@ -235,9 +233,7 @@ public class JOPASimulationScript {
 	}
 
 	private void defaultComputeShaderDeinit() {
-		setCapabilities(null);
-		glfwDestroyWindow(window);
-		glfwTerminate();
+		destroyWindow(window);
 	}
 
 }

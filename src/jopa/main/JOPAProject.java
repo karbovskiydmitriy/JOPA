@@ -22,7 +22,7 @@ import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAType;
 
-public class JOPAWorkspace {
+public class JOPAProject {
 
 	private long lastSelectTick;
 	private Point prevPoint;
@@ -42,7 +42,7 @@ public class JOPAWorkspace {
 	public ArrayList<JOPAVariable> publicVariables;
 	public JOPAFunction currentFunction;
 
-	public JOPAWorkspace(String name, JOPAProjectType type) {
+	public JOPAProject(String name, JOPAProjectType type) {
 		this.name = name;
 		this.projectType = type;
 		this.types = new ArrayList<JOPAType>();
@@ -53,7 +53,7 @@ public class JOPAWorkspace {
 	}
 
 	private void init() {
-		constants.add(new JOPAConstant("PI", JOPAGLSLType.JOPA_FLOAT, null, "3.14"));
+		constants.add(new JOPAConstant("PI", JOPAGLSLType.JOPA_FLOAT, "3.14"));
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -70,6 +70,12 @@ public class JOPAWorkspace {
 		functions.add(function);
 
 		return function;
+	}
+
+	public void updateConstants() {
+		functions.forEach(function -> {
+			function.constantsNode.updateConstants();
+		});
 	}
 
 	public synchronized boolean deleteFunction(String name) {
@@ -332,11 +338,11 @@ public class JOPAWorkspace {
 		}
 	}
 
-	public static synchronized JOPAWorkspace loadFromFile(String fileName) {
+	public static synchronized JOPAProject loadFromFile(String fileName) {
 		return JOPASerializer.readFromfile(fileName);
 	}
 
-	public static synchronized boolean saveToFile(String fileName, JOPAWorkspace project) {
+	public static synchronized boolean saveToFile(String fileName, JOPAProject project) {
 		return JOPASerializer.saveToFile(project.name, project);
 	}
 

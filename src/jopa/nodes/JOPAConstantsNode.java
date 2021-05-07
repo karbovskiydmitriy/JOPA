@@ -4,11 +4,11 @@ import java.awt.Rectangle;
 
 import jopa.main.JOPAConstant;
 import jopa.main.JOPAMain;
-import jopa.main.JOPAWorkspace;
+import jopa.main.JOPAProject;
 
 public class JOPAConstantsNode extends JOPANode {
 
-	private JOPAWorkspace project;
+	private JOPAProject project;
 
 	public JOPAConstantsNode(Rectangle rect, String template) {
 		super(rect, "CONSTANTS", template);
@@ -20,11 +20,19 @@ public class JOPAConstantsNode extends JOPANode {
 
 	@Override
 	protected void init() {
-		project = JOPAMain.currentWorkspace;
+		project = JOPAMain.currentProject;
 		for (JOPAConstant constant : project.constants) {
 			createPort(constant.type, constant.name, true, false);
 		}
 		adjustPorts();
+	}
+
+	public void updateConstants() {
+		outputs.forEach(outputPort -> {
+			outputPort.destroyAllConnections();
+		});
+		outputs.clear();
+		init();
 	}
 
 	@Override

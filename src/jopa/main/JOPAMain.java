@@ -1,5 +1,7 @@
 package jopa.main;
 
+import static jopa.util.JOPAOGLUtil.getVersion;
+
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationType;
@@ -9,28 +11,41 @@ public class JOPAMain {
 
 	private static final String TEST_PROJECT_NAME = ".\\projects\\test.jopa";
 
-	public static Object workspaceSync;
-	public static JOPAWorkspace currentWorkspace;
+	public static int majorVersion;
+	public static int minorVersion;
+	public static String versionRawString;
+	public static Object projectSync;
+	public static JOPAProject currentProject;
 	public static JOPASettings settings;
 	public static JOPAUI ui;
 
 	public static void main(String[] args) {
-		if (!checkVersion()) {
-			// TODO gui
+		setupUI();
 
-			return;
+		if (!checkVersion()) {
+			ui.showMessage("Your system does not support OpenGL 4.3, required for compute shaders!");
 		}
 
 		settings = new JOPASettings();
+		projectSync = new Object();
 
-		workspaceSync = new Object();
-
-		setupUI();
 		createNewWorkspace();
 	}
 
 	private static boolean checkVersion() {
-		return true; // TODO checkVersion
+		if (versionRawString == null) {
+			versionRawString = getVersion();
+			System.out.println("OpenGL version: " + versionRawString);
+			String[] versionParts = versionRawString.split(" ")[0].split("\\.");
+			majorVersion = Integer.parseInt(versionParts[0]);
+			minorVersion = Integer.parseInt(versionParts[1]);
+		}
+
+		if (majorVersion < 4 && minorVersion < 3) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private static void setupUI() {
@@ -44,9 +59,8 @@ public class JOPAMain {
 	}
 
 	public static void createNewWorkspace() {
-		synchronized (workspaceSync) {
-			// TODO project types
-			currentWorkspace = new JOPAWorkspace("New workspace", JOPAProjectType.NONE);
+		synchronized (projectSync) {
+			currentProject = new JOPAProject("New workspace", JOPAProjectType.FRAGMENT);
 			createNewFunction();
 		}
 
@@ -54,20 +68,20 @@ public class JOPAMain {
 	}
 
 	public static void openWorkspace() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
 				// TODO ask
 			}
 			// TODO file system GUI
-			currentWorkspace = JOPAWorkspace.loadFromFile(TEST_PROJECT_NAME);
+			currentProject = JOPAProject.loadFromFile(TEST_PROJECT_NAME);
 		}
 	}
 
 	public static void saveWorkspace() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
 				// TODO file system GUI
-				JOPAWorkspace.saveToFile(TEST_PROJECT_NAME, currentWorkspace);
+				JOPAProject.saveToFile(TEST_PROJECT_NAME, currentProject);
 			} else {
 				workspaceNotCreated();
 			}
@@ -75,25 +89,25 @@ public class JOPAMain {
 	}
 
 	public static void destroyWorkspace() {
-		synchronized (workspaceSync) {
+		synchronized (projectSync) {
 			// TODO deinit?
-			currentWorkspace = null;
+			currentProject = null;
 		}
 
 		ui.repaint();
 	}
 
 	public static void quit() {
-		synchronized (workspaceSync) {
+		synchronized (projectSync) {
 			saveWorkspace();
-			currentWorkspace = null;
+			currentProject = null;
 			ui.close();
 		}
 	}
 
 	public static void editProject() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
 				// TODO edition GUI
 			} else {
 				workspaceNotCreated();
@@ -102,9 +116,9 @@ public class JOPAMain {
 	}
 
 	public static void verifyProject() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				if (currentWorkspace.verifyFunctions()) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				if (currentProject.verifyFunctions()) {
 					ui.showMessage("project passed validation");
 				} else {
 					ui.showMessage("project contains errors");
@@ -116,9 +130,9 @@ public class JOPAMain {
 	}
 
 	public static void createNewFunction() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				ui.addFunction(currentWorkspace.createFunction(null));
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				ui.addFunction(currentProject.createFunction(null));
 			} else {
 				workspaceNotCreated();
 			}
@@ -126,10 +140,10 @@ public class JOPAMain {
 	}
 
 	public static void validateFunction() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				if (currentWorkspace.currentFunction != null) {
-					if (currentWorkspace.verifyFunction(currentWorkspace.currentFunction)) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				if (currentProject.currentFunction != null) {
+					if (currentProject.verifyFunction(currentProject.currentFunction)) {
 						ui.showMessage("function passed validation");
 					} else {
 						ui.showMessage("function contains errors");
@@ -144,10 +158,10 @@ public class JOPAMain {
 	}
 
 	public static void createNewNode() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
 				JOPANode node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
-				currentWorkspace.currentFunction.statementNodes.add(node);
+				currentProject.currentFunction.statementNodes.add(node);
 			} else {
 				workspaceNotCreated();
 			}
@@ -155,10 +169,10 @@ public class JOPAMain {
 	}
 
 	public static void validateNodes() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				if (currentWorkspace.currentFunction != null) {
-					if (currentWorkspace.currentFunction.verifyNodes()) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				if (currentProject.currentFunction != null) {
+					if (currentProject.currentFunction.verifyNodes()) {
 						ui.showMessage("Nodes in current function are OK");
 					} else {
 						ui.showMessage("Nodes in current function are not OK");
@@ -171,9 +185,9 @@ public class JOPAMain {
 	}
 
 	public static void generateShader() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.generateShader();
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.generateShader();
 			} else {
 				workspaceNotCreated();
 			}
@@ -181,9 +195,9 @@ public class JOPAMain {
 	}
 
 	public static void showShaderCode() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.showGeneratedShader();
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.showGeneratedShader();
 			} else {
 				workspaceNotCreated();
 			}
@@ -191,9 +205,9 @@ public class JOPAMain {
 	}
 
 	public static void createPlayground(JOPASimulationType type) {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.createPlayground(type);
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.createPlayground(type);
 			} else {
 				workspaceNotCreated();
 			}
@@ -201,9 +215,9 @@ public class JOPAMain {
 	}
 
 	public static void startPlayground() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.startPlayground();
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.startPlayground();
 			} else {
 				workspaceNotCreated();
 			}
@@ -211,9 +225,9 @@ public class JOPAMain {
 	}
 
 	public static void stopPlayground() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.stopPlayground();
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.stopPlayground();
 			} else {
 				workspaceNotCreated();
 			}
@@ -221,9 +235,9 @@ public class JOPAMain {
 	}
 
 	public static void closePlayground() {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
-				currentWorkspace.closePlayground();
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.closePlayground();
 			} else {
 				workspaceNotCreated();
 			}

@@ -28,6 +28,8 @@ public class JOPAMessageWindow extends JDialog {
 				textLabel.requestFocusInWindow();
 			}
 		});
+		
+		pack();
 
 		setVisible(true);
 	}

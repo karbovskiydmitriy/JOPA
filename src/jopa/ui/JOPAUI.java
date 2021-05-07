@@ -6,7 +6,7 @@ import static jopa.main.JOPAMain.createNewFunction;
 import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewWorkspace;
 import static jopa.main.JOPAMain.createPlayground;
-import static jopa.main.JOPAMain.currentWorkspace;
+import static jopa.main.JOPAMain.currentProject;
 import static jopa.main.JOPAMain.destroyWorkspace;
 import static jopa.main.JOPAMain.editProject;
 import static jopa.main.JOPAMain.generateShader;
@@ -20,7 +20,7 @@ import static jopa.main.JOPAMain.stopPlayground;
 import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
-import static jopa.main.JOPAMain.workspaceSync;
+import static jopa.main.JOPAMain.projectSync;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -250,7 +250,7 @@ public class JOPAUI {
 					// }
 					int selectedIndex = tabs.getSelectedIndex();
 					if (selectedIndex != -1) {
-						currentWorkspace.selectFunction(selectedIndex);
+						currentProject.selectFunction(selectedIndex);
 					}
 					// if (function != null) {
 					// currentCanvas = function.canvas;
@@ -282,9 +282,9 @@ public class JOPAUI {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					System.out.println(e);
-					synchronized (workspaceSync) {
-						if (currentWorkspace != null) {
-							currentWorkspace.keyTyped(e.getKeyCode());
+					synchronized (projectSync) {
+						if (currentProject != null) {
+							currentProject.keyTyped(e.getKeyCode());
 						}
 					}
 				}
@@ -295,8 +295,8 @@ public class JOPAUI {
 	}
 
 	public synchronized void addFunction(JOPAFunction function) {
-		synchronized (workspaceSync) {
-			if (currentWorkspace != null) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
 				// JOPACanvas canvas = createCanvas();
 				// function.canvas = canvas;
 				// if (openEditor) {
@@ -314,7 +314,7 @@ public class JOPAUI {
 	}
 
 	public synchronized void editConstants(JOPAFunction function) {
-		new JOPAEditConstantsDialog(window, currentWorkspace);
+		new JOPAEditConstantsDialog(window, currentProject);
 	}
 
 	public synchronized void editNode(JOPANode node) {

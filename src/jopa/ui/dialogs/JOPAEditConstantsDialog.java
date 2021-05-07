@@ -11,15 +11,16 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import jopa.main.JOPAConstant;
-import jopa.main.JOPAWorkspace;
+import jopa.main.JOPAProject;
+import jopa.types.JOPAGLSLType;
 import jopa.ui.editors.JOPAConstantEditor;
 import jopa.ui.editors.JOPAEditorComponent;
 
-public class JOPAEditConstantsDialog extends JOPADialog<JOPAWorkspace> {
+public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 	private static final long serialVersionUID = -2535204900792827922L;
 
-	public JOPAEditConstantsDialog(Frame owner, JOPAWorkspace workspace) {
+	public JOPAEditConstantsDialog(Frame owner, JOPAProject workspace) {
 		super(owner, "Constants", workspace);
 
 		init();
@@ -54,11 +55,16 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAWorkspace> {
 			JMenuItem newConstantMenuItem = new JMenuItem("new constant");
 
 			newConstantMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+					.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newConstantMenuItem.addActionListener(e -> {
-
+				JOPAConstant newConstant = new JOPAConstant("foobar", JOPAGLSLType.JOPA_INT, "42");
+				object.constants.add(newConstant);
+				object.updateConstants();
+				init();
 			});
+
+			constantsMenu.add(newConstantMenuItem);
 
 			constantsMenuBar.add(constantsMenu);
 		}

@@ -6,8 +6,8 @@ public class JOPAConstant extends JOPAVariable {
 
 	public String value;
 
-	public JOPAConstant(String name, JOPAGLSLType type, String modifiers, String value) {
-		super(name, type, modifiers);
+	public JOPAConstant(String name, JOPAGLSLType type, String value) {
+		super(name, type, null);
 		this.value = value;
 	}
 

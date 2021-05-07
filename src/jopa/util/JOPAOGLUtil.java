@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -12,12 +13,16 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11.glGetString;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
@@ -87,6 +92,14 @@ import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
 
 public final class JOPAOGLUtil {
+
+	public static String getVersion() {
+		long window = createWindow(22, 22, false, false, null);
+		String version = glGetString(GL_VERSION);
+		destroyWindow(window);
+
+		return version;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T safeCast(Object object, Class<T> type) {
@@ -308,6 +321,12 @@ public final class JOPAOGLUtil {
 		}
 
 		return window;
+	}
+
+	public static void destroyWindow(long window) {
+		setCapabilities(null);
+		glfwDestroyWindow(window);
+		glfwTerminate();
 	}
 
 	public static int createTexture(int width, int height, int format) {
