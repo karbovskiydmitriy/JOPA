@@ -15,7 +15,8 @@ public class JOPAControlPort extends JOPAPort {
 	public static final int HEIGHT = 20;
 
 	public JOPAControlPort(JOPANode node, String name, boolean isOutput) {
-		super(node, getControlPortPosition(node.rect, isOutput), isOutput, name);
+		super(node, isOutput, name);
+		this.position = getControlPortPosition(node.rect, isOutput);
 		this.connections = new ArrayList<JOPAPort>();
 	}
 
@@ -23,7 +24,7 @@ public class JOPAControlPort extends JOPAPort {
 	public boolean hit(Point p) {
 		return position.x <= p.x && position.x + WIDTH >= p.x && position.y <= p.y && position.y + HEIGHT >= p.y;
 	}
-	
+
 	@Override
 	public void update() {
 		// TODO?

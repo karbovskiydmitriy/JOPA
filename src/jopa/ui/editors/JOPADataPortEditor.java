@@ -21,6 +21,7 @@ public class JOPADataPortEditor extends JOPAEditorComponent<JOPADataPort> {
 
 	public JOPADataPortEditor(JOPADataPort port) {
 		super(port);
+		setBackground(port.isOutput ? Color.GREEN : Color.GRAY);
 		typesComboBox = new JComboBox<String>(JOPATypeUtil.getAllTypes());
 		typesComboBox.setSelectedItem(getNameForType(object.dataType));
 		nameField = new JTextField(port.name);

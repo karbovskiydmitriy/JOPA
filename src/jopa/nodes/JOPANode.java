@@ -90,12 +90,7 @@ public abstract class JOPANode {
 		if (template != null) {
 			inputs = new ArrayList<JOPADataPort>(template.inputs.length);
 			outputs = new ArrayList<JOPADataPort>(template.outputs.length);
-			int inputsCount = template.inputs.length;
-			int outputsCount = template.outputs.length;
-			float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputsCount + 1);
-			float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputsCount + 1);
 			for (int i = 0; i < template.inputs.length; i++) {
-				float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
 				String input = template.inputs[i];
 				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
 				String name = input;
@@ -106,11 +101,9 @@ public abstract class JOPANode {
 						name = parts[1];
 					}
 				}
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x, (int) h), type, name, false);
-				inputs.add(port);
+				createPort(type, name, false, false);
 			}
 			for (int i = 0; i < template.outputs.length; i++) {
-				float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
 				String output = template.outputs[i];
 				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
 				String name = output;
@@ -121,9 +114,47 @@ public abstract class JOPANode {
 						name = parts[1];
 					}
 				}
-				JOPADataPort port = new JOPADataPort(this, new Point(rect.x + rect.width, (int) h), type, name, true);
-				outputs.add(port);
+				createPort(type, name, true, false);
 			}
+			adjustPorts();
+		}
+	}
+
+	public void createPort(JOPAGLSLType type, String name, boolean isOutput, boolean update) {
+		JOPADataPort port = new JOPADataPort(this, type, name, isOutput);
+		if (!isOutput) {
+			inputs.add(port);
+		} else {
+			outputs.add(port);
+		}
+		if (update) {
+			adjustPorts();
+		}
+	}
+
+	public void deletePort(JOPADataPort port) {
+		if (!port.isOutput) {
+			inputs.remove(port);
+		} else {
+			outputs.remove(port);
+		}
+		port.destroyAllConnections();
+		adjustPorts();
+	}
+
+	private void adjustPorts() {
+		float inputsStep = (rect.height - HEADER_HEIGHT) / (float) (inputs.size() + 1);
+		float outputsStep = (rect.height - HEADER_HEIGHT) / (float) (outputs.size() + 1);
+
+		for (int i = 0; i < inputs.size(); i++) {
+			JOPADataPort port = inputs.get(i);
+			float h = rect.y + HEADER_HEIGHT + (i + 1) * inputsStep;
+			port.position = new Point(rect.x, (int) h);
+		}
+		for (int i = 0; i < outputs.size(); i++) {
+			JOPADataPort port = outputs.get(i);
+			float h = rect.y + HEADER_HEIGHT + (i + 1) * outputsStep;
+			port.position = new Point(rect.x + rect.width, (int) h);
 		}
 	}
 

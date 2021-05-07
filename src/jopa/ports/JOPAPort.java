@@ -15,9 +15,8 @@ public abstract class JOPAPort {
 	public String name;
 	public ArrayList<JOPAPort> connections;
 
-	public JOPAPort(JOPANode node, Point position, boolean isOutput, String name) {
+	public JOPAPort(JOPANode node, boolean isOutput, String name) {
 		this.node = node;
-		this.position = position;
 		this.isOutput = isOutput;
 		this.name = name;
 	}

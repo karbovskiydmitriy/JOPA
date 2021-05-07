@@ -24,8 +24,8 @@ public class JOPADataPort extends JOPAPort {
 
 	public JOPAGLSLType dataType;
 
-	public JOPADataPort(JOPANode node, Point position, JOPAGLSLType type, String name, boolean isOutput) {
-		super(node, position, isOutput, name);
+	public JOPADataPort(JOPANode node, JOPAGLSLType type, String name, boolean isOutput) {
+		super(node, isOutput, name);
 		this.connections = new ArrayList<JOPAPort>();
 		this.dataType = type;
 		update();

@@ -1,5 +1,6 @@
 package jopa.ui.dialogs;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javax.swing.KeyStroke;
 
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPADataPort;
+import jopa.types.JOPAGLSLType;
 import jopa.ui.editors.JOPADataPortEditor;
 import jopa.ui.editors.JOPAEditorComponent;
 
@@ -39,7 +41,8 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newInputMenuItem.addActionListener(e -> {
-				// TODO
+				node.createPort(JOPAGLSLType.JOPA_INT, "input_port", false, true);
+				init();
 			});
 
 			inputsMenu.add(newInputMenuItem);
@@ -56,7 +59,8 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newOutputMenuItem.addActionListener(e -> {
-				// TODO
+				node.createPort(JOPAGLSLType.JOPA_INT, "output_port", true, true);
+				init();
 			});
 
 			outputsMenu.add(newOutputMenuItem);
@@ -65,7 +69,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 		}
 
 		setJMenuBar(statementMenuBar);
-		init(node);
+		init();
 		setVisible(true);
 	}
 
@@ -74,29 +78,35 @@ public class JOPAEditStatementNodeDialog extends JOPADialog {
 		editors.forEach(editor -> editor.writeBack());
 	}
 
-	private void init(JOPAStatementNode node) {
+	private void init() {
 		editors.clear();
+		area.removeAll();
 		for (int i = 0; i < node.inputs.size(); i++) {
 			JOPADataPort port = node.inputs.get(i);
-			JOPADataPortEditor editor = new JOPADataPortEditor(port);
-			addEditorPair("input[" + i + "]", editor);
+			addEditorPair("input[" + i + "]", port);
 		}
 		for (int i = 0; i < node.outputs.size(); i++) {
 			JOPADataPort port = node.outputs.get(i);
-			JOPADataPortEditor editor = new JOPADataPortEditor(port);
-			addEditorPair("output[" + i + "]", editor);
+			addEditorPair("output[" + i + "]", port);
 		}
+		revalidate();
+		repaint();
 	}
 
-	protected void addEditorPair(String name, JOPAEditorComponent<?> editor) {
-		JLabel l = new JLabel(name, JLabel.TRAILING);
-		area.add(l);
-		l.setLabelFor(editor);
-		area.add(editor);
+	protected void addEditorPair(String name, JOPADataPort port) {
+		JOPAEditorComponent<?> editor = new JOPADataPortEditor(port);
+		JLabel label = new JLabel(name, JLabel.TRAILING);
+		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
+		deleteButton.addActionListener(e -> {
+			node.deletePort(port);
+			init();
+		});
+		area.add(label);
+		area.add(editor);
 		area.add(deleteButton);
-		makeCompactGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 		editors.add(editor);
+		makeCompactGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }
