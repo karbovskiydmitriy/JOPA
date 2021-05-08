@@ -23,6 +23,7 @@ public class JOPAEndNode extends JOPANode {
 
 	@Override
 	protected void init() {
+		super.init();
 		this.flowEnd = new JOPAControlPort(this, "end", false);
 	}
 

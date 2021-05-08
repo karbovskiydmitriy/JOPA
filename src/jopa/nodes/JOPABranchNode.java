@@ -9,12 +9,17 @@ public class JOPABranchNode extends JOPANode {
 
 	private static final long serialVersionUID = -1257820350964560822L;
 
-	public JOPABranchNode(Rectangle rect, String header) {
-		super(rect, header);
+	public JOPABranchNode(Rectangle rect) {
+		super(rect, "BRANCH");
+	}
+
+	public JOPABranchNode(int x, int y) {
+		super(x, y, "BRANCH");
 	}
 
 	@Override
 	protected void init() {
+		super.init();
 		// TODO init
 	}
 
@@ -33,11 +38,11 @@ public class JOPABranchNode extends JOPANode {
 
 		return true;
 	}
-	
+
 	@Override
 	public String generateCode() {
 		// TODO generateCode
-		
+
 		return null;
 	}
 

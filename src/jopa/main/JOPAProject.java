@@ -18,6 +18,7 @@ import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPAPlayground;
+import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
@@ -45,6 +46,7 @@ public class JOPAProject implements Serializable {
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAVariable> publicVariables;
 	public JOPAFunction currentFunction;
+	public JOPASimulationScript script;
 
 	public JOPAProject(String name, JOPAProjectType type) {
 		this.name = name;
@@ -58,6 +60,7 @@ public class JOPAProject implements Serializable {
 
 	private void init() {
 		constants.add(new JOPAConstant("PI", JOPAGLSLType.JOPA_FLOAT, "3.14"));
+		script = JOPASimulationScript.create(JOPASimulationType.CUSTOM);
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
@@ -200,15 +203,15 @@ public class JOPAProject implements Serializable {
 					if (currentTime - lastSelectTick <= 500) {
 						Class<?> nodeType = node.getClass();
 						if (nodeType.equals(JOPAStatementNode.class)) {
-							JOPAMain.ui.editNode(node);
+							JOPAMain.ui.openNodeEditor(node);
 						} else if (nodeType.equals(JOPAConstantsNode.class)) {
-							JOPAMain.ui.editConstants(currentFunction);
+							JOPAMain.ui.openConstantsEditor(currentFunction);
 						} else if (nodeType.equals(JOPAStatementNode.class)) {
-							JOPAMain.ui.editFunctionPrototype(currentFunction);
+							JOPAMain.ui.openFunctionEditor(currentFunction);
 						} else if (nodeType.equals(JOPAStartNode.class)) {
-							JOPAMain.ui.editFunctionPrototype(currentFunction);
+							JOPAMain.ui.openFunctionEditor(currentFunction);
 						} else if (nodeType.equals(JOPAEndNode.class)) {
-							JOPAMain.ui.editFunctionPrototype(currentFunction);
+							JOPAMain.ui.openFunctionEditor(currentFunction);
 						}
 					}
 					lastSelectTick = currentTime;
@@ -237,7 +240,7 @@ public class JOPAProject implements Serializable {
 			break;
 		case 10:
 			if (selectedNode != null) {
-				JOPAMain.ui.editNode(selectedNode);
+				JOPAMain.ui.openNodeEditor(selectedNode);
 			}
 			break;
 		case 'E':

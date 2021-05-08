@@ -12,16 +12,17 @@ public class JOPALoopNode extends JOPAStatementNode {
 	
 	public JOPAControlPort loopIterationFlow;
 
-	public JOPALoopNode(Rectangle rect, String header, String template) {
-		super(rect, header, template);
-	}
-
 	public JOPALoopNode(Rectangle rect, String template) {
 		super(rect, "LOOP", template);
+	}
+	
+	public JOPALoopNode(int x, int y, String template) {
+		super(x, y, "LOOP", template);
 	}
 
 	@Override
 	protected void init() {
+		super.init();
 		loopIterationFlow = new JOPAControlPort(this, "loop iteration", true);
 	}
 

@@ -28,7 +28,6 @@ import static org.lwjgl.opengl.GL43.glDispatchCompute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 import jopa.exceptions.JOPAPlaygroundException;
@@ -45,31 +44,51 @@ public class JOPASimulationScript {
 	int state = 0;
 	int image;
 
-	public JOPASimulationScript(JOPASimulationType simulationType) throws JOPAPlaygroundException {
-		if (simulationType == null) {
-			throw new JOPAPlaygroundException("simulation type is null");
-		}
-		if (simulationType == JOPASimulationType.NONE) {
-			throw new JOPAPlaygroundException("simulation type is NONE");
-		}
-
+	private JOPASimulationScript(JOPASimulationType simulationType) {
 		this.executionType = simulationType;
 		this.commands = new ArrayList<String>();
 		this.resources = new ArrayList<JOPAResource>();
 	}
 
-	public void setupScript(Collection<String> commands, JOPAResource... resources) throws JOPAPlaygroundException {
+	public static JOPASimulationScript create(JOPASimulationType simulationType) {
+		if (simulationType == null) {
+			return null;
+		}
+		if (simulationType == JOPASimulationType.NONE) {
+			return null;
+		}
+
+		return new JOPASimulationScript(simulationType);
+	}
+
+	public void setupScript(String code, JOPAResource... resources) throws JOPAPlaygroundException {
 		if (executionType != JOPASimulationType.CUSTOM) {
 			throw new JOPAPlaygroundException("custom setup is only possible in custom script");
 		}
-		if (commands == null) {
-			throw new JOPAPlaygroundException("commands is null");
-		}
+		// if (code == null) {
+		// throw new JOPAPlaygroundException("commands is null");
+		// }
 
-		this.commands.clear();
-		this.commands.addAll(commands);
+		setCode(code);
 		this.resources.clear();
 		this.resources.addAll(Arrays.asList(resources));
+	}
+
+	public String getCode() {
+		String code = "";
+
+		for (String command : commands) {
+			code += command + '\n';
+		}
+
+		return code;
+	}
+
+	public void setCode(String code) {
+		if (commands != null) {
+			commands.clear();
+		}
+		commands = new ArrayList<String>(Arrays.asList(code.split("\n")));
 	}
 
 	public void reset() {

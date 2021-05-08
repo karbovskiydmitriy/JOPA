@@ -32,6 +32,7 @@ public class JOPAStatementNode extends JOPANode {
 
 	@Override
 	protected void init() {
+		super.init();
 		incomingControlFlow = new JOPAControlPort(this, "in", false);
 		outcomingControlFlow = new JOPAControlPort(this, "out", true);
 	}

@@ -23,7 +23,7 @@ import jopa.types.JOPANodeType;
 public abstract class JOPANode implements Serializable {
 
 	private static final long serialVersionUID = 3421947909279717819L;
-	
+
 	private static final int HEADER_HEIGHT = 20;
 	private static final int DEFAULT_SIZE = 100;
 
@@ -38,32 +38,35 @@ public abstract class JOPANode implements Serializable {
 	public JOPANode(Rectangle rect, String header, String template) {
 		this.rect = rect;
 		this.header = header;
-		assignTemplate(template);
 		init();
+		assignTemplate(template);
 	}
 
 	public JOPANode(Rectangle rect, String header) {
 		this.rect = rect;
 		this.header = header;
-		assignTemplate("EMPTY");
 		init();
+		assignTemplate("EMPTY");
 	}
 
 	public JOPANode(int x, int y, String header, String template) {
 		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
-		assignTemplate(template);
 		init();
+		assignTemplate(template);
 	}
 
 	public JOPANode(int x, int y, String header) {
 		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
-		assignTemplate("EMPTY");
 		init();
+		assignTemplate("EMPTY");
 	}
 
-	protected abstract void init();
+	protected void init() {
+		inputs = new ArrayList<JOPADataPort>();
+		outputs = new ArrayList<JOPADataPort>();
+	}
 
 	public abstract boolean check();
 
@@ -91,8 +94,6 @@ public abstract class JOPANode implements Serializable {
 		JOPANodeTemplate template = JOPANodeTemplate.getFormulaByName(formulaName);
 		this.template = template;
 		if (template != null) {
-			inputs = new ArrayList<JOPADataPort>(template.inputs.length);
-			outputs = new ArrayList<JOPADataPort>(template.outputs.length);
 			for (int i = 0; i < template.inputs.length; i++) {
 				String input = template.inputs[i];
 				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;

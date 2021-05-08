@@ -9,6 +9,7 @@ import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentProject;
 import static jopa.main.JOPAMain.destroyWorkspace;
 import static jopa.main.JOPAMain.editProject;
+import static jopa.main.JOPAMain.editScript;
 import static jopa.main.JOPAMain.generateShader;
 import static jopa.main.JOPAMain.manual;
 import static jopa.main.JOPAMain.openWorkspace;
@@ -41,17 +42,22 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
+import jopa.main.JOPAProject;
 import jopa.nodes.JOPABranchNode;
+import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
 import jopa.ui.dialogs.JOPAEditBranchNodeGialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
+import jopa.ui.dialogs.JOPAEditProjectDialog;
+import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
-import jopa.ui.dialogs.JOPAMessageWindow;
+import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 
 public class JOPAUI {
@@ -148,13 +154,31 @@ public class JOPAUI {
 			{
 				Menu nodeMenu = new Menu("node");
 
-				MenuItem createNewNodeMenuItem = new MenuItem("create new node");
 				MenuItem validateNodeMenuItem = new MenuItem("validate nodes");
 
-				createNewNodeMenuItem.addActionListener(e -> createNewNode());
 				validateNodeMenuItem.addActionListener(e -> validateNodes());
 
-				nodeMenu.add(createNewNodeMenuItem);
+				{
+					Menu createNewNodeMenu = new Menu("create new node");
+
+					MenuItem statementNode = new MenuItem("statement node");
+					MenuItem functionNode = new MenuItem("function node");
+					MenuItem branchNode = new MenuItem("brach node");
+					MenuItem loopNode = new MenuItem("loop node");
+
+					statementNode.addActionListener(e -> createNewNode(JOPAStatementNode.class));
+					functionNode.addActionListener(e -> createNewNode(JOPAFunctionNode.class));
+					branchNode.addActionListener(e -> createNewNode(JOPABranchNode.class));
+					loopNode.addActionListener(e -> createNewNode(JOPALoopNode.class));
+
+					createNewNodeMenu.add(statementNode);
+					createNewNodeMenu.add(functionNode);
+					createNewNodeMenu.add(branchNode);
+					createNewNodeMenu.add(loopNode);
+
+					nodeMenu.add(createNewNodeMenu);
+				}
+
 				nodeMenu.add(validateNodeMenuItem);
 
 				menuBar.add(nodeMenu);
@@ -180,10 +204,12 @@ public class JOPAUI {
 			{
 				Menu playgroundMenu = new Menu("playground");
 
+				MenuItem editScriptMenuItem = new MenuItem("edit script");
 				MenuItem startPlaygroundMenuItem = new MenuItem("start playground");
 				MenuItem stopPlaygroundMenuItem = new MenuItem("stop playground");
 				MenuItem closePlaygroundMenuItem = new MenuItem("close playground");
 
+				editScriptMenuItem.addActionListener(e -> editScript());
 				startPlaygroundMenuItem.addActionListener(e -> startPlayground());
 				stopPlaygroundMenuItem.addActionListener(e -> stopPlayground());
 				closePlaygroundMenuItem.addActionListener(e -> closePlayground());
@@ -206,6 +232,7 @@ public class JOPAUI {
 					playgroundMenu.add(createPlaygroundMenuItem);
 				}
 
+				playgroundMenu.add(editScriptMenuItem);
 				playgroundMenu.add(startPlaygroundMenuItem);
 				playgroundMenu.add(stopPlaygroundMenuItem);
 				playgroundMenu.add(closePlaygroundMenuItem);
@@ -297,15 +324,23 @@ public class JOPAUI {
 		// }
 	}
 
-	public synchronized void editFunctionPrototype(JOPAFunction function) {
+	public synchronized void openProjectEditor(JOPAProject project) {
+		new JOPAEditProjectDialog(window, project);
+	}
+
+	public synchronized void openScriptEditor(JOPASimulationScript script) {
+		new JOPAEditScriptDialog(window, script);
+	}
+
+	public synchronized void openFunctionEditor(JOPAFunction function) {
 		new JOPAEditFunctionDialog(window, function);
 	}
 
-	public synchronized void editConstants(JOPAFunction function) {
+	public synchronized void openConstantsEditor(JOPAFunction function) {
 		new JOPAEditConstantsDialog(window, currentProject);
 	}
 
-	public synchronized void editNode(JOPANode node) {
+	public synchronized void openNodeEditor(JOPANode node) {
 		Class<?> type = node.getClass();
 		if (type.equals(JOPAStatementNode.class)) {
 			new JOPAEditStatementNodeDialog(window, (JOPAStatementNode) node);
@@ -322,10 +357,10 @@ public class JOPAUI {
 
 	public synchronized void showMessage(String text) {
 		if (window != null) {
-			JOPAMessageWindow messageWindow = new JOPAMessageWindow(window, text, "message");
+			JOPAMessageDialog messageWindow = new JOPAMessageDialog(window, text, "message");
 			messageWindow.dispose();
 		} else {
-			JOPAMessageWindow messageWindow = new JOPAMessageWindow(new Frame("error"), text, "message");
+			JOPAMessageDialog messageWindow = new JOPAMessageDialog(new Frame("error"), text, "message");
 			messageWindow.dispose();
 		}
 	}
@@ -359,7 +394,7 @@ public class JOPAUI {
 
 		return null;
 	}
-	
+
 	public synchronized void closeProject() {
 		tabs.removeAll();
 		tabs.revalidate();

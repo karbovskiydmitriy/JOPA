@@ -22,6 +22,7 @@ public class JOPAConstantsNode extends JOPANode {
 
 	@Override
 	protected void init() {
+		super.init();
 		project = JOPAMain.currentProject;
 		for (JOPAConstant constant : project.constants) {
 			createPort(constant.type, constant.name, true, false);

@@ -7,11 +7,11 @@ import java.awt.event.ComponentEvent;
 
 import javax.swing.JDialog;
 
-public class JOPAMessageWindow extends JDialog {
+public class JOPAMessageDialog extends JDialog {
 
 	private static final long serialVersionUID = 43221962375631247L;
 
-	public JOPAMessageWindow(Window owner, String text, String header) {
+	public JOPAMessageDialog(Window owner, String text, String header) {
 		super(owner);
 
 		setTitle(header);

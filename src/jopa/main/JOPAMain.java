@@ -4,6 +4,9 @@ import java.io.File;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jopa.nodes.JOPABranchNode;
+import jopa.nodes.JOPAFunctionNode;
+import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationType;
@@ -31,10 +34,6 @@ public class JOPAMain {
 		projectFileFilter = new FileNameExtensionFilter("JOPA project file", "jopa");
 
 		createNewWorkspace();
-
-		if (JOPAProject.saveToFile(new File(TEST_PROJECT_NAME + "test.jopa"), currentProject)) {
-			System.out.println("!!!");
-		}
 	}
 
 	private static void init() {
@@ -94,7 +93,7 @@ public class JOPAMain {
 					}
 				}
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 
 			return false;
@@ -121,9 +120,9 @@ public class JOPAMain {
 	public static void editProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				// TODO edition GUI
+				ui.openProjectEditor(currentProject);
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -137,7 +136,7 @@ public class JOPAMain {
 					ui.showMessage("project contains errors");
 				}
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -147,7 +146,7 @@ public class JOPAMain {
 			if (currentProject != null) {
 				ui.addFunction(currentProject.createFunction(null));
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -165,18 +164,29 @@ public class JOPAMain {
 					ui.showMessage("Function not selected!");
 				}
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
 
-	public static void createNewNode() {
+	public static void createNewNode(Class<?> type) {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				JOPANode node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
-				currentProject.currentFunction.statementNodes.add(node);
+				JOPANode node = null;
+				if (type.equals(JOPAStatementNode.class)) {
+					node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
+				} else if (type.equals(JOPAFunctionNode.class)) {
+					node = new JOPAFunctionNode(0, 0, null);
+				} else if (type.equals(JOPABranchNode.class)) {
+					node = new JOPABranchNode(0, 0);
+				} else if (type.equals(JOPALoopNode.class)) {
+					node = new JOPALoopNode(0, 0, null);
+				}
+				if (node != null) {
+					currentProject.currentFunction.statementNodes.add(node);
+				}
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -192,7 +202,7 @@ public class JOPAMain {
 					}
 				}
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -202,7 +212,7 @@ public class JOPAMain {
 			if (currentProject != null) {
 				currentProject.generateShader();
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -212,7 +222,7 @@ public class JOPAMain {
 			if (currentProject != null) {
 				currentProject.showGeneratedShader();
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -222,17 +232,27 @@ public class JOPAMain {
 			if (currentProject != null) {
 				currentProject.createPlayground(type);
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
 
+	public static void editScript() {
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				ui.openScriptEditor(currentProject.script);
+			} else {
+				projectNotCreated();
+			}
+		}
+	}
+	
 	public static void startPlayground() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
 				currentProject.startPlayground();
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -242,7 +262,7 @@ public class JOPAMain {
 			if (currentProject != null) {
 				currentProject.stopPlayground();
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
@@ -252,12 +272,12 @@ public class JOPAMain {
 			if (currentProject != null) {
 				currentProject.closePlayground();
 			} else {
-				workspaceNotCreated();
+				projectNotCreated();
 			}
 		}
 	}
 
-	private static void workspaceNotCreated() {
+	private static void projectNotCreated() {
 		ui.showMessage("Project not created!");
 	}
 

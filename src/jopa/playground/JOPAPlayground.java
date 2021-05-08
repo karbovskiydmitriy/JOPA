@@ -3,7 +3,6 @@ package jopa.playground;
 import java.io.Closeable;
 import java.util.ArrayList;
 
-import jopa.exceptions.JOPAPlaygroundException;
 import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
@@ -27,11 +26,9 @@ public class JOPAPlayground implements Closeable {
 
 	public synchronized void start() {
 		if (simulationThread == null) {
-			try {
-				JOPASimulationScript script = new JOPASimulationScript(simulationType);
-				setupScript(script);
-			} catch (JOPAPlaygroundException e) {
-				e.printStackTrace();
+			if (script == null) {
+				JOPASimulationScript stubScript = JOPASimulationScript.create(simulationType);
+				setupScript(stubScript);
 			}
 			if (script == null) {
 				System.out.println("Script not set up");

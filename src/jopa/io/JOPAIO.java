@@ -6,14 +6,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import jopa.graphics.JOPAImage;
+
 public class JOPAIO {
 
 	public static String loadTextFile(String fileName) {
 		try {
 			return new String(Files.readAllBytes(Paths.get(fileName)));
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			// do sth with it?
+			System.err.println(e.getMessage());
 
 			return null;
 		}
@@ -23,7 +24,7 @@ public class JOPAIO {
 		try {
 			Files.write(Paths.get(fileName), text.getBytes());
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 
 			return false;
 		}
@@ -65,6 +66,12 @@ public class JOPAIO {
 		}
 
 		return false;
+	}
+	
+	public static JOPAImage loadImage(String fileName) {
+		// TODO loadImage
+		
+		return null;
 	}
 
 }
