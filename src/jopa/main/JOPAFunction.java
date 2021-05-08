@@ -4,6 +4,7 @@ import static jopa.util.JOPATypeUtil.getNameForType;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,7 +16,9 @@ import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
-public class JOPAFunction {
+public class JOPAFunction implements Serializable {
+
+	private static final long serialVersionUID = -8041471689492839874L;
 
 	public static final String TAB = "\t";
 	public static final String NEW_LINE = "\n";

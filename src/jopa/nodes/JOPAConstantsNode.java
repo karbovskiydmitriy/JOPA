@@ -8,6 +8,8 @@ import jopa.main.JOPAProject;
 
 public class JOPAConstantsNode extends JOPANode {
 
+	private static final long serialVersionUID = 6463101741433264603L;
+	
 	private JOPAProject project;
 
 	public JOPAConstantsNode(Rectangle rect, String template) {

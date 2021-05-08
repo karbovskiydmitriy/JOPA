@@ -9,6 +9,7 @@ import static jopa.util.JOPATypeUtil.getTypeForName;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.main.JOPAMain;
@@ -19,8 +20,10 @@ import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPANodeType;
 
-public abstract class JOPANode {
+public abstract class JOPANode implements Serializable {
 
+	private static final long serialVersionUID = 3421947909279717819L;
+	
 	private static final int HEADER_HEIGHT = 20;
 	private static final int DEFAULT_SIZE = 100;
 

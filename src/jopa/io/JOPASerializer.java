@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import jopa.main.JOPAMain;
+import java.util.Arrays;
 
 public final class JOPASerializer {
 
@@ -20,9 +19,13 @@ public final class JOPASerializer {
 
 				return bos.toByteArray();
 			} catch (IOException e) {
+				System.err.println(e.getMessage());
+
 				return null;
 			}
 		} catch (IOException e) {
+			System.err.println(e.getMessage());
+
 			return null;
 		}
 	}
@@ -35,16 +38,18 @@ public final class JOPASerializer {
 
 				return object;
 			} catch (IOException | ClassNotFoundException e) {
+				System.err.println(e.getMessage());
+
 				return null;
 			}
 		} catch (IOException e) {
+			System.err.println(e.getMessage());
+
 			return null;
 		}
 	}
 
 	public static <T> boolean saveToFile(File file, T object) {
-		JOPAMain.ui.showMessage("TODO save");
-
 		byte[] data = serialize(object);
 		if (data != null) {
 			return JOPAIO.saveBinaryFile(file, data);
@@ -54,8 +59,6 @@ public final class JOPASerializer {
 	}
 
 	public static <T> T readFromfile(File file) {
-		JOPAMain.ui.showMessage("TODO load");
-
 		byte[] data = JOPAIO.loadBinaryFile(file);
 		if (data != null) {
 			return deserialize(data);

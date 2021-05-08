@@ -17,6 +17,8 @@ import jopa.types.JOPAGLSLType;
 
 public class JOPADataPort extends JOPAPort {
 
+	private static final long serialVersionUID = 6506059782634794376L;
+
 	private final int PORT_RADIUS = 7;
 
 	private String typeName;

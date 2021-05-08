@@ -7,6 +7,8 @@ import jopa.ports.JOPAPort;
 
 public class JOPABranchNode extends JOPANode {
 
+	private static final long serialVersionUID = -1257820350964560822L;
+
 	public JOPABranchNode(Rectangle rect, String header) {
 		super(rect, header);
 	}

@@ -8,6 +8,8 @@ import jopa.ports.JOPAPort;
 
 public class JOPALoopNode extends JOPAStatementNode {
 
+	private static final long serialVersionUID = 6933041211578604855L;
+	
 	public JOPAControlPort loopIterationFlow;
 
 	public JOPALoopNode(Rectangle rect, String header, String template) {

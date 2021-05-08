@@ -11,6 +11,8 @@ import jopa.nodes.JOPANode;
 
 public class JOPAControlPort extends JOPAPort {
 
+	private static final long serialVersionUID = -4488663573363159229L;
+	
 	public static final int WIDTH = 8;
 	public static final int HEIGHT = 20;
 

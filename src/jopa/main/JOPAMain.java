@@ -28,15 +28,18 @@ public class JOPAMain {
 
 		settings = new JOPASettings();
 		projectSync = new Object();
-		projectFileFilter = new FileNameExtensionFilter("JOPA project file", ".jopa");
+		projectFileFilter = new FileNameExtensionFilter("JOPA project file", "jopa");
 
 		createNewWorkspace();
+
+		if (JOPAProject.saveToFile(new File(TEST_PROJECT_NAME + "test.jopa"), currentProject)) {
+			System.out.println("!!!");
+		}
 	}
 
 	private static void init() {
+		ui = new JOPAUI();
 		system = JOPASystem.init();
-
-		setupUI();
 
 		if (!system.checkSystem()) {
 			ui.showMessage(SYSTEM_NOT_SUPPORTED);
@@ -45,16 +48,15 @@ public class JOPAMain {
 		if (!system.checkVersion()) {
 			ui.showMessage(OPENGL_VERSION_WARNING);
 		}
+
+		setupUI();
 	}
 
 	private static void setupUI() {
-		if (ui == null) {
-			ui = new JOPAUI();
-			ui.createWindow();
-			ui.createMenu();
-			ui.createTabs();
-			ui.createCanvas();
-		}
+		ui.createWindow();
+		ui.createMenu();
+		ui.createTabs();
+		ui.createCanvas();
 	}
 
 	public static void createNewWorkspace() {

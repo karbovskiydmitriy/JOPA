@@ -9,6 +9,8 @@ import jopa.ports.JOPAPort;
 
 public class JOPAStatementNode extends JOPANode {
 
+	private static final long serialVersionUID = 1015604031569137995L;
+	
 	public JOPAControlPort incomingControlFlow;
 	public JOPAControlPort outcomingControlFlow;
 

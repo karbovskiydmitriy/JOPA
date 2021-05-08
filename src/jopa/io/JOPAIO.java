@@ -3,6 +3,7 @@ package jopa.io;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class JOPAIO {
@@ -31,10 +32,38 @@ public class JOPAIO {
 	}
 
 	public static byte[] loadBinaryFile(File file) {
+		if (file != null && file.exists()) {
+			Path path = file.toPath();
+			if (path != null) {
+				try {
+					return Files.readAllBytes(path);
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+
+					return null;
+				}
+			}
+		}
+
 		return null;
 	}
 
 	public static boolean saveBinaryFile(File file, byte[] data) {
+		if (file != null) {
+			if (data != null && data.length > 0) {
+				Path path = file.toPath();
+				try {
+					Files.write(path, data);
+
+					return true;
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+
+					return false;
+				}
+			}
+		}
+
 		return false;
 	}
 

@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
@@ -23,7 +24,9 @@ import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAType;
 
-public class JOPAProject {
+public class JOPAProject implements Serializable {
+
+	private static final long serialVersionUID = -5034273809770939736L;
 
 	private long lastSelectTick;
 	private Point prevPoint;

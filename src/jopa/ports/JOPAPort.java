@@ -3,12 +3,15 @@ package jopa.ports;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.nodes.JOPANode;
 
-public abstract class JOPAPort {
+public abstract class JOPAPort implements Serializable {
 
+	private static final long serialVersionUID = 4696720939425567556L;
+	
 	public JOPANode node;
 	public Point position;
 	public boolean isOutput;

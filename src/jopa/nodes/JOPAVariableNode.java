@@ -8,6 +8,8 @@ import jopa.ports.JOPAPort;
 
 public class JOPAVariableNode extends JOPANode {
 
+	private static final long serialVersionUID = -4245064405386575712L;
+	
 	public JOPAVariable variable;
 
 	public JOPAVariableNode(Rectangle rect, String header) {
