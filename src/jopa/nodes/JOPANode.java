@@ -10,6 +10,8 @@ import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import jopa.main.JOPACodeConvertible;
+import jopa.main.JOPAConstant;
 import jopa.main.JOPAMain;
 import jopa.main.JOPANodeTemplate;
 import jopa.main.JOPAVariable;
@@ -19,7 +21,7 @@ import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPANodeType;
 
-public abstract class JOPANode implements Serializable {
+public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 
 	private static final long serialVersionUID = 3421947909279717819L;
 
@@ -96,6 +98,8 @@ public abstract class JOPANode implements Serializable {
 				JOPAVariable variable = JOPAVariable.create(input);
 				if (variable == null) {
 					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, input);
+				} else if (variable.getClass() == JOPAConstant.class) {
+					JOPAMain.currentProject.constants.add((JOPAConstant) variable);
 				}
 				createPort(variable, false, false);
 			}
@@ -104,6 +108,8 @@ public abstract class JOPANode implements Serializable {
 				JOPAVariable variable = JOPAVariable.create(output);
 				if (variable == null) {
 					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, output);
+				} else if (variable.getClass() == JOPAConstant.class) {
+					JOPAMain.currentProject.constants.add((JOPAConstant) variable);
 				}
 				createPort(variable, true, false);
 			}
@@ -113,6 +119,9 @@ public abstract class JOPANode implements Serializable {
 
 	public void createPort(JOPAVariable variable, boolean isOutput, boolean update) {
 		JOPADataPort port = new JOPADataPort(this, variable, isOutput);
+		// if (variable.getClass() == JOPAConstant.class) {
+		// JOPAMain.currentProject.constants.add((JOPAConstant) variable);
+		// }
 		if (!isOutput) {
 			inputs.add(port);
 		} else {

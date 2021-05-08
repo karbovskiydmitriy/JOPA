@@ -133,7 +133,10 @@ public class JOPAProject implements Serializable {
 	// }
 
 	public synchronized void draw(Graphics2D g) {
-		functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
+		// functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
+		if (currentFunction != null) {
+			currentFunction.draw(g, selectedNode, selectedPort);
+		}
 		if (selectedPort != null) {
 			JOPADataPort.drawConnection(g, selectedPort.position.x, selectedPort.position.y, cursorPosition.x,
 					cursorPosition.y, Color.BLACK);

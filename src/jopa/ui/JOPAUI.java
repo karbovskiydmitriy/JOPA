@@ -2,12 +2,12 @@ package jopa.ui;
 
 import static jopa.main.JOPAMain.about;
 import static jopa.main.JOPAMain.closePlayground;
+import static jopa.main.JOPAMain.closeProject;
 import static jopa.main.JOPAMain.createNewFunction;
 import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewProject;
 import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentProject;
-import static jopa.main.JOPAMain.closeProject;
 import static jopa.main.JOPAMain.editProject;
 import static jopa.main.JOPAMain.editScript;
 import static jopa.main.JOPAMain.generateShader;

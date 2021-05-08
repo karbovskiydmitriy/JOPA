@@ -12,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import jopa.main.JOPACodeConvertible;
+import jopa.main.JOPAConstant;
 import jopa.main.JOPAMain;
 import jopa.main.JOPAVariable;
 import jopa.nodes.JOPANode;
@@ -54,7 +55,12 @@ public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
 		g.fillOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		g.setColor(Color.BLACK);
 		g.drawOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
-		String text = JOPAMain.settings.showPortTypes ? typeName + " " + variable.name : variable.name;
+		String text;
+		if (!variable.getClass().equals(JOPAConstant.class)) {
+			text = JOPAMain.settings.showPortTypes ? typeName + " " + variable.name : variable.name;
+		} else {
+			text = variable.toString();
+		}
 		if (!isOutput) {
 			FontRenderContext frc = g.getFontRenderContext();
 			Font font = g.getFont();

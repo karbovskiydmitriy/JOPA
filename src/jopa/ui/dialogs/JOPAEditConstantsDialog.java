@@ -79,6 +79,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		JButton deleteButton = new JButton("delete");
 		deleteButton.addActionListener(e -> {
 			object.constants.remove(constant);
+			object.updateConstants();
 			init();
 		});
 		area.add(label);

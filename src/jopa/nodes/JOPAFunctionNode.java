@@ -1,8 +1,9 @@
 package jopa.nodes;
 
+import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAFunction;
 
-public class JOPAFunctionNode extends JOPANode {
+public class JOPAFunctionNode extends JOPANode implements JOPACodeConvertible {
 
 	private static final long serialVersionUID = 7559559202358367590L;
 

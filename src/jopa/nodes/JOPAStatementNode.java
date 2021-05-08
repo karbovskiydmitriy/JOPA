@@ -4,13 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import jopa.main.JOPACodeConvertible;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
-public class JOPAStatementNode extends JOPANode {
+public class JOPAStatementNode extends JOPANode implements JOPACodeConvertible {
 
 	private static final long serialVersionUID = 1015604031569137995L;
-	
+
 	public JOPAControlPort incomingControlFlow;
 	public JOPAControlPort outcomingControlFlow;
 

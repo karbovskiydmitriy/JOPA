@@ -2,11 +2,12 @@ package jopa.nodes;
 
 import java.awt.Rectangle;
 
+import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
 import jopa.main.JOPAMain;
 import jopa.main.JOPAProject;
 
-public class JOPAConstantsNode extends JOPANode {
+public class JOPAConstantsNode extends JOPANode implements JOPACodeConvertible {
 
 	private static final long serialVersionUID = 6463101741433264603L;
 
@@ -24,10 +25,6 @@ public class JOPAConstantsNode extends JOPANode {
 	protected void init() {
 		super.init();
 		project = JOPAMain.currentProject;
-		for (JOPAConstant constant : project.constants) {
-			createPort(new JOPAConstant(constant.type, constant.name, constant.value), true, false);
-		}
-		adjustPorts();
 	}
 
 	public void updateConstants() {
@@ -36,6 +33,10 @@ public class JOPAConstantsNode extends JOPANode {
 		});
 		outputs.clear();
 		init();
+		for (JOPAConstant constant : project.constants) {
+			createPort(constant, true, false);
+		}
+		adjustPorts();
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class JOPASystem {
 	}
 
 	public boolean checkSystem() {
-		if (!Arrays.asList("x86", "x64").contains(arch)) {
+		if (!Arrays.asList("x86", "amd64").contains(arch)) {
 			return false;
 		}
 		if (os.contains("Windows")) {

@@ -16,7 +16,7 @@ import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
-public class JOPAFunction implements Serializable {
+public class JOPAFunction implements Serializable, JOPACodeConvertible {
 
 	private static final long serialVersionUID = -8041471689492839874L;
 

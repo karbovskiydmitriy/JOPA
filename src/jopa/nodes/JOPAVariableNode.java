@@ -3,13 +3,14 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPAPort;
 
-public class JOPAVariableNode extends JOPANode {
+public class JOPAVariableNode extends JOPANode implements JOPACodeConvertible {
 
 	private static final long serialVersionUID = -4245064405386575712L;
-	
+
 	public JOPAVariable variable;
 
 	public JOPAVariableNode(Rectangle rect, String header) {
