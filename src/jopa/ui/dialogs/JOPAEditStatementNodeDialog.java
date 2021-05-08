@@ -10,6 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import jopa.main.JOPAVariable;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPADataPort;
 import jopa.types.JOPAGLSLType;
@@ -46,6 +47,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			JOPADataPort port = object.outputs.get(i);
 			addEditorPair("output[" + i + "]", port);
 		}
+		adjustGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();
@@ -63,7 +65,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newInputMenuItem.addActionListener(e -> {
-				object.createPort(JOPAGLSLType.JOPA_FLOAT, "input_port", false, true);
+				object.createPort(new JOPAVariable(JOPAGLSLType.JOPA_FLOAT, "input_port"), false, true);
 				init();
 			});
 
@@ -81,7 +83,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newOutputMenuItem.addActionListener(e -> {
-				object.createPort(JOPAGLSLType.JOPA_FLOAT, "output_port", true, true);
+				object.createPort(new JOPAVariable(JOPAGLSLType.JOPA_FLOAT, "output_port"), true, true);
 				init();
 			});
 
@@ -106,7 +108,6 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		makeCompactGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

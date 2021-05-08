@@ -1,5 +1,7 @@
 package jopa.main;
 
+import static jopa.io.JOPAIO.loadTextFile;
+
 import java.io.File;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -14,14 +16,17 @@ import jopa.ui.JOPAUI;
 
 public class JOPAMain {
 
-	private static final String OPENGL_VERSION_WARNING = "Your system does not support OpenGL 4.3, required for compute shaders!";
 	private static final String SYSTEM_NOT_SUPPORTED = "Your system is not officially supported!";
+	// private static final String OPENGL_VERSION_WARNING = "Your system does not
+	// support OpenGL 4.3, required for compute shaders!";
 	private static final String TEST_PROJECT_NAME = ".\\projects\\";
 
 	private static FileNameExtensionFilter projectFileFilter;
-	private static JOPASystem system;
 	private static Object projectSync;
+	private static String helpString;
+	private static String manualString;
 
+	public static JOPASystem system;
 	public static JOPAProject currentProject;
 	public static JOPASettings settings;
 	public static JOPAUI ui;
@@ -33,7 +38,7 @@ public class JOPAMain {
 		projectSync = new Object();
 		projectFileFilter = new FileNameExtensionFilter("JOPA project file", "jopa");
 
-		createNewWorkspace();
+		createNewProject();
 	}
 
 	private static void init() {
@@ -45,8 +50,11 @@ public class JOPAMain {
 		}
 
 		if (!system.checkVersion()) {
-			ui.showMessage(OPENGL_VERSION_WARNING);
+			// ui.showMessage(OPENGL_VERSION_WARNING);
 		}
+
+		helpString = loadTextFile("about.txt");
+		manualString = loadTextFile("manual.txt");
 
 		setupUI();
 	}
@@ -58,19 +66,19 @@ public class JOPAMain {
 		ui.createCanvas();
 	}
 
-	public static void createNewWorkspace() {
+	public static void createNewProject() {
 		synchronized (projectSync) {
-			currentProject = new JOPAProject("New workspace", JOPAProjectType.FRAGMENT);
+			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
 		}
 
 		ui.repaint();
 	}
 
-	public static boolean openWorkspace() {
+	public static boolean openProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				// TODO ask
+				askAsboutSavingTheProject();
 			}
 			File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
 			if (selectedFile != null) {
@@ -83,7 +91,7 @@ public class JOPAMain {
 		return false;
 	}
 
-	public static boolean saveWorkspace() {
+	public static boolean saveProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
 				File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, true);
@@ -100,10 +108,10 @@ public class JOPAMain {
 		}
 	}
 
-	public static void destroyWorkspace() {
+	public static void closeProject() {
 		synchronized (projectSync) {
 			currentProject = null;
-			ui.closeProject();
+			ui.closeProjectTabs();
 		}
 
 		ui.repaint();
@@ -111,7 +119,7 @@ public class JOPAMain {
 
 	public static void quit() {
 		synchronized (projectSync) {
-			saveWorkspace();
+			askAsboutSavingTheProject();
 			currentProject = null;
 			ui.close();
 		}
@@ -246,7 +254,7 @@ public class JOPAMain {
 			}
 		}
 	}
-	
+
 	public static void startPlayground() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
@@ -281,12 +289,18 @@ public class JOPAMain {
 		ui.showMessage("Project not created!");
 	}
 
+	private static void askAsboutSavingTheProject() {
+		if (ui.showQuestion("Save project?")) {
+			saveProject();
+		}
+	}
+
 	public static void about() {
-		ui.showMessage("JOPA");
+		ui.showMessage(helpString);
 	}
 
 	public static void manual() {
-		ui.showMessage("MANUAL");
+		ui.showMessage(manualString);
 	}
 
 }

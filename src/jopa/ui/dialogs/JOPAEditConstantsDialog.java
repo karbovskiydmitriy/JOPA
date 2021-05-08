@@ -20,8 +20,8 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 	private static final long serialVersionUID = -2535204900792827922L;
 
-	public JOPAEditConstantsDialog(Frame owner, JOPAProject workspace) {
-		super(owner, "Constants", workspace);
+	public JOPAEditConstantsDialog(Frame owner, JOPAProject project) {
+		super(owner, "Constants", project);
 
 		init();
 		initMenu();
@@ -58,7 +58,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 					.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newConstantMenuItem.addActionListener(e -> {
-				JOPAConstant newConstant = new JOPAConstant("foobar", JOPAGLSLType.JOPA_INT, "42");
+				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.JOPA_INT, "foobar", "42");
 				object.constants.add(newConstant);
 				object.updateConstants();
 				init();
@@ -85,7 +85,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		makeCompactGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
+		adjustGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

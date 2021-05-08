@@ -2,7 +2,6 @@ package jopa.main;
 
 import static jopa.main.JOPAFunction.NEW_LINE;
 import static jopa.main.JOPAFunction.TWO_LINES;
-import static jopa.util.JOPATypeUtil.getNameForType;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -22,7 +21,7 @@ import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
-import jopa.types.JOPAGLSLType;
+import jopa.types.JOPAResource;
 import jopa.types.JOPAType;
 
 public class JOPAProject implements Serializable {
@@ -45,21 +44,22 @@ public class JOPAProject implements Serializable {
 	public ArrayList<JOPAType> types;
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAVariable> publicVariables;
+	public ArrayList<JOPAResource> resources;
 	public JOPAFunction currentFunction;
 	public JOPASimulationScript script;
 
 	public JOPAProject(String name, JOPAProjectType type) {
 		this.name = name;
 		this.projectType = type;
-		this.types = new ArrayList<JOPAType>();
-		this.constants = new ArrayList<JOPAConstant>();
-		this.publicVariables = new ArrayList<JOPAVariable>();
-		this.functions = new ArrayList<JOPAFunction>();
 		init();
 	}
 
 	private void init() {
-		constants.add(new JOPAConstant("PI", JOPAGLSLType.JOPA_FLOAT, "3.14"));
+		types = new ArrayList<JOPAType>();
+		constants = new ArrayList<JOPAConstant>();
+		publicVariables = new ArrayList<JOPAVariable>();
+		functions = new ArrayList<JOPAFunction>();
+		resources = new ArrayList<JOPAResource>();
 		script = JOPASimulationScript.create(JOPASimulationType.CUSTOM);
 	}
 
@@ -97,7 +97,7 @@ public class JOPAProject implements Serializable {
 
 	public synchronized void createPlayground(JOPASimulationType type) {
 		if (playground == null) {
-			playground = new JOPAPlayground(type);
+			playground = JOPAPlayground.create(type);
 		}
 	}
 
@@ -314,9 +314,9 @@ public class JOPAProject implements Serializable {
 				shaderCode += NEW_LINE;
 			}
 			if (mainFunction.startNode.outputs.size() > 0) {
-				for (JOPADataPort variable : mainFunction.startNode.outputs) {
+				for (JOPADataPort port : mainFunction.startNode.outputs) {
 					String modifier = "uniform ";
-					shaderCode += modifier + getNameForType(variable.dataType) + " " + variable.name + ";\n";
+					shaderCode += modifier + port.generateCode() + ";\n";
 				}
 				shaderCode += NEW_LINE;
 			}

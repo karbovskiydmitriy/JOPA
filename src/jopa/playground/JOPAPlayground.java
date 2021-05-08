@@ -3,6 +3,7 @@ package jopa.playground;
 import java.io.Closeable;
 import java.util.ArrayList;
 
+import jopa.main.JOPAMain;
 import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
@@ -13,11 +14,22 @@ public class JOPAPlayground implements Closeable {
 
 	private ArrayList<JOPAResource> resources;
 
-	public JOPAPlayground(JOPASimulationType type) {
+	private JOPAPlayground(JOPASimulationType type) {
 		this.simulationType = type;
 		resources = new ArrayList<JOPAResource>();
 		System.out.println("Playground created");
-		// TODO playground init?
+	}
+
+	public static JOPAPlayground create(JOPASimulationType type) {
+		if (type == JOPASimulationType.COMPUTE) {
+			if (!JOPAMain.system.checkVersion()) {
+				JOPAMain.ui.showMessage("You system does not support compute shaders!");
+
+				return null;
+			}
+		}
+
+		return new JOPAPlayground(type);
 	}
 
 	public synchronized void setupScript(JOPASimulationScript script) {
@@ -28,6 +40,7 @@ public class JOPAPlayground implements Closeable {
 		if (simulationThread == null) {
 			if (script == null) {
 				JOPASimulationScript stubScript = JOPASimulationScript.create(simulationType);
+				System.out.println(stubScript);
 				setupScript(stubScript);
 			}
 			if (script == null) {

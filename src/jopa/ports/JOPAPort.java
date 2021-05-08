@@ -15,13 +15,13 @@ public abstract class JOPAPort implements Serializable {
 	public JOPANode node;
 	public Point position;
 	public boolean isOutput;
-	public String name;
+//	public String name;
 	public ArrayList<JOPAPort> connections;
 
-	public JOPAPort(JOPANode node, boolean isOutput, String name) {
+	public JOPAPort(JOPANode node, boolean isOutput/*, String name*/) {
 		this.node = node;
 		this.isOutput = isOutput;
-		this.name = name;
+//		this.name = name;
 	}
 
 	public abstract boolean hit(Point p);

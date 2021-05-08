@@ -11,11 +11,12 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAMain;
+import jopa.main.JOPAVariable;
 import jopa.nodes.JOPANode;
-import jopa.types.JOPAGLSLType;
 
-public class JOPADataPort extends JOPAPort {
+public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
 
 	private static final long serialVersionUID = 6506059782634794376L;
 
@@ -24,12 +25,12 @@ public class JOPADataPort extends JOPAPort {
 	private String typeName;
 	private Color color;
 
-	public JOPAGLSLType dataType;
+	public JOPAVariable variable;
 
-	public JOPADataPort(JOPANode node, JOPAGLSLType type, String name, boolean isOutput) {
-		super(node, isOutput, name);
+	public JOPADataPort(JOPANode node, JOPAVariable variable, boolean isOutput) {
+		super(node, isOutput);
 		this.connections = new ArrayList<JOPAPort>();
-		this.dataType = type;
+		this.variable = variable;
 		update();
 	}
 
@@ -40,8 +41,8 @@ public class JOPADataPort extends JOPAPort {
 
 	@Override
 	public void update() {
-		typeName = getNameForType(dataType);
-		color = getColorForType(dataType);
+		typeName = getNameForType(variable.type);
+		color = getColorForType(variable.type);
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {
@@ -53,7 +54,7 @@ public class JOPADataPort extends JOPAPort {
 		g.fillOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		g.setColor(Color.BLACK);
 		g.drawOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
-		String text = JOPAMain.settings.showPortTypes ? typeName + " " + name : name;
+		String text = JOPAMain.settings.showPortTypes ? typeName + " " + variable.name : variable.name;
 		if (!isOutput) {
 			FontRenderContext frc = g.getFontRenderContext();
 			Font font = g.getFont();
@@ -73,6 +74,11 @@ public class JOPADataPort extends JOPAPort {
 	public void destroyAllConnections() {
 		connections.forEach(port -> port.connections.remove(this));
 		connections.clear();
+	}
+
+	@Override
+	public String generateCode() {
+		return variable.toString();
 	}
 
 }

@@ -4,17 +4,17 @@ import static jopa.main.JOPAMain.about;
 import static jopa.main.JOPAMain.closePlayground;
 import static jopa.main.JOPAMain.createNewFunction;
 import static jopa.main.JOPAMain.createNewNode;
-import static jopa.main.JOPAMain.createNewWorkspace;
+import static jopa.main.JOPAMain.createNewProject;
 import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentProject;
-import static jopa.main.JOPAMain.destroyWorkspace;
+import static jopa.main.JOPAMain.closeProject;
 import static jopa.main.JOPAMain.editProject;
 import static jopa.main.JOPAMain.editScript;
 import static jopa.main.JOPAMain.generateShader;
 import static jopa.main.JOPAMain.manual;
-import static jopa.main.JOPAMain.openWorkspace;
+import static jopa.main.JOPAMain.openProject;
 import static jopa.main.JOPAMain.quit;
-import static jopa.main.JOPAMain.saveWorkspace;
+import static jopa.main.JOPAMain.saveProject;
 import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
@@ -55,6 +55,7 @@ import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
+import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
@@ -103,10 +104,10 @@ public class JOPAUI {
 				closeFileMenuItem.setShortcut(new MenuShortcut('W'));
 				quitFileMenuItem.setShortcut(new MenuShortcut('Q'));
 
-				newFileMenuItem.addActionListener(e -> createNewWorkspace());
-				openFileMenuItem.addActionListener(e -> openWorkspace());
-				saveFileMenuItem.addActionListener(e -> saveWorkspace());
-				closeFileMenuItem.addActionListener(e -> destroyWorkspace());
+				newFileMenuItem.addActionListener(e -> createNewProject());
+				openFileMenuItem.addActionListener(e -> openProject());
+				saveFileMenuItem.addActionListener(e -> saveProject());
+				closeFileMenuItem.addActionListener(e -> closeProject());
 				quitFileMenuItem.addActionListener(e -> quit());
 
 				fileMenu.add(newFileMenuItem);
@@ -140,7 +141,7 @@ public class JOPAUI {
 				MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
 				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
 
-				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F', true));
+				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F'));
 
 				createNewFunctionMenuItem.addActionListener(e -> createNewFunction());
 				validateFunctionMenuItem.addActionListener(e -> validateFunction());
@@ -190,7 +191,8 @@ public class JOPAUI {
 				MenuItem generateShaderMenuItem = new MenuItem("generate shader");
 				MenuItem showShaderCodeMenuItem = new MenuItem("show shader code");
 
-				generateShaderMenuItem.setShortcut(new MenuShortcut('G', true));
+				generateShaderMenuItem.setShortcut(new MenuShortcut('G'));
+				showShaderCodeMenuItem.setShortcut(new MenuShortcut('S', true));
 
 				generateShaderMenuItem.addActionListener(e -> generateShader());
 				showShaderCodeMenuItem.addActionListener(e -> showShaderCode());
@@ -332,6 +334,10 @@ public class JOPAUI {
 		new JOPAEditScriptDialog(window, script);
 	}
 
+	public synchronized void openResourcesEditor(JOPAProject project) {
+		new JOPAEditResourcesDialog(window, project);
+	}
+
 	public synchronized void openFunctionEditor(JOPAFunction function) {
 		new JOPAEditFunctionDialog(window, function);
 	}
@@ -365,6 +371,13 @@ public class JOPAUI {
 		}
 	}
 
+	public synchronized boolean showQuestion(String message) {
+		showMessage(message);
+		// TODO buttons
+
+		return false;
+	}
+
 	public synchronized File showFileDialog(String path, FileNameExtensionFilter filter, String title, boolean save) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(false);
@@ -395,7 +408,7 @@ public class JOPAUI {
 		return null;
 	}
 
-	public synchronized void closeProject() {
+	public synchronized void closeProjectTabs() {
 		tabs.removeAll();
 		tabs.revalidate();
 		tabs.repaint();

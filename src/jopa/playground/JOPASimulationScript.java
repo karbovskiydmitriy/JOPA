@@ -7,20 +7,10 @@ import static jopa.util.JOPAOGLUtil.destroyWindow;
 import static jopa.util.JOPAOGLUtil.getTextureFormat;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
-import static jopa.util.JOPAOGLUtil.passUniforms;
+import static jopa.util.JOPAOGLUtil.tick;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
@@ -35,14 +25,14 @@ import jopa.types.JOPAResource;
 
 public class JOPASimulationScript {
 
+	private static long window;
+	private static int state = 0;
+	private static int image;
+
 	private ArrayList<String> commands;
 	private Iterator<String> nextCommand;
 	private JOPASimulationType executionType;
 	private ArrayList<JOPAResource> resources;
-
-	long window;
-	int state = 0;
-	int image;
 
 	private JOPASimulationScript(JOPASimulationType simulationType) {
 		this.executionType = simulationType;
@@ -181,28 +171,7 @@ public class JOPASimulationScript {
 	}
 
 	private boolean defaultFragmentShaderTick() {
-		if (!glfwWindowShouldClose(window)) {
-			passUniforms(resources);
-
-			glClear(GL_COLOR_BUFFER_BIT);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 1);
-			glVertex2i(-1, -1);
-			glTexCoord2f(0, 0);
-			glVertex2i(-1, 1);
-			glTexCoord2f(1, 0);
-			glVertex2i(1, 1);
-			glTexCoord2f(1, 1);
-			glVertex2i(1, -1);
-			glEnd();
-
-			glfwSwapBuffers(window);
-			glfwPollEvents();
-
-			return true;
-		}
-
-		return false;
+		return tick(window, resources);
 	}
 
 	private void defaultFragmentShaderDeinit() {
@@ -227,26 +196,7 @@ public class JOPASimulationScript {
 	}
 
 	private boolean defaultComputeShaderTick() {
-		if (!glfwWindowShouldClose(window)) {
-			glClear(GL_COLOR_BUFFER_BIT);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 1);
-			glVertex2i(-1, -1);
-			glTexCoord2f(0, 0);
-			glVertex2i(-1, 1);
-			glTexCoord2f(1, 0);
-			glVertex2i(1, 1);
-			glTexCoord2f(1, 1);
-			glVertex2i(1, -1);
-			glEnd();
-
-			glfwSwapBuffers(window);
-			glfwPollEvents();
-
-			return true;
-		}
-
-		return false;
+		return tick(window, resources);
 	}
 
 	private void defaultComputeShaderDeinit() {

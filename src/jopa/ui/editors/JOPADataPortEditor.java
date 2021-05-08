@@ -23,8 +23,8 @@ public class JOPADataPortEditor extends JOPAEditorComponent<JOPADataPort> {
 		super(port);
 		setBackground(port.isOutput ? Color.GREEN : Color.GRAY);
 		typesComboBox = new JComboBox<String>(JOPATypeUtil.getAllTypes());
-		typesComboBox.setSelectedItem(getNameForType(object.dataType));
-		nameField = new JTextField(port.name);
+		typesComboBox.setSelectedItem(getNameForType(object.variable.type));
+		nameField = new JTextField(port.variable.name);
 		add(typesComboBox);
 		add(nameField);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -32,8 +32,8 @@ public class JOPADataPortEditor extends JOPAEditorComponent<JOPADataPort> {
 
 	@Override
 	public void writeBack() {
-		object.dataType = getTypeForName((String) typesComboBox.getSelectedItem());
-		object.name = nameField.getText();
+		object.variable.type = getTypeForName((String) typesComboBox.getSelectedItem());
+		object.variable.name = nameField.getText();
 		object.update();
 	}
 

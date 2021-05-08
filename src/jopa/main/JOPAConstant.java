@@ -8,8 +8,8 @@ public class JOPAConstant extends JOPAVariable {
 	
 	public String value;
 
-	public JOPAConstant(String name, JOPAGLSLType type, String value) {
-		super(name, type, null);
+	public JOPAConstant(JOPAGLSLType type, String name, String value) {
+		super(type, name);
 		this.value = value;
 	}
 

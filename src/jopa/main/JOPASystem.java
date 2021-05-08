@@ -56,9 +56,7 @@ public class JOPASystem {
 		}
 
 		if (majorVersion < 4 && minorVersion < 3) {
-			// uncomment later
-			return true;
-			// return false;
+			return false;
 		}
 
 		return true;

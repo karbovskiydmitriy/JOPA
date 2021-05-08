@@ -3,8 +3,6 @@ package jopa.nodes;
 import static java.awt.Color.BLACK;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
-import static jopa.util.JOPATypeUtil.getNameForType;
-import static jopa.util.JOPATypeUtil.getTypeForName;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 
 import jopa.main.JOPAMain;
 import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPAVariable;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
@@ -81,10 +80,8 @@ public abstract class JOPANode implements Serializable {
 	protected String generateConnectionsCode() {
 		String text = "";
 		for (JOPADataPort input : inputs) {
-			String varType = getNameForType(input.dataType);
-			String varName = input.name;
-			String valueName = input.connections.get(0).name;
-			text += varType + " " + varName + " = " + valueName + ";";
+			String valueName = ((JOPADataPort) input.connections.get(0)).variable.name;
+			text += input.generateCode() + " = " + valueName + ";";
 		}
 
 		return text;
@@ -96,36 +93,26 @@ public abstract class JOPANode implements Serializable {
 		if (template != null) {
 			for (int i = 0; i < template.inputs.length; i++) {
 				String input = template.inputs[i];
-				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
-				String name = input;
-				if (input.contains(":")) {
-					String[] parts = input.split(":");
-					if (parts.length == 2) {
-						type = getTypeForName(parts[0]);
-						name = parts[1];
-					}
+				JOPAVariable variable = JOPAVariable.create(input);
+				if (variable == null) {
+					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, input);
 				}
-				createPort(type, name, false, false);
+				createPort(variable, false, false);
 			}
 			for (int i = 0; i < template.outputs.length; i++) {
 				String output = template.outputs[i];
-				JOPAGLSLType type = JOPAGLSLType.JOPA_NONE;
-				String name = output;
-				if (output.contains(":")) {
-					String[] parts = output.split(":");
-					if (parts.length == 2) {
-						type = getTypeForName(parts[0]);
-						name = parts[1];
-					}
+				JOPAVariable variable = JOPAVariable.create(output);
+				if (variable == null) {
+					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, output);
 				}
-				createPort(type, name, true, false);
+				createPort(variable, true, false);
 			}
 			adjustPorts();
 		}
 	}
 
-	public void createPort(JOPAGLSLType type, String name, boolean isOutput, boolean update) {
-		JOPADataPort port = new JOPADataPort(this, type, name, isOutput);
+	public void createPort(JOPAVariable variable, boolean isOutput, boolean update) {
+		JOPADataPort port = new JOPADataPort(this, variable, isOutput);
 		if (!isOutput) {
 			inputs.add(port);
 		} else {

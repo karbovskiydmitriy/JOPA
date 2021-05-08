@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.SpringLayout.Constraints;
 
 import jopa.ui.editors.JOPAEditorComponent;
 
@@ -21,7 +22,7 @@ public abstract class JOPADialog<T> extends JDialog {
 	protected T object;
 	protected JPanel area;
 	protected ArrayList<JOPAEditorComponent<?>> editors;
-	
+
 	public JOPADialog(Frame owner, String title, T object) {
 		super(owner);
 		this.object = object;
@@ -47,19 +48,19 @@ public abstract class JOPADialog<T> extends JDialog {
 
 	protected abstract void closing();
 
-	protected static SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
-		SpringLayout layout = (SpringLayout) parent.getLayout();
+	protected static Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
 		Component c = parent.getComponent(row * cols + col);
-		return layout.getConstraints(c);
+
+		return ((SpringLayout) parent.getLayout()).getConstraints(c);
 	}
 
-	protected static void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad,
+	protected static void adjustGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad,
 			int yPad) {
 		SpringLayout layout;
 		try {
 			layout = (SpringLayout) parent.getLayout();
 		} catch (ClassCastException e) {
-			System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+			System.err.println("The first argument must use SpringLayout");
 
 			return;
 		}

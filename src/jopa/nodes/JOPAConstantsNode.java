@@ -9,7 +9,7 @@ import jopa.main.JOPAProject;
 public class JOPAConstantsNode extends JOPANode {
 
 	private static final long serialVersionUID = 6463101741433264603L;
-	
+
 	private JOPAProject project;
 
 	public JOPAConstantsNode(Rectangle rect, String template) {
@@ -25,7 +25,7 @@ public class JOPAConstantsNode extends JOPANode {
 		super.init();
 		project = JOPAMain.currentProject;
 		for (JOPAConstant constant : project.constants) {
-			createPort(constant.type, constant.name, true, false);
+			createPort(new JOPAConstant(constant.type, constant.name, constant.value), true, false);
 		}
 		adjustPorts();
 	}

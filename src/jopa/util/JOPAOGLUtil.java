@@ -11,18 +11,28 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_VERSION;
+import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glGetString;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
@@ -321,6 +331,31 @@ public final class JOPAOGLUtil {
 		}
 
 		return window;
+	}
+
+	public static boolean tick(long window, ArrayList<JOPAResource> resources) {
+		if (!glfwWindowShouldClose(window)) {
+			passUniforms(resources);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0, 1);
+			glVertex2i(-1, -1);
+			glTexCoord2f(0, 0);
+			glVertex2i(-1, 1);
+			glTexCoord2f(1, 0);
+			glVertex2i(1, 1);
+			glTexCoord2f(1, 1);
+			glVertex2i(1, -1);
+			glEnd();
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public static void destroyWindow(long window) {
