@@ -1,7 +1,6 @@
 package jopa.graphics;
 
 import static jopa.main.JOPAMain.currentProject;
-import static jopa.main.JOPAMain.projectSync;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,53 +24,53 @@ public class JOPACanvas extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				synchronized (projectSync) {
-					if (currentProject != null) {
-						currentProject.mousePressed(getChangedPoint(e.getPoint()));
-						repaint();
-					}
+				// synchronized (projectSync) {
+				if (currentProject != null) {
+					currentProject.mousePressed(getChangedPoint(e.getPoint()));
+					repaint();
 				}
+				// }
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				synchronized (projectSync) {
-					if (currentProject != null) {
-						currentProject.mouseReleased(getChangedPoint(e.getPoint()));
-						repaint();
-					}
+				// synchronized (projectSync) {
+				if (currentProject != null) {
+					currentProject.mouseReleased(getChangedPoint(e.getPoint()));
+					repaint();
 				}
+				// }
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				synchronized (projectSync) {
-					if (currentProject != null) {
-						currentProject.mouseClicked(getChangedPoint(e.getPoint()));
-						repaint();
-					}
+				// synchronized (projectSync) {
+				if (currentProject != null) {
+					currentProject.mouseClicked(getChangedPoint(e.getPoint()));
+					repaint();
 				}
+				// }
 			}
 		});
 		addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				synchronized (projectSync) {
-					if (currentProject != null) {
-						currentProject.mouseMoved(getChangedPoint(e.getPoint()));
-						repaint();
-					}
+				// synchronized (projectSync) {
+				if (currentProject != null) {
+					currentProject.mouseMoved(getChangedPoint(e.getPoint()));
+					repaint();
 				}
+				// }
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				synchronized (projectSync) {
-					if (currentProject != null) {
-						currentProject.mouseMoved(getChangedPoint(e.getPoint()));
-						repaint();
-					}
+				// synchronized (projectSync) {
+				if (currentProject != null) {
+					currentProject.mouseMoved(getChangedPoint(e.getPoint()));
+					repaint();
 				}
+				// }
 			}
 		});
 		addMouseWheelListener(new MouseAdapter() {
@@ -103,11 +102,11 @@ public class JOPACanvas extends JPanel {
 		graphics2D.implementation = (Graphics2D) g;
 		g.setColor(JOPAMain.settings.defaultPalette.backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		synchronized (JOPAMain.projectSync) {
-			if (JOPAMain.currentProject != null) {
-				JOPAMain.currentProject.draw((Graphics2D) graphics2D);
-			}
+		// synchronized (JOPAMain.projectSync) {
+		if (JOPAMain.currentProject != null) {
+			JOPAMain.currentProject.draw((Graphics2D) graphics2D);
 		}
+		// }
 	}
 
 }

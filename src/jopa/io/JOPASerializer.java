@@ -2,6 +2,7 @@ package jopa.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -41,21 +42,21 @@ public final class JOPASerializer {
 		}
 	}
 
-	public static <T> boolean saveToFile(String fileName, T object) {
+	public static <T> boolean saveToFile(File file, T object) {
 		JOPAMain.ui.showMessage("TODO save");
 
 		byte[] data = serialize(object);
 		if (data != null) {
-			return JOPAIO.saveBinaryFile(fileName, data);
+			return JOPAIO.saveBinaryFile(file, data);
 		}
 
 		return false;
 	}
 
-	public static <T> T readFromfile(String fileName) {
+	public static <T> T readFromfile(File file) {
 		JOPAMain.ui.showMessage("TODO load");
 
-		byte[] data = JOPAIO.loadBinaryFile(fileName);
+		byte[] data = JOPAIO.loadBinaryFile(file);
 		if (data != null) {
 			return deserialize(data);
 		}

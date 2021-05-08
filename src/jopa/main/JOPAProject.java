@@ -7,6 +7,7 @@ import static jopa.util.JOPATypeUtil.getNameForType;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.File;
 import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
@@ -30,12 +31,12 @@ public class JOPAProject {
 	private JOPANode selectedNode;
 	private JOPANode draggingNode;
 	private Point cursorPosition;
-	private String name;
 	private ArrayList<JOPAFunction> functions;
 	private JOPAFunction mainFunction;
 	private String generatedShader;
 	private JOPAPlayground playground;
 
+	public String name;
 	public JOPAProjectType projectType;
 	public ArrayList<JOPAType> types;
 	public ArrayList<JOPAConstant> constants;
@@ -338,12 +339,12 @@ public class JOPAProject {
 		}
 	}
 
-	public static synchronized JOPAProject loadFromFile(String fileName) {
-		return JOPASerializer.readFromfile(fileName);
+	public static synchronized JOPAProject loadFromFile(File file) {
+		return JOPASerializer.readFromfile(file);
 	}
 
-	public static synchronized boolean saveToFile(String fileName, JOPAProject project) {
-		return JOPASerializer.saveToFile(project.name, project);
+	public static synchronized boolean saveToFile(File file, JOPAProject project) {
+		return JOPASerializer.saveToFile(file, project);
 	}
 
 }

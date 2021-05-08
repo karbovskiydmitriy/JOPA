@@ -1,5 +1,9 @@
 package jopa.main;
 
+import java.io.File;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationType;
@@ -9,15 +13,27 @@ public class JOPAMain {
 
 	private static final String OPENGL_VERSION_WARNING = "Your system does not support OpenGL 4.3, required for compute shaders!";
 	private static final String SYSTEM_NOT_SUPPORTED = "Your system is not officially supported!";
-	private static final String TEST_PROJECT_NAME = ".\\projects\\test.jopa";
+	private static final String TEST_PROJECT_NAME = ".\\projects\\";
 
-	public static Object projectSync;
-	public static JOPASystem system;
+	private static FileNameExtensionFilter projectFileFilter;
+	private static JOPASystem system;
+	private static Object projectSync;
+
 	public static JOPAProject currentProject;
 	public static JOPASettings settings;
 	public static JOPAUI ui;
 
 	public static void main(String[] args) {
+		init();
+
+		settings = new JOPASettings();
+		projectSync = new Object();
+		projectFileFilter = new FileNameExtensionFilter("JOPA project file", ".jopa");
+
+		createNewWorkspace();
+	}
+
+	private static void init() {
 		system = JOPASystem.init();
 
 		setupUI();
@@ -29,11 +45,6 @@ public class JOPAMain {
 		if (!system.checkVersion()) {
 			ui.showMessage(OPENGL_VERSION_WARNING);
 		}
-
-		settings = new JOPASettings();
-		projectSync = new Object();
-
-		createNewWorkspace();
 	}
 
 	private static void setupUI() {
@@ -55,31 +66,43 @@ public class JOPAMain {
 		ui.repaint();
 	}
 
-	public static void openWorkspace() {
+	public static boolean openWorkspace() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
 				// TODO ask
 			}
-			// TODO file system GUI
-			currentProject = JOPAProject.loadFromFile(TEST_PROJECT_NAME);
+			File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
+			if (selectedFile != null) {
+				currentProject = JOPAProject.loadFromFile(selectedFile);
+
+				return true;
+			}
 		}
+
+		return false;
 	}
 
-	public static void saveWorkspace() {
+	public static boolean saveWorkspace() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				// TODO file system GUI
-				JOPAProject.saveToFile(TEST_PROJECT_NAME, currentProject);
+				File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, true);
+				if (selectedFile != null) {
+					if (JOPAProject.saveToFile(selectedFile, currentProject)) {
+						return true;
+					}
+				}
 			} else {
 				workspaceNotCreated();
 			}
+
+			return false;
 		}
 	}
 
 	public static void destroyWorkspace() {
 		synchronized (projectSync) {
-			// TODO deinit?
 			currentProject = null;
+			ui.closeProject();
 		}
 
 		ui.repaint();

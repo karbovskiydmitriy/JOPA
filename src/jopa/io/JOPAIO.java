@@ -1,5 +1,6 @@
 package jopa.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,11 +30,11 @@ public class JOPAIO {
 		return true;
 	}
 
-	public static byte[] loadBinaryFile(String fileName) {
+	public static byte[] loadBinaryFile(File file) {
 		return null;
 	}
 
-	public static boolean saveBinaryFile(String fileName, byte[] data) {
+	public static boolean saveBinaryFile(File file, byte[] data) {
 		return false;
 	}
 

@@ -20,7 +20,6 @@ import static jopa.main.JOPAMain.stopPlayground;
 import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
-import static jopa.main.JOPAMain.projectSync;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -29,15 +28,16 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
@@ -278,35 +278,23 @@ public class JOPAUI {
 	public synchronized void createCanvas() {
 		if (canvas == null) {
 			canvas = new JOPACanvas();
-			window.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyPressed(KeyEvent e) {
-					System.out.println(e);
-					synchronized (projectSync) {
-						if (currentProject != null) {
-							currentProject.keyTyped(e.getKeyCode());
-						}
-					}
-				}
-			});
-
 			canvas.repaint();
 		}
 	}
 
 	public synchronized void addFunction(JOPAFunction function) {
-		synchronized (projectSync) {
-			if (currentProject != null) {
-				// JOPACanvas canvas = createCanvas();
-				// function.canvas = canvas;
-				// if (openEditor) {
-				// editFunctionPrototype(function);
-				// }
-				// Panel panel = new Panel();
-				// panel.add(canvas);
-				tabs.addTab(function.name, canvas);
-			}
-		}
+		// synchronized (projectSync) {
+		// if (currentProject != null) {
+		// JOPACanvas canvas = createCanvas();
+		// function.canvas = canvas;
+		// if (openEditor) {
+		// editFunctionPrototype(function);
+		// }
+		// Panel panel = new Panel();
+		// panel.add(canvas);
+		tabs.addTab(function.name, canvas);
+		// }
+		// }
 	}
 
 	public synchronized void editFunctionPrototype(JOPAFunction function) {
@@ -340,6 +328,42 @@ public class JOPAUI {
 			JOPAMessageWindow messageWindow = new JOPAMessageWindow(new Frame("error"), text, "message");
 			messageWindow.dispose();
 		}
+	}
+
+	public synchronized File showFileDialog(String path, FileNameExtensionFilter filter, String title, boolean save) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setMultiSelectionEnabled(false);
+		if (title != null) {
+			fileChooser.setDialogTitle(title);
+		}
+		if (filter != null) {
+			fileChooser.setFileFilter(filter);
+		}
+		if (path != null) {
+			File startingPath = new File(path);
+			if (startingPath.exists() && startingPath.isDirectory()) {
+				fileChooser.setCurrentDirectory(startingPath);
+			}
+		}
+		if (!save) {
+			int returnValue = fileChooser.showOpenDialog(window);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				return fileChooser.getSelectedFile();
+			}
+		} else {
+			int returnValue = fileChooser.showSaveDialog(window);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				return fileChooser.getSelectedFile();
+			}
+		}
+
+		return null;
+	}
+	
+	public synchronized void closeProject() {
+		tabs.removeAll();
+		tabs.revalidate();
+		tabs.repaint();
 	}
 
 	public synchronized void repaint() {
