@@ -96,9 +96,11 @@ public class JOPAProject implements Serializable {
 	}
 
 	public synchronized void createPlayground(JOPASimulationType type) {
-		if (playground == null) {
-			playground = JOPAPlayground.create(type);
+		if (playground != null) {
+			playground.stop();
+			playground.close();
 		}
+		playground = JOPAPlayground.create(type);
 	}
 
 	public synchronized void startPlayground() {

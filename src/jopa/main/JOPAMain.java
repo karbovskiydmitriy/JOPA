@@ -70,6 +70,7 @@ public class JOPAMain {
 		synchronized (projectSync) {
 			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
+			createPlayground(JOPASimulationType.CUSTOM);
 		}
 
 		ui.repaint();
@@ -78,7 +79,8 @@ public class JOPAMain {
 	public static boolean openProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				askAsboutSavingTheProject();
+				// TODO uncomment later
+				// askAsboutSavingTheProject();
 			}
 			File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
 			if (selectedFile != null) {

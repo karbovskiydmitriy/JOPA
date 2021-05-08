@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -23,7 +24,9 @@ import java.util.Iterator;
 import jopa.exceptions.JOPAPlaygroundException;
 import jopa.types.JOPAResource;
 
-public class JOPASimulationScript {
+public class JOPASimulationScript implements Serializable {
+
+	private static final long serialVersionUID = -5030460984321077507L;
 
 	private static long window;
 	private static int state = 0;
@@ -79,6 +82,7 @@ public class JOPASimulationScript {
 			commands.clear();
 		}
 		commands = new ArrayList<String>(Arrays.asList(code.split("\n")));
+		reset();
 	}
 
 	public void reset() {
@@ -94,29 +98,27 @@ public class JOPASimulationScript {
 		case COMPUTE:
 			return executeDefaultComputeShaderSimulation();
 		case CUSTOM:
-			if (nextCommand == null) {
+			if (!nextCommand.hasNext()) {
 				reset();
 
 				return false;
 			}
 
 			String command = nextCommand.next();
-			if (command != null && command.length() > 0) {
-				if (command.contains(" ")) {
-					String[] parts = command.split(" ");
-					if (parts.length > 0) {
-
-					}
-				} else {
-
-				}
-
+			if (command.length() > 0) {
+				executeCommand(command);
 			}
 
 			return true;
 		default:
 			return false;
 		}
+	}
+
+	private boolean executeCommand(String command) {
+		// TODO commands
+		
+		return true;
 	}
 
 	private boolean executeDefaultFragmentShaderSimulation() {

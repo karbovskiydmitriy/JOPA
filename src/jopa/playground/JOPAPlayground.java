@@ -9,7 +9,7 @@ import jopa.types.JOPAResource;
 public class JOPAPlayground implements Closeable {
 
 	private JOPASimulationType simulationType;
-	private JOPASimulationScript script;
+	// private JOPASimulationScript script;
 	private JOPASimulationThread simulationThread;
 
 	private ArrayList<JOPAResource> resources;
@@ -33,17 +33,18 @@ public class JOPAPlayground implements Closeable {
 	}
 
 	public synchronized void setupScript(JOPASimulationScript script) {
-		this.script = script;
+		JOPAMain.currentProject.script = script;
 	}
 
 	public synchronized void start() {
 		if (simulationThread == null) {
-			if (script == null) {
-				JOPASimulationScript stubScript = JOPASimulationScript.create(simulationType);
-				System.out.println(stubScript);
-				setupScript(stubScript);
-			}
-			if (script == null) {
+			// if (script == null) {
+			// JOPASimulationScript stubScript =
+			// JOPASimulationScript.create(simulationType);
+			// System.out.println(stubScript);
+			// setupScript(stubScript);
+			// }
+			if (JOPAMain.currentProject.script == null) {
 				System.out.println("Script not set up");
 				// TODO error handling?
 
@@ -51,7 +52,7 @@ public class JOPAPlayground implements Closeable {
 			}
 			System.out.println("Playground started");
 
-			simulationThread = new JOPASimulationThread(script);
+			simulationThread = new JOPASimulationThread(JOPAMain.currentProject.script);
 			simulationThread.start();
 		}
 	}

@@ -31,6 +31,8 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 	@Override
 	protected void closing() {
+		editors.forEach(editor -> editor.writeBack());
+		object.updateConstants();
 	}
 
 	private void init() {
@@ -79,7 +81,6 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		JButton deleteButton = new JButton("delete");
 		deleteButton.addActionListener(e -> {
 			object.constants.remove(constant);
-			object.updateConstants();
 			init();
 		});
 		area.add(label);
