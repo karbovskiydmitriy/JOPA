@@ -47,6 +47,8 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glIsBuffer;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -62,6 +64,8 @@ import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glIsProgram;
+import static org.lwjgl.opengl.GL20.glIsShader;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUniform1f;
@@ -72,6 +76,7 @@ import static org.lwjgl.opengl.GL20.glUniform3fv;
 import static org.lwjgl.opengl.GL20.glUniform3iv;
 import static org.lwjgl.opengl.GL20.glUniform4fv;
 import static org.lwjgl.opengl.GL20.glUniform4iv;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.GL_R16I;
 import static org.lwjgl.opengl.GL30.GL_R16UI;
 import static org.lwjgl.opengl.GL30.GL_R32F;
@@ -123,15 +128,6 @@ public final class JOPAOGLUtil {
 		return version;
 	}
 
-	public static int[] getWindowSize(long window) {
-		int[] windowWidht = new int[1];
-		int[] windowHeight = new int[1];
-		glfwGetWindowSize(window, windowWidht, windowHeight);
-		int[] windowSize = new int[] { windowWidht[0], windowHeight[0] };
-
-		return windowSize;
-	}
-
 	public static int createShader(int shaderType, String code) {
 		int shader = glCreateShader(shaderType);
 		glShaderSource(shader, code);
@@ -143,6 +139,15 @@ public final class JOPAOGLUtil {
 		}
 
 		return shader;
+	}
+	
+	public static boolean deleteShader(int shader) {
+		if (!glIsShader(shader)) {
+			return false;
+		}
+		glDeleteShader(shader);
+		
+		return true;
 	}
 
 	public static int loadFragmentShader(String fileName) {
@@ -175,6 +180,18 @@ public final class JOPAOGLUtil {
 		}
 
 		return program;
+	}
+	
+	public static boolean deleteProgram(int program) {
+		if (!glIsProgram(program)) {
+			return false;
+		}
+		if (glGetInteger(GL_CURRENT_PROGRAM) == program) {
+			glUseProgram(0); // DECIDE return false?..
+		}
+		glDeleteProgram(program);
+		
+		return true;
 	}
 
 	public static long createWindow(int width, int height, boolean isFullscreen, JOPASimulationScript context) {
@@ -209,6 +226,18 @@ public final class JOPAOGLUtil {
 		}
 
 		return window;
+	}
+
+	public static int[] getWindowSize(long window) {
+		if (window <= 0) {
+			return null;
+		}
+		int[] windowWidht = new int[1];
+		int[] windowHeight = new int[1];
+		glfwGetWindowSize(window, windowWidht, windowHeight);
+		int[] windowSize = new int[] { windowWidht[0], windowHeight[0] };
+
+		return windowSize;
 	}
 
 	public static boolean tick(long window, JOPASimulationScript context) {
@@ -278,6 +307,21 @@ public final class JOPAOGLUtil {
 		}
 		glDeleteTextures(image.handle);
 
+		return true;
+	}
+	
+	public static int createBuffer() {
+		// TODO createBuffer
+		
+		return 42;
+	}
+	
+	public static boolean deleteBuffer(int buffer) {
+		if (!glIsBuffer(buffer)) {
+			return false;
+		}
+		glDeleteBuffers(buffer);
+		
 		return true;
 	}
 

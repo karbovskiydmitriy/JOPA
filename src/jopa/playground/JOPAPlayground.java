@@ -39,7 +39,7 @@ public class JOPAPlayground implements Closeable {
 		if (simulationThread == null) {
 			if (JOPAMain.currentProject.script == null) {
 				System.out.println("Script not set up");
-				// TODO error handling?
+				// DECIDE error handling?
 
 				return;
 			}

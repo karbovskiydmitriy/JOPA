@@ -4,4 +4,7 @@ new program(program,shader)
 set program(program)
 do ticks()
 destroy window(window)
+set program(0)
+delete shader(shader)
+delete program(program)
 exit
