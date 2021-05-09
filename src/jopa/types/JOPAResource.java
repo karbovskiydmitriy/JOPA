@@ -1,11 +1,16 @@
 package jopa.types;
 
-public class JOPAResource {
+import java.io.Serializable;
+
+public class JOPAResource implements Serializable {
+
+	private static final long serialVersionUID = 2431228582741056741L;
+
+	private Object value;
 
 	public JOPAResourceType type;
 	public JOPAGLSLType glslType;
 	public String name;
-	public Object value;
 
 	public JOPAResource(JOPAResourceType type, String name, Object value) {
 		this.type = type;
@@ -26,11 +31,11 @@ public class JOPAResource {
 			try {
 				return (long) value;
 			} catch (Exception e) {
-				return -1;
+				return 0;
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public int getAsTexture() {
@@ -38,11 +43,11 @@ public class JOPAResource {
 			try {
 				return (int) value;
 			} catch (Exception e) {
-				return -1;
+				return 0;
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public int getAsBuffer() {
@@ -50,11 +55,11 @@ public class JOPAResource {
 			try {
 				return (int) value;
 			} catch (Exception e) {
-				return -1;
+				return 0;
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public int getAsShader() {
@@ -62,11 +67,11 @@ public class JOPAResource {
 			try {
 				return (int) value;
 			} catch (Exception e) {
-				return -1;
+				return 0;
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public int getAsProgram() {
@@ -74,11 +79,11 @@ public class JOPAResource {
 			try {
 				return (int) value;
 			} catch (Exception e) {
-				return -1;
+				return 0;
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public JOPAGLSLType getAsGLSLType() {
@@ -91,6 +96,10 @@ public class JOPAResource {
 		}
 
 		return null;
+	}
+	
+	public Object getAsObject() {
+		return value;
 	}
 
 }

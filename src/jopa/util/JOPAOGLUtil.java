@@ -27,11 +27,13 @@ import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glGetString;
+import static org.lwjgl.opengl.GL11.glIsTexture;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -42,11 +44,12 @@ import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glDeleteShader;
 import static org.lwjgl.opengl.GL20.glDetachShader;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
@@ -248,6 +251,15 @@ public final class JOPAOGLUtil {
 		return image;
 	}
 
+	public static boolean deleteTexture(int texture) {
+		if (!glIsTexture(texture)) {
+			return false;
+		}
+		glDeleteTextures(texture);
+
+		return true;
+	}
+
 	public static int getTextureFormat(int channels, Class<?> type, boolean signed) {
 		if (type.equals(int.class)) {
 			if (!signed) {
@@ -373,96 +385,101 @@ public final class JOPAOGLUtil {
 		if (resource != null && resource.type != null) {
 			switch (resource.type) {
 			case BUFFER_HANDLE:
+				int buffer = safeCast(resource.getAsBuffer(), int.class);
+				// FIXME passing buffer
+				glUniform1i(location, buffer);
+				break;
 			case TEXTURE_HANDLE: {
-				int value = safeCast(resource.value, int.class);
+				int value = safeCast(resource.getAsTexture(), int.class);
 				glUniform1i(location, value);
+				break;
 			}
 			case GLSL_TYPE:
 				if (resource.glslType != null) {
 					JOPAGLSLType type = resource.glslType;
 					switch (type) {
 					case JOPA_BOOL: {
-						int value = safeCast(resource.value, boolean.class) ? 1 : 0;
+						int value = safeCast(resource.getAsObject(), boolean.class) ? 1 : 0;
 						glUniform1i(location, value);
 						break;
 					}
 					case JOPA_INT: {
-						int value = safeCast(resource.value, int.class);
+						int value = safeCast(resource.getAsObject(), int.class);
 						glUniform1i(location, value);
 						break;
 					}
 					case JOPA_UINT: {
-						int value = safeCast(resource.value, int.class);
+						int value = safeCast(resource.getAsObject(), int.class);
 						glUniform1ui(location, value);
 						break;
 					}
 					case JOPA_FLOAT: {
-						float value = safeCast(resource.value, float.class);
+						float value = safeCast(resource.getAsObject(), float.class);
 						glUniform1f(location, value);
 						break;
 					}
 					case JOPA_DOUBLE: {
-						double value = safeCast(resource.value, double.class);
+						double value = safeCast(resource.getAsObject(), double.class);
 						glUniform1d(location, value);
 						break;
 					}
 					case JOPA_BOOL_VECTOR_2: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
 					case JOPA_BOOL_VECTOR_3: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
 					case JOPA_BOOL_VECTOR_4: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
 					case JOPA_INT_VECTOR_2: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
 					case JOPA_INT_VECTOR_3: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
 					case JOPA_INT_VECTOR_4: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
 					case JOPA_UINT_VECTOR_2: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
 					case JOPA_UINT_VECTOR_3: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
 					case JOPA_UINT_VECTOR_4: {
-						int[] value = safeCast(resource.value, int[].class);
+						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
 					case JOPA_FLOAT_VECTOR_2: {
-						float[] value = safeCast(resource.value, float[].class);
+						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform2fv(location, value);
 						break;
 					}
 					case JOPA_FLOAT_VECTOR_3: {
-						float[] value = safeCast(resource.value, float[].class);
+						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform3fv(location, value);
 						break;
 					}
 					case JOPA_FLOAT_VECTOR_4: {
-						float[] value = safeCast(resource.value, float[].class);
+						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform4fv(location, value);
 						break;
 					}

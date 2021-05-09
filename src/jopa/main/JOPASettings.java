@@ -13,17 +13,26 @@ import jopa.io.JOPAIO;
 
 public class JOPASettings {
 
-	final static String CONFIGS_DIRECTORY_PATH = ".\\configs\\";
-	final static String DEFAULT_PALETTE_PATH = CONFIGS_DIRECTORY_PATH + "default palette.json";
+	private static final String CONFIG_DIRECTORY_PATH = ".\\configs\\";
+//	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY_PATH + "config.json";
+	private static final String PALETTE_FILE_PATH = CONFIG_DIRECTORY_PATH + "palette.json";
 
 	public JOPAPalette defaultPalette;
 	public boolean showPortTypes = true;
 	public boolean highlightIncorrectNodes = false;
 
 	public JOPASettings() {
-		defaultPalette = loadPalette(DEFAULT_PALETTE_PATH);
+		defaultPalette = loadPalette(PALETTE_FILE_PATH);
 
-		savePalette(defaultPalette, DEFAULT_PALETTE_PATH);
+		savePalette(defaultPalette, PALETTE_FILE_PATH);
+	}
+
+	public void readSettings() {
+		// TODO readSettings
+	}
+
+	public void writeSettings() {
+		// TODO writeSettings
 	}
 
 	private static JOPAPalette loadPalette(String filePath) {

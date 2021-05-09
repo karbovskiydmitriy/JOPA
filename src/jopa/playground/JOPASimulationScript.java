@@ -1,8 +1,10 @@
 package jopa.playground;
 
-import static jopa.util.JOPAOGLUtil.*;
+import static jopa.util.JOPAOGLUtil.createProgram;
+import static jopa.util.JOPAOGLUtil.createShader;
 import static jopa.util.JOPAOGLUtil.createTexture;
 import static jopa.util.JOPAOGLUtil.createWindow;
+import static jopa.util.JOPAOGLUtil.deleteTexture;
 import static jopa.util.JOPAOGLUtil.destroyWindow;
 import static jopa.util.JOPAOGLUtil.getTextureFormat;
 import static jopa.util.JOPAOGLUtil.getWindowSize;
@@ -10,9 +12,10 @@ import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.tick;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL43.glDispatchCompute;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,10 +41,12 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] NEW_PROGRAM = { "new", "program" };
 	private static final String[] GENERATE_SHADER = { "generate", "shader" };
 	private static final String[] SET_PROGRAM = { "set", "program" };
+	private static final String[] LOAD_TEXTURE = { "load", "texture" };
+	private static final String[] SAVE_TEXTURE = { "save", "texture" };
 	private static final String[] DO_TICKS = { "do", "ticks" };
 	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
-	private static final String[] DESTROY_TEXTURE = { "destroy", "texture" };
-	private static final String[] DESTROY_BUFFER = { "destroy", "buffer" };
+	private static final String[] DELETE_TEXTURE = { "destroy", "texture" };
+	private static final String[] DELETE_BUFFER = { "destroy", "buffer" };
 
 	private static long window;
 	private static int state = 0;
@@ -56,7 +61,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private final Map<String[], Predicate<String[]>> operations;
 
-	private Predicate<String[]> NEW_WINDOW_OPERATION = args -> {
+	private final Predicate<String[]> NEW_WINDOW_OPERATION = args -> {
 		if (args.length != 4) {
 			return false;
 		}
@@ -80,12 +85,13 @@ public class JOPASimulationScript implements Serializable {
 		long windowHandle = createWindow(width, height, isFullscreen, false, resources);
 
 		JOPAResource windowResource = new JOPAResource(JOPAResourceType.WINDOW_HANDLE, name, windowHandle);
-		resources.add(windowResource);
+
+		addResource(windowResource);
 
 		return true;
 	};
 
-	private Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
+	private final Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
 		if (args.length != 1) {
 			return false;
 		}
@@ -95,17 +101,18 @@ public class JOPASimulationScript implements Serializable {
 		int textureHandle = createTexture(size[0], size[1], getTextureFormat(1, Float.class, false), resources);
 
 		JOPAResource textureResource = new JOPAResource(JOPAResourceType.TEXTURE_HANDLE, name, textureHandle);
-		resources.add(textureResource);
+		addResource(textureResource);
 
 		return true;
 	};
 
-	private Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
+	private final Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
+		// TODO new buffer
 
 		return true;
 	};
 
-	private Predicate<String[]> NEW_SHADER_OPERATION = args -> {
+	private final Predicate<String[]> NEW_SHADER_OPERATION = args -> {
 		if (args.length != 3) {
 			return false;
 		}
@@ -128,12 +135,12 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		JOPAResource shaderResource = new JOPAResource(JOPAResourceType.SHADER, name, shader);
-		resources.add(shaderResource);
+		addResource(shaderResource);
 
 		return true;
 	};
 
-	private Predicate<String[]> NEW_PROGRAM_OPERATION = args -> {
+	private final Predicate<String[]> NEW_PROGRAM_OPERATION = args -> {
 		if (args.length < 2) {
 			return false;
 		}
@@ -148,7 +155,7 @@ public class JOPASimulationScript implements Serializable {
 				return false;
 			}
 			int shader = shaderResource.getAsShader();
-			if (shader == -1) {
+			if (shader == 0) {
 				return false;
 			}
 			shaders[i] = shader;
@@ -159,12 +166,12 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		JOPAResource programResource = new JOPAResource(JOPAResourceType.PROGRAM, programName, program);
-		resources.add(programResource);
+		addResource(programResource);
 
 		return true;
 	};
 
-	private Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
+	private final Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
 		if (args.length != 1) {
 			return false;
 		}
@@ -187,12 +194,12 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		JOPAResource shaderResource = new JOPAResource(JOPAResourceType.SHADER, shaderName, shader);
-		resources.add(shaderResource);
+		addResource(shaderResource);
 
 		return true;
 	};
 
-	private Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
+	private final Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
 		if (args.length != 1) {
 			return false;
 		}
@@ -203,7 +210,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		int program = programResource.getAsProgram();
-		if (program == -1) {
+		if (program == 0) {
 			return false;
 		}
 
@@ -212,12 +219,25 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private Predicate<String[]> DO_TICKS_PREDICATE = args -> {
+	private final Predicate<String[]> LOAD_TEXTURE_OPERATION = args -> {
+		if (args.length != 2) {
+			return false;
+		}
+		String name = args[0];
+		String fileName = args[1];
+
+		return true;
+	};
+
+	private final Predicate<String[]> SAVE_TEXTURE_OPERATION = args -> {
+		// TODO saving texture
+
+		return true;
+	};
+
+	private final Predicate<String[]> DO_TICKS_PREDICATE = args -> {
 		if (args.length != 0) {
-			System.out.println(0);
-			System.out.println(args.length);
-			System.out.println(args[0]);
-			System.out.println(Arrays.toString(args));
+			logError("", args);
 
 			return false;
 		}
@@ -226,10 +246,9 @@ public class JOPASimulationScript implements Serializable {
 
 		for (JOPAResource resource : resources) {
 			if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
-				long windowHandle = (long) resource.value;
-				if (windowHandle != -1) {
+				long windowHandle = resource.getAsWindow();
+				if (windowHandle != 0) {
 					if (tick(windowHandle, resources)) {
-						System.out.println("tick");
 						windowsCount++;
 					}
 				} else {
@@ -248,7 +267,7 @@ public class JOPASimulationScript implements Serializable {
 		return false;
 	};
 
-	private Predicate<String[]> DESTROY_WINDOW_PREDICATE = args -> {
+	private final Predicate<String[]> DESTROY_WINDOW_PREDICATE = args -> {
 		if (args.length != 1) {
 			return false;
 		}
@@ -257,7 +276,7 @@ public class JOPASimulationScript implements Serializable {
 		JOPAResource resource = getResourceByName(name);
 		if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
 			long windowHandle = resource.getAsWindow();
-			if (windowHandle != -1) {
+			if (windowHandle != 0) {
 				destroyWindow(windowHandle);
 				resources.remove(resource);
 
@@ -273,17 +292,29 @@ public class JOPASimulationScript implements Serializable {
 		return false;
 	};
 
-	private Predicate<String[]> DESTROY_TEXTURE_PREDICATE = args -> {
+	private final Predicate<String[]> DELETE_TEXTURE_PREDICATE = args -> {
 		if (args.length != 1) {
 			return false;
 		}
 
-		// TODO destroying texture
+		String name = args[0];
+		JOPAResource textureResource = getResourceByName(name);
+		if (textureResource == null) {
+			return false;
+		}
+		int texture = textureResource.getAsTexture();
+		if (texture == 0) {
+			return false;
+		}
+
+		if (!deleteTexture(texture)) {
+			return false;
+		}
 
 		return true;
 	};
 
-	private Predicate<String[]> DESTROY_BUFFER_PREDICATE = args -> {
+	private final Predicate<String[]> DELETE_BUFFER_PREDICATE = args -> {
 		if (args.length != 1) {
 			return false;
 		}
@@ -309,10 +340,16 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
 		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
 		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
+		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
+		operations.put(SAVE_TEXTURE, SAVE_TEXTURE_OPERATION);
 		operations.put(DO_TICKS, DO_TICKS_PREDICATE);
 		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
-		operations.put(DESTROY_TEXTURE, DESTROY_TEXTURE_PREDICATE);
-		operations.put(DESTROY_BUFFER, DESTROY_BUFFER_PREDICATE);
+		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
+		operations.put(DELETE_BUFFER, DELETE_BUFFER_PREDICATE);
+	}
+
+	private void logError(String errorMessage, Object object) {
+
 	}
 
 	public static JOPASimulationScript create(JOPASimulationType simulationType) {
@@ -386,15 +423,9 @@ public class JOPASimulationScript implements Serializable {
 			}
 
 			String command = commands.get(commandIndex++);
-			System.out.println("Command: " + command);
+			// System.out.println("Command: " + command);
 			if (command.length() > 0) {
 				boolean result = executeCommand(command);
-
-				if (result) {
-					System.out.println("succ");
-				} else {
-					System.out.println("fucc");
-				}
 
 				return result;
 			}
@@ -484,6 +515,14 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		return null;
+	}
+
+	private void addResource(JOPAResource resource) {
+		JOPAResource foundResource = getResourceByName(resource.name);
+		if (foundResource != null) {
+			resources.remove(foundResource);
+		}
+		resources.add(resource);
 	}
 
 	private boolean executeDefaultFragmentShaderSimulation() {
