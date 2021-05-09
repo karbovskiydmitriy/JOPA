@@ -211,6 +211,7 @@ public class JOPAUI {
 				MenuItem stopPlaygroundMenuItem = new MenuItem("stop playground");
 				MenuItem closePlaygroundMenuItem = new MenuItem("close playground");
 
+				editScriptMenuItem.setShortcut(new MenuShortcut('E'));
 				startPlaygroundMenuItem.setShortcut(new MenuShortcut('P'));
 
 				editScriptMenuItem.addActionListener(e -> editScript());

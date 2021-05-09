@@ -83,7 +83,11 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 		String text = "";
 		for (JOPADataPort input : inputs) {
 			String valueName = ((JOPADataPort) input.connections.get(0)).variable.name;
-			text += input.generateCode() + " = " + valueName + ";";
+			if (input.variable.name.startsWith("gl_")) {
+				text += input.variable.name + " = " + valueName + ";";
+			} else {
+				text += input.generateCode() + " = " + valueName + ";";
+			}
 		}
 
 		return text;

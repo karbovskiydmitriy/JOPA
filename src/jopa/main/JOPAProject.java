@@ -320,6 +320,12 @@ public class JOPAProject implements Serializable {
 			}
 			if (mainFunction.startNode.outputs.size() > 0) {
 				for (JOPADataPort port : mainFunction.startNode.outputs) {
+					if (port.variable.name.startsWith("gl_")) {
+						continue;
+					}
+					if (port.connections.size() == 0) {
+						continue;
+					}
 					String modifier = "uniform ";
 					shaderCode += modifier + port.generateCode() + ";\n";
 				}
@@ -339,7 +345,16 @@ public class JOPAProject implements Serializable {
 			this.generatedShader = shaderCode;
 		} else {
 			JOPAMain.ui.showMessage("project contains error!");
+			generatedShader = null;
 		}
+	}
+
+	public synchronized String getGeneratedShader() {
+		if (generatedShader == null) {
+			generateShader();
+		}
+
+		return generatedShader;
 	}
 
 	public synchronized void showGeneratedShader() {

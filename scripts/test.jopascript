@@ -1,5 +1,5 @@
 new window(window,500,500,false)
-new shader(shader,fragment,fragment.glsl)
+generate shader(shader)
 new program(program,shader)
 set program(program)
 do ticks()

@@ -15,7 +15,7 @@ public class JOPAConstant extends JOPAVariable {
 
 	@Override
 	public String toString() {
-		return super.toString() + " = " + value;
+		return "const " + super.toString() + " = " + value;
 	}
 
 }

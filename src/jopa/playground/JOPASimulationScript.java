@@ -1,6 +1,6 @@
 package jopa.playground;
 
-import static jopa.util.JOPAOGLUtil.createProgram;
+import static jopa.util.JOPAOGLUtil.*;
 import static jopa.util.JOPAOGLUtil.createTexture;
 import static jopa.util.JOPAOGLUtil.createWindow;
 import static jopa.util.JOPAOGLUtil.destroyWindow;
@@ -12,7 +12,7 @@ import static jopa.util.JOPAOGLUtil.tick;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
-import static org.lwjgl.opengl.GL43.glDispatchCompute;
+import static org.lwjgl.opengl.GL43.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
 import jopa.io.JOPALoader;
+import jopa.main.JOPAMain;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
 
@@ -35,6 +36,7 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] NEW_BUFFER = { "new", "buffer" };
 	private static final String[] NEW_SHADER = { "new", "shader" };
 	private static final String[] NEW_PROGRAM = { "new", "program" };
+	private static final String[] GENERATE_SHADER = { "generate", "shader" };
 	private static final String[] SET_PROGRAM = { "set", "program" };
 	private static final String[] DO_TICKS = { "do", "ticks" };
 	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
@@ -162,6 +164,34 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
+		if (args.length != 1) {
+			return false;
+		}
+
+		String shaderName = args[0];
+		String shaderCode = JOPAMain.currentProject.getGeneratedShader();
+		if (shaderCode == null) {
+			return false;
+		}
+		int shader;
+		switch (JOPAMain.currentProject.projectType) {
+		case FRAGMENT:
+			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			break;
+		case COMPUTE:
+			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			break;
+		default:
+			return false;
+		}
+
+		JOPAResource shaderResource = new JOPAResource(JOPAResourceType.SHADER, shaderName, shader);
+		resources.add(shaderResource);
+
+		return true;
+	};
+
 	private Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
 		if (args.length != 1) {
 			return false;
@@ -277,6 +307,7 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
 		operations.put(NEW_SHADER, NEW_SHADER_OPERATION);
 		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
+		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
 		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
 		operations.put(DO_TICKS, DO_TICKS_PREDICATE);
 		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
