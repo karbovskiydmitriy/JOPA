@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
+import jopa.io.JOPALoader;
 import jopa.types.JOPAResource;
+import jopa.types.JOPAResourceType;
 
 public class JOPASimulationScript implements Serializable {
 
@@ -31,6 +33,9 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] NEW_WINDOW = { "new", "window" };
 	private static final String[] NEW_TEXTURE = { "new", "texture" };
 	private static final String[] NEW_BUFFER = { "new", "buffer" };
+	private static final String[] NEW_SHADER = { "new", "shader" };
+	private static final String[] NEW_PROGRAM = { "new", "program" };
+	private static final String[] SET_PROGRAM = { "set", "program" };
 	private static final String[] DO_TICKS = { "do", "ticks" };
 	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
 	private static final String[] DESTROY_TEXTURE = { "destroy", "texture" };
@@ -50,25 +55,161 @@ public class JOPASimulationScript implements Serializable {
 	private final Map<String[], Predicate<String[]>> operations;
 
 	private Predicate<String[]> NEW_WINDOW_OPERATION = args -> {
-		window = createWindow(500, 500, false, false, resources);
+		if (args.length != 4) {
+			return false;
+		}
+
+		String name = args[0];
+		boolean isFullscreen;
+		int width;
+		int height;
+		try {
+			width = Integer.parseUnsignedInt(args[1]);
+			height = Integer.parseUnsignedInt(args[2]);
+		} catch (Exception e) {
+			return false;
+		}
+		if (!args[3].equals("true") && !args[3].equals("false")) {
+			return false;
+		} else {
+			isFullscreen = Boolean.parseBoolean(args[3]);
+		}
+
+		long windowHandle = createWindow(width, height, isFullscreen, false, resources);
+
+		JOPAResource windowResource = new JOPAResource(JOPAResourceType.WINDOW_HANDLE, name, windowHandle);
+		resources.add(windowResource);
 
 		return true;
 	};
 
 	private Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
-		int[] windowSize = getWindowSize(window);
+		if (args.length != 1) {
+			return false;
+		}
 
-		texture = createTexture(windowSize[0], windowSize[1], getTextureFormat(1, Float.class, false), resources);
+		String name = args[0];
+		int[] size = getWindowSize(window);
+		int textureHandle = createTexture(size[0], size[1], getTextureFormat(1, Float.class, false), resources);
+
+		JOPAResource textureResource = new JOPAResource(JOPAResourceType.TEXTURE_HANDLE, name, textureHandle);
+		resources.add(textureResource);
 
 		return true;
 	};
 
 	private Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
+
+		return true;
+	};
+
+	private Predicate<String[]> NEW_SHADER_OPERATION = args -> {
+		if (args.length != 3) {
+			return false;
+		}
+
+		String name = args[0];
+		String type = args[1];
+		String file = args[2];
+		int shader;
+		switch (type) {
+		case "fragment":
+			shader = loadFragmentShader(file);
+			break;
+		case "compute":
+			shader = loadComputeShader(file);
+		default:
+			return false;
+		}
+		if (shader == 0) {
+			return false;
+		}
+
+		JOPAResource shaderResource = new JOPAResource(JOPAResourceType.SHADER, name, shader);
+		resources.add(shaderResource);
+
+		return true;
+	};
+
+	private Predicate<String[]> NEW_PROGRAM_OPERATION = args -> {
+		if (args.length < 2) {
+			return false;
+		}
+
+		String programName = args[0];
+		String[] shaderNames = Arrays.copyOfRange(args, 1, args.length);
+		int[] shaders = new int[shaderNames.length];
+		for (int i = 0; i < shaderNames.length; i++) {
+			String shaderName = shaderNames[i];
+			JOPAResource shaderResource = getResourceByName(shaderName);
+			if (shaderResource == null) {
+				return false;
+			}
+			int shader = shaderResource.getAsShader();
+			if (shader == -1) {
+				return false;
+			}
+			shaders[i] = shader;
+		}
+		int program = createProgram(shaders);
+		if (program == 0) {
+			return false;
+		}
+
+		JOPAResource programResource = new JOPAResource(JOPAResourceType.PROGRAM, programName, program);
+		resources.add(programResource);
+
+		return true;
+	};
+
+	private Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
+		if (args.length != 1) {
+			return false;
+		}
+
+		String programName = args[0];
+		JOPAResource programResource = getResourceByName(programName);
+		if (programResource == null) {
+			return false;
+		}
+		int program = programResource.getAsProgram();
+		if (program == -1) {
+			return false;
+		}
+
+		glUseProgram(program);
+
 		return true;
 	};
 
 	private Predicate<String[]> DO_TICKS_PREDICATE = args -> {
-		if (tick(window, resources)) {
+		if (args.length != 0) {
+			System.out.println(0);
+			System.out.println(args.length);
+			System.out.println(args[0]);
+			System.out.println(Arrays.toString(args));
+
+			return false;
+		}
+
+		int windowsCount = 0;
+
+		for (JOPAResource resource : resources) {
+			if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
+				long windowHandle = (long) resource.value;
+				if (windowHandle != -1) {
+					if (tick(windowHandle, resources)) {
+						System.out.println("tick");
+						windowsCount++;
+					}
+				} else {
+					System.err.println("resource " + resource.name + " is not long");
+
+					return false;
+				}
+			}
+		}
+		if (windowsCount > 0) {
 			commandIndex--;
 
 			return true;
@@ -78,16 +219,47 @@ public class JOPASimulationScript implements Serializable {
 	};
 
 	private Predicate<String[]> DESTROY_WINDOW_PREDICATE = args -> {
-		destroyWindow(window);
+		if (args.length != 1) {
+			return false;
+		}
 
-		return true;
+		String name = args[0];
+		JOPAResource resource = getResourceByName(name);
+		if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
+			long windowHandle = resource.getAsWindow();
+			if (windowHandle != -1) {
+				destroyWindow(windowHandle);
+				resources.remove(resource);
+
+				return true;
+			} else {
+				System.err.println("resource " + name + " is not long");
+
+				return false;
+			}
+		}
+		System.err.println("window " + name + " not found");
+
+		return false;
 	};
 
 	private Predicate<String[]> DESTROY_TEXTURE_PREDICATE = args -> {
+		if (args.length != 1) {
+			return false;
+		}
+
+		// TODO destroying texture
+
 		return true;
 	};
 
 	private Predicate<String[]> DESTROY_BUFFER_PREDICATE = args -> {
+		if (args.length != 1) {
+			return false;
+		}
+
+		// TODO destroying buffer
+
 		return true;
 	};
 
@@ -95,15 +267,21 @@ public class JOPASimulationScript implements Serializable {
 		this.executionType = simulationType;
 		this.commands = new ArrayList<String>();
 		this.resources = new ArrayList<JOPAResource>();
-
 		this.operations = new HashMap<String[], Predicate<String[]>>();
-		this.operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
-		this.operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
-		this.operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
-		this.operations.put(DO_TICKS, DO_TICKS_PREDICATE);
-		this.operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
-		this.operations.put(DESTROY_TEXTURE, DESTROY_TEXTURE_PREDICATE);
-		this.operations.put(DESTROY_BUFFER, DESTROY_BUFFER_PREDICATE);
+		init();
+	}
+
+	private void init() {
+		operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
+		operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
+		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
+		operations.put(NEW_SHADER, NEW_SHADER_OPERATION);
+		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
+		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
+		operations.put(DO_TICKS, DO_TICKS_PREDICATE);
+		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
+		operations.put(DESTROY_TEXTURE, DESTROY_TEXTURE_PREDICATE);
+		operations.put(DESTROY_BUFFER, DESTROY_BUFFER_PREDICATE);
 	}
 
 	public static JOPASimulationScript create(JOPASimulationType simulationType) {
@@ -114,16 +292,25 @@ public class JOPASimulationScript implements Serializable {
 			return null;
 		}
 
-		return new JOPASimulationScript(simulationType);
+		JOPASimulationScript script = new JOPASimulationScript(simulationType);
+		try {
+			script.setupScript(JOPALoader.loadStandardScript("test.jopascript"));
+		} catch (JOPAPlaygroundException e) {
+			System.err.println(e.getMessage());
+
+			return null;
+		}
+
+		return script;
 	}
 
 	public void setupScript(String code, JOPAResource... resources) throws JOPAPlaygroundException {
 		if (executionType != JOPASimulationType.CUSTOM) {
 			throw new JOPAPlaygroundException("custom setup is only possible in custom script");
 		}
-		// if (code == null) {
-		// throw new JOPAPlaygroundException("commands is null");
-		// }
+		if (code == null) {
+			throw new JOPAPlaygroundException("commands is null");
+		}
 
 		setCode(code);
 		this.resources.clear();
@@ -168,9 +355,17 @@ public class JOPASimulationScript implements Serializable {
 			}
 
 			String command = commands.get(commandIndex++);
+			System.out.println("Command: " + command);
 			if (command.length() > 0) {
-				System.out.println(command);
-				return executeCommand(command);
+				boolean result = executeCommand(command);
+
+				if (result) {
+					System.out.println("succ");
+				} else {
+					System.out.println("fucc");
+				}
+
+				return result;
 			}
 
 			return true;
@@ -211,10 +406,23 @@ public class JOPASimulationScript implements Serializable {
 									}
 									argsBuilder.deleteCharAt(index);
 								}
-								String[] args = argsBuilder.toString().split(",");
 								String[] parts = operationPart.split(" ");
-								// System.out.println(Arrays.toString(parts));
-								// System.out.println(Arrays.toString(args));
+								String[] args;
+								if (argsContent.length() > 0) {
+									args = argsBuilder.toString().split(",");
+								} else {
+									args = new String[0];
+								}
+								for (String s : parts) {
+									if (s.length() == 0) {
+										return false;
+									}
+								}
+								for (String s : args) {
+									if (s.length() == 0) {
+										return false;
+									}
+								}
 								executed = false;
 								operations.forEach((strings, operationPredicate) -> {
 									if (Arrays.equals(strings, parts)) {
@@ -224,9 +432,7 @@ public class JOPASimulationScript implements Serializable {
 										return;
 									}
 								});
-								if (!executed) {
-									System.out.println("Could not find operation: " + operationPart);
-								} else {
+								if (executed) {
 									return true;
 								}
 							}
@@ -237,6 +443,16 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		return false;
+	}
+
+	private JOPAResource getResourceByName(String name) {
+		for (JOPAResource resource : resources) {
+			if (resource.name.equals(name)) {
+				return resource;
+			}
+		}
+
+		return null;
 	}
 
 	private boolean executeDefaultFragmentShaderSimulation() {

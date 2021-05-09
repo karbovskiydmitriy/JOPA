@@ -100,7 +100,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
-import jopa.types.JOPAResourceType;
 
 public final class JOPAOGLUtil {
 
@@ -332,11 +331,8 @@ public final class JOPAOGLUtil {
 		glViewport(0, 0, windowWidht[0], windowHeight[0]);
 
 		if (resources != null) {
-			JOPAResource screenSize = new JOPAResource();
-			screenSize.name = "screenSize";
-			screenSize.type = JOPAResourceType.GLSL_TYPE;
-			screenSize.glslType = JOPAGLSLType.JOPA_INT_VECTOR_2;
-			screenSize.value = new int[] { windowWidht[0], windowHeight[0] };
+			int[] size = new int[] { windowWidht[0], windowHeight[0] };
+			JOPAResource screenSize = new JOPAResource(JOPAGLSLType.JOPA_INT_VECTOR_2, "screenSize", size);
 			resources.add(screenSize);
 		}
 

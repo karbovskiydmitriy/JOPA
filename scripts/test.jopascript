@@ -1,0 +1,7 @@
+new window(window,500,500,false)
+new shader(shader,fragment,fragment.glsl)
+new program(program,shader)
+set program(program)
+do ticks()
+destroy window(window)
+exit
