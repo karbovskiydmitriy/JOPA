@@ -1,5 +1,6 @@
 package jopa.playground;
 
+import static jopa.io.JOPALoader.loadStandardScript;
 import static jopa.util.JOPAOGLUtil.createProgram;
 import static jopa.util.JOPAOGLUtil.createShader;
 import static jopa.util.JOPAOGLUtil.createTexture;
@@ -10,6 +11,7 @@ import static jopa.util.JOPAOGLUtil.getTextureFormat;
 import static jopa.util.JOPAOGLUtil.getWindowSize;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
+import static jopa.util.JOPAOGLUtil.loadTexture;
 import static jopa.util.JOPAOGLUtil.tick;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -22,11 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
-import jopa.io.JOPALoader;
+import jopa.graphics.JOPAImage;
 import jopa.main.JOPAMain;
+import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
 
@@ -42,7 +46,7 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] GENERATE_SHADER = { "generate", "shader" };
 	private static final String[] SET_PROGRAM = { "set", "program" };
 	private static final String[] LOAD_TEXTURE = { "load", "texture" };
-	private static final String[] SAVE_TEXTURE = { "save", "texture" };
+	// private static final String[] SAVE_TEXTURE = { "save", "texture" };
 	private static final String[] DO_TICKS = { "do", "ticks" };
 	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
 	private static final String[] DELETE_TEXTURE = { "destroy", "texture" };
@@ -50,10 +54,13 @@ public class JOPASimulationScript implements Serializable {
 
 	private static long window;
 	private static int state = 0;
-	private static int texture;
+	private static JOPAImage singleImage;
 
 	private boolean executed;
 	private int commandIndex;
+
+	public long startTime;
+	private long prevTime;
 
 	private ArrayList<String> commands;
 	private JOPASimulationType executionType;
@@ -82,10 +89,9 @@ public class JOPASimulationScript implements Serializable {
 			isFullscreen = Boolean.parseBoolean(args[3]);
 		}
 
-		long windowHandle = createWindow(width, height, isFullscreen, false, resources);
+		long windowHandle = createWindow(width, height, isFullscreen, this);
 
 		JOPAResource windowResource = new JOPAResource(JOPAResourceType.WINDOW_HANDLE, name, windowHandle);
-
 		addResource(windowResource);
 
 		return true;
@@ -98,9 +104,9 @@ public class JOPASimulationScript implements Serializable {
 
 		String name = args[0];
 		int[] size = getWindowSize(window);
-		int textureHandle = createTexture(size[0], size[1], getTextureFormat(1, Float.class, false), resources);
+		JOPAImage image = createTexture(size[0], size[1], getTextureFormat(1, Float.class, false));
 
-		JOPAResource textureResource = new JOPAResource(JOPAResourceType.TEXTURE_HANDLE, name, textureHandle);
+		JOPAResource textureResource = new JOPAResource(JOPAResourceType.IMAGE, name, image);
 		addResource(textureResource);
 
 		return true;
@@ -226,14 +232,22 @@ public class JOPASimulationScript implements Serializable {
 		String name = args[0];
 		String fileName = args[1];
 
+		JOPAImage image = loadTexture(fileName);
+		if (image == null) {
+			return false;
+		}
+
+		JOPAResource imageResource = new JOPAResource(JOPAResourceType.IMAGE, name, image);
+		addResource(imageResource);
+
 		return true;
 	};
 
-	private final Predicate<String[]> SAVE_TEXTURE_OPERATION = args -> {
-		// TODO saving texture
-
-		return true;
-	};
+	// private final Predicate<String[]> SAVE_TEXTURE_OPERATION = args -> {
+	// // TODO saving texture
+	//
+	// return true;
+	// };
 
 	private final Predicate<String[]> DO_TICKS_PREDICATE = args -> {
 		if (args.length != 0) {
@@ -242,13 +256,26 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 
+		long currentTime = System.currentTimeMillis() - startTime;
+		float deltaTime = (currentTime - prevTime) / 1000.0f;
+		JOPAResource timeResource = getResourceByName("time");
+		if (timeResource == null) {
+			return false;
+		}
+		JOPAResource deltaTimeResource = getResourceByName("deltaTime");
+		if (deltaTimeResource == null) {
+			return false;
+		}
+		timeResource.setValue(currentTime / 1000.0f);
+		deltaTimeResource.setValue(deltaTime);
+
 		int windowsCount = 0;
 
 		for (JOPAResource resource : resources) {
 			if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
 				long windowHandle = resource.getAsWindow();
 				if (windowHandle != 0) {
-					if (tick(windowHandle, resources)) {
+					if (tick(windowHandle, this)) {
 						windowsCount++;
 					}
 				} else {
@@ -260,6 +287,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 		if (windowsCount > 0) {
 			commandIndex--;
+			prevTime = currentTime;
 
 			return true;
 		}
@@ -302,12 +330,12 @@ public class JOPASimulationScript implements Serializable {
 		if (textureResource == null) {
 			return false;
 		}
-		int texture = textureResource.getAsTexture();
-		if (texture == 0) {
+		JOPAImage image = textureResource.getAsImage();
+		if (image == null) {
 			return false;
 		}
 
-		if (!deleteTexture(texture)) {
+		if (!deleteTexture(image)) {
 			return false;
 		}
 
@@ -341,11 +369,27 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
 		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
 		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
-		operations.put(SAVE_TEXTURE, SAVE_TEXTURE_OPERATION);
 		operations.put(DO_TICKS, DO_TICKS_PREDICATE);
 		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
 		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
 		operations.put(DELETE_BUFFER, DELETE_BUFFER_PREDICATE);
+
+		JOPAResource timeResource = new JOPAResource(JOPAGLSLType.JOPA_FLOAT, "time", 0.0f);
+		addResource(timeResource);
+		JOPAResource deltaTimeResource = new JOPAResource(JOPAGLSLType.JOPA_FLOAT, "deltaTime", 0.0f);
+		addResource(deltaTimeResource);
+	}
+
+	public void start() {
+		startTime = System.currentTimeMillis();
+		commandIndex = 0;
+		printResources();
+	}
+
+	private void printResources() {
+		for (JOPAResource resource : resources) {
+			System.out.println(resource.name);
+		}
 	}
 
 	private void logError(String errorMessage, Object object) {
@@ -361,18 +405,20 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		JOPASimulationScript script = new JOPASimulationScript(simulationType);
-		try {
-			script.setupScript(JOPALoader.loadStandardScript("test.jopascript"));
-		} catch (JOPAPlaygroundException e) {
-			System.err.println(e.getMessage());
+		if (simulationType == JOPASimulationType.CUSTOM) {
+			try {
+				script.setupScript(loadStandardScript("test.jopascript"));
+			} catch (JOPAPlaygroundException e) {
+				System.err.println(e.getMessage());
 
-			return null;
+				return null;
+			}
 		}
 
 		return script;
 	}
 
-	public void setupScript(String code, JOPAResource... resources) throws JOPAPlaygroundException {
+	public void setupScript(String code) throws JOPAPlaygroundException {
 		if (executionType != JOPASimulationType.CUSTOM) {
 			throw new JOPAPlaygroundException("custom setup is only possible in custom script");
 		}
@@ -381,8 +427,8 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		setCode(code);
-		this.resources.clear();
-		this.resources.addAll(Arrays.asList(resources));
+		// this.resources.clear();
+		// this.resources.addAll(Arrays.asList(resources));
 	}
 
 	public String getCode() {
@@ -400,11 +446,6 @@ public class JOPASimulationScript implements Serializable {
 			commands.clear();
 		}
 		commands = new ArrayList<String>(Arrays.asList(code.split("\n")));
-		reset();
-	}
-
-	public void reset() {
-		commandIndex = 0;
 	}
 
 	public boolean execute() {
@@ -417,8 +458,6 @@ public class JOPASimulationScript implements Serializable {
 			return executeDefaultComputeShaderSimulation();
 		case CUSTOM:
 			if (commandIndex == commands.size()) {
-				reset();
-
 				return false;
 			}
 
@@ -517,12 +556,17 @@ public class JOPASimulationScript implements Serializable {
 		return null;
 	}
 
-	private void addResource(JOPAResource resource) {
+	public void addResource(JOPAResource resource) {
 		JOPAResource foundResource = getResourceByName(resource.name);
 		if (foundResource != null) {
 			resources.remove(foundResource);
 		}
 		resources.add(resource);
+		System.out.println("Adding: " + resource.name);
+	}
+
+	public void forEachResource(Consumer<JOPAResource> consumer) {
+		resources.forEach(consumer);
 	}
 
 	private boolean executeDefaultFragmentShaderSimulation() {
@@ -572,12 +616,12 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private void defaultFragmentShaderInit() {
-		window = createWindow(500, 500, false, false, resources);
+		window = createWindow(500, 500, false, this);
 		glUseProgram(createProgram(loadFragmentShader("fragment.glsl")));
 	}
 
 	private boolean defaultFragmentShaderTick() {
-		return tick(window, resources);
+		return tick(window, this);
 	}
 
 	private void defaultFragmentShaderDeinit() {
@@ -585,21 +629,21 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private void defaultComputeShaderInit() {
-		window = createWindow(500, 500, false, false, resources);
+		window = createWindow(500, 500, false, this);
 
 		int[] windowSize = getWindowSize(window);
 
 		int format = getTextureFormat(4, float.class, false);
-		texture = createTexture(windowSize[0], windowSize[1], format, resources);
+		singleImage = createTexture(windowSize[0], windowSize[1], format);
 
 		int defaultProgram = createProgram(loadComputeShader("compute.glsl"));
 		glUseProgram(defaultProgram);
-		glBindImageTexture(0, texture, 0, false, 0, GL_WRITE_ONLY, format);
+		glBindImageTexture(0, singleImage.handle, 0, false, 0, GL_WRITE_ONLY, format);
 		glDispatchCompute(windowSize[0] / 2, windowSize[1] / 2, 1);
 	}
 
 	private boolean defaultComputeShaderTick() {
-		return tick(window, resources);
+		return tick(window, this);
 	}
 
 	private void defaultComputeShaderDeinit() {

@@ -7,6 +7,7 @@ public class JOPASimulationThread extends Thread {
 	public JOPASimulationThread(JOPASimulationScript script) {
 		super(() -> {
 			isRunning = true;
+			script.start();
 			while (isRunning) {
 				if (!script.execute()) {
 					isRunning = false;

@@ -51,6 +51,7 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 		statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
 		startNode.outputs.get(0).makeConnection(statement.inputs.get(0));
 		startNode.outputs.get(2).makeConnection(statement.inputs.get(1));
+		startNode.outputs.get(1).makeConnection(statement.inputs.get(2));
 		statement.outputs.get(0).makeConnection(endNode.inputs.get(0));
 	}
 

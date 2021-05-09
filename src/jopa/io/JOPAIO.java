@@ -67,10 +67,13 @@ public class JOPAIO {
 
 		return false;
 	}
-	
+
 	public static JOPAImage loadImage(String fileName) {
-		// TODO loadImage
-		
+		JOPAImage image = new JOPAImage(fileName);
+		if (image.handle != 0) {
+			return image;
+		}
+
 		return null;
 	}
 

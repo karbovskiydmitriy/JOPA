@@ -2,6 +2,8 @@ package jopa.types;
 
 import java.io.Serializable;
 
+import jopa.graphics.JOPAImage;
+
 public class JOPAResource implements Serializable {
 
 	private static final long serialVersionUID = 2431228582741056741L;
@@ -26,6 +28,10 @@ public class JOPAResource implements Serializable {
 		this.value = value;
 	}
 
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
 	public long getAsWindow() {
 		if (type == JOPAResourceType.WINDOW_HANDLE) {
 			try {
@@ -38,16 +44,16 @@ public class JOPAResource implements Serializable {
 		return 0;
 	}
 
-	public int getAsTexture() {
-		if (type == JOPAResourceType.TEXTURE_HANDLE) {
+	public JOPAImage getAsImage() {
+		if (type == JOPAResourceType.IMAGE) {
 			try {
-				return (int) value;
+				return (JOPAImage) value;
 			} catch (Exception e) {
-				return 0;
+				return null;
 			}
 		}
 
-		return 0;
+		return null;
 	}
 
 	public int getAsBuffer() {
@@ -97,7 +103,7 @@ public class JOPAResource implements Serializable {
 
 		return null;
 	}
-	
+
 	public Object getAsObject() {
 		return value;
 	}

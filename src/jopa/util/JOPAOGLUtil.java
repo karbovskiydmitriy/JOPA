@@ -3,7 +3,6 @@ package jopa.util;
 import static jopa.io.JOPALoader.loadStandardShader;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
@@ -21,8 +20,16 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -35,8 +42,11 @@ import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glGetString;
 import static org.lwjgl.opengl.GL11.glIsTexture;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -96,18 +106,17 @@ import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.lwjgl.glfw.GLFWVidMode;
 
+import jopa.graphics.JOPAImage;
+import jopa.playground.JOPASimulationScript;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 
 public final class JOPAOGLUtil {
 
 	public static String getVersion() {
-		long window = createWindow(22, 22, false, false, null);
+		long window = createWindow(22, 22, false, null);
 		String version = glGetString(GL_VERSION);
 		destroyWindow(window);
 
@@ -168,14 +177,13 @@ public final class JOPAOGLUtil {
 		return program;
 	}
 
-	public static long createWindow(int width, int height, boolean isFullscreen, boolean resizeable,
-			ArrayList<JOPAResource> resources) {
+	public static long createWindow(int width, int height, boolean isFullscreen, JOPASimulationScript context) {
 		glfwInit();
 
 		long window;
 		String title = "Default fragment shader showcase";
 		if (!isFullscreen) {
-			glfwWindowHint(GLFW_RESIZABLE, resizeable ? GLFW_TRUE : GLFW_FALSE);
+			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 			window = glfwCreateWindow(width, height, title, NULL, NULL);
 		} else {
 			long monitor = glfwGetPrimaryMonitor();
@@ -194,18 +202,18 @@ public final class JOPAOGLUtil {
 
 		glViewport(0, 0, windowWidht[0], windowHeight[0]);
 
-		if (resources != null) {
+		if (context != null) {
 			int[] size = new int[] { windowWidht[0], windowHeight[0] };
 			JOPAResource windowSize = new JOPAResource(JOPAGLSLType.JOPA_INT_VECTOR_2, "windowSize", size);
-			resources.add(windowSize);
+			context.addResource(windowSize);
 		}
 
 		return window;
 	}
 
-	public static boolean tick(long window, ArrayList<JOPAResource> resources) {
+	public static boolean tick(long window, JOPASimulationScript context) {
 		if (!glfwWindowShouldClose(window)) {
-			passUniforms(resources);
+			passUniforms(context);
 
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBegin(GL_QUADS);
@@ -234,28 +242,41 @@ public final class JOPAOGLUtil {
 		glfwTerminate();
 	}
 
-	public static int createTexture(int width, int height, int format, ArrayList<JOPAResource> resources) {
+	public static JOPAImage createTexture(int width, int height, int format) {
 		if (width <= 0 || height <= 0 || format <= 0) {
-			return 0;
+			return null;
 		}
 
 		glEnable(GL_TEXTURE_2D);
-		int image = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, image);
+		JOPAImage image = new JOPAImage(width, height, glGenTextures());
+		glBindTexture(GL_TEXTURE_2D, image.handle);
 		glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-
-		if (resources != null) {
-
-		}
 
 		return image;
 	}
 
-	public static boolean deleteTexture(int texture) {
-		if (!glIsTexture(texture)) {
+	public static JOPAImage loadTexture(String fileName) {
+		JOPAImage image = new JOPAImage(fileName);
+		if (image.handle == 0) {
+			return null;
+		}
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, image.handle);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image.data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		return image;
+	}
+
+	public static boolean deleteTexture(JOPAImage image) {
+		if (!glIsTexture(image.handle)) {
 			return false;
 		}
-		glDeleteTextures(texture);
+		glDeleteTextures(image.handle);
 
 		return true;
 	}
@@ -364,11 +385,11 @@ public final class JOPAOGLUtil {
 		}
 	}
 
-	public static void passUniforms(Collection<JOPAResource> resources) {
-		if (resources != null && resources.size() > 0) {
+	public static void passUniforms(JOPASimulationScript script) {
+		if (script != null) {
 			int program = glGetInteger(GL_CURRENT_PROGRAM);
 			if (program != 0) {
-				for (JOPAResource resource : resources) {
+				script.forEachResource(resource -> {
 					String name = resource.name;
 					if (name != null && name.length() > 0) {
 						int location = glGetUniformLocation(program, name);
@@ -376,7 +397,7 @@ public final class JOPAOGLUtil {
 							passUniformValue(resource, location);
 						}
 					}
-				}
+				});
 			}
 		}
 	}
@@ -389,8 +410,8 @@ public final class JOPAOGLUtil {
 				// FIXME passing buffer
 				glUniform1i(location, buffer);
 				break;
-			case TEXTURE_HANDLE: {
-				int value = safeCast(resource.getAsTexture(), int.class);
+			case IMAGE: {
+				int value = safeCast(resource.getAsImage(), int.class);
 				glUniform1i(location, value);
 				break;
 			}

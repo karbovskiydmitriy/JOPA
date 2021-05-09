@@ -31,12 +31,13 @@
 		"FRAGMENT_TEST": {
 			"inputs": [
 				"vec4:coord",
-				"ivec2:size"
+				"ivec2:size",
+				"float:t"
 			],
 			"outputs": [
 				"vec4:color"
 			],
-			"template": "vec2 uv = vec2(coord.xy) / vec2(size);vec4 color = vec4(uv, 0.0, 1.0);"
+			"template": "t *= 3f;vec2 uv = vec2(coord.yx) / vec2(size);uv.xy = vec2(uv.x, sin(uv.y) / 2.0 + 0.5);vec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);"
 		}
 	}
 }

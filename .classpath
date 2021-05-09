@@ -17,6 +17,11 @@
 	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-natives-windows-x86.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-opengl/lwjgl-opengl-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-stb/lwjgl-stb-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-stb/lwjgl-stb-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-stb/lwjgl-stb-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-stb/lwjgl-stb-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-stb/lwjgl-stb.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>

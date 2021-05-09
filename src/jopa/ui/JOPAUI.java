@@ -83,6 +83,7 @@ public class JOPAUI {
 		window.setEnabled(true);
 		window.setVisible(true);
 		window.setLayout(new BorderLayout());
+		window.requestFocus();
 	}
 
 	public synchronized void createMenu() {
