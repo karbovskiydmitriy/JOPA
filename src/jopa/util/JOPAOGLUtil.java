@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGetInteger;
@@ -109,6 +110,15 @@ public final class JOPAOGLUtil {
 		destroyWindow(window);
 
 		return version;
+	}
+
+	public static int[] getWindowSize(long window) {
+		int[] windowWidht = new int[1];
+		int[] windowHeight = new int[1];
+		glfwGetWindowSize(window, windowWidht, windowHeight);
+		int[] windowSize = new int[] { windowWidht[0], windowHeight[0] };
+
+		return windowSize;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -364,14 +374,19 @@ public final class JOPAOGLUtil {
 		glfwTerminate();
 	}
 
-	public static int createTexture(int width, int height, int format) {
+	public static int createTexture(int width, int height, int format, ArrayList<JOPAResource> resources) {
 		if (width <= 0 || height <= 0 || format <= 0) {
 			return 0;
 		}
 
+		glEnable(GL_TEXTURE_2D);
 		int image = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, image);
 		glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+
+		if (resources != null) {
+
+		}
 
 		return image;
 	}

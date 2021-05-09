@@ -8,14 +8,13 @@ import jopa.types.JOPAResource;
 
 public class JOPAPlayground implements Closeable {
 
-	private JOPASimulationType simulationType;
 	// private JOPASimulationScript script;
 	private JOPASimulationThread simulationThread;
 
 	private ArrayList<JOPAResource> resources;
 
-	private JOPAPlayground(JOPASimulationType type) {
-		this.simulationType = type;
+	private JOPAPlayground() {
+		// this.simulationType = type;
 		resources = new ArrayList<JOPAResource>();
 		System.out.println("Playground created");
 	}
@@ -29,7 +28,7 @@ public class JOPAPlayground implements Closeable {
 			}
 		}
 
-		return new JOPAPlayground(type);
+		return new JOPAPlayground();
 	}
 
 	public synchronized void setupScript(JOPASimulationScript script) {
@@ -38,12 +37,6 @@ public class JOPAPlayground implements Closeable {
 
 	public synchronized void start() {
 		if (simulationThread == null) {
-			// if (script == null) {
-			// JOPASimulationScript stubScript =
-			// JOPASimulationScript.create(simulationType);
-			// System.out.println(stubScript);
-			// setupScript(stubScript);
-			// }
 			if (JOPAMain.currentProject.script == null) {
 				System.out.println("Script not set up");
 				// TODO error handling?
