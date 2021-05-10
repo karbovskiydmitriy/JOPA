@@ -87,7 +87,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		adjustGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

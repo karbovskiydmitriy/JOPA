@@ -1,6 +1,7 @@
 package jopa.playground;
 
 import static jopa.io.JOPALoader.loadStandardScript;
+import static jopa.util.JOPATypeUtil.*;
 import static jopa.util.JOPAOGLUtil.createBuffer;
 import static jopa.util.JOPAOGLUtil.createProgram;
 import static jopa.util.JOPAOGLUtil.createShader;
@@ -24,6 +25,7 @@ import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -110,6 +112,7 @@ public class JOPASimulationScript implements Serializable {
 		long windowHandle = createWindow(width, height, isFullscreen, this);
 
 		JOPAResource windowResource = new JOPAResource(JOPAResourceType.WINDOW_HANDLE, name, windowHandle);
+
 		addResource(windowResource);
 
 		return true;
@@ -141,14 +144,36 @@ public class JOPASimulationScript implements Serializable {
 	};
 
 	private final Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
-		if (args.length != 1) {
-			logSimulationError(this, "HAIL SANTA", args);
+		if (args.length != 3) {
+			logSimulationError(this, "NEW BUFFER uses 3 arguments (name, type name, count)", args);
 
 			return false;
 		}
 
 		String name = args[0];
-		int buffer = createBuffer();
+		String typeName = args[1];
+		String countString = args[2];
+		int typeSize = getTypeSize(typeName);
+		if (typeSize == 0) {
+			logSimulationError(this, "Unknown type", typeName);
+
+			return false;
+		}
+		int count;
+		try {
+			count = Integer.parseUnsignedInt(countString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"count\" should be unsigned integer", countString);
+
+			return false;
+		}
+		if (count == 0) {
+			logSimulationError(this, "\"count\" can not be 0", countString);
+
+			return false;
+		}
+		int size = typeSize * count;
+		int buffer = createBuffer(ByteBuffer.allocate(size));
 		if (buffer == 0) {
 			logSimulationError(this, "Buffer was not created1", name);
 
@@ -392,22 +417,21 @@ public class JOPASimulationScript implements Serializable {
 
 		String name = args[0];
 		JOPAResource resource = getResourceByName(name);
-		if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
-			long windowHandle = resource.getAsWindow();
-			if (windowHandle == 0) {
-				logSimulationError(this, "Window resource is NULL", resource);
+		if (resource.type != JOPAResourceType.WINDOW_HANDLE) {
+			logSimulationError(this, "Window was not found", name);
 
-				return false;
-			} else {
-				destroyWindow(windowHandle);
-				resources.remove(resource);
-
-				return true;
-			}
+			return false;
 		}
-		logSimulationError(this, "Window was not found", name);
+		long windowHandle = resource.getAsWindow();
+		if (windowHandle == 0) {
+			logSimulationError(this, "Window resource is NULL", resource);
 
-		return false;
+			return false;
+		}
+		destroyWindow(windowHandle);
+		resources.remove(resource);
+
+		return true;
 	};
 
 	private final Predicate<String[]> DELETE_TEXTURE_PREDICATE = args -> {

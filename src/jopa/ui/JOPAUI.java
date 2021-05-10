@@ -52,6 +52,7 @@ import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
+import jopa.types.JOPAType;
 import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
@@ -61,6 +62,8 @@ import jopa.ui.dialogs.JOPAEditProjectDialog;
 import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
+import jopa.ui.dialogs.JOPAEditTypeDialog;
+import jopa.ui.dialogs.JOPAEditTypesListDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAQuestionDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
@@ -372,6 +375,16 @@ public class JOPAUI {
 	public synchronized void openFunctionEditor(JOPAFunction function) {
 		JOPAEditFunctionDialog editFunctionDialog = new JOPAEditFunctionDialog(window, function);
 		editFunctionDialog.dispose();
+	}
+
+	public synchronized void openTypesListEditor(JOPAProject project) {
+		JOPAEditTypesListDialog editTypesDialog = new JOPAEditTypesListDialog(window, project);
+		editTypesDialog.dispose();
+	}
+
+	public synchronized void openTypeEditor(JOPAType type) {
+		JOPAEditTypeDialog editTypeDialog = new JOPAEditTypeDialog(window, type);
+		editTypeDialog.dispose();
 	}
 
 	public synchronized void openConstantsEditor(JOPAFunction function) {

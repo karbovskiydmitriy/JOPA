@@ -19,6 +19,7 @@ import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.nodes.JOPATypesNode;
 import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
@@ -263,7 +264,6 @@ public class JOPAProject implements Serializable {
 	}
 
 	private void openNodeEditor(JOPANode node) {
-		System.out.println(node);
 		Class<?> nodeType = node.getClass();
 		if (nodeType.equals(JOPAStatementNode.class)) {
 			JOPAMain.ui.openStatementNodeEditor((JOPAStatementNode) node);
@@ -273,6 +273,8 @@ public class JOPAProject implements Serializable {
 			JOPAMain.ui.openLoopNodeEditor((JOPALoopNode) node);
 		} else if (nodeType.equals(JOPAFunctionNode.class)) {
 			JOPAMain.ui.openFunctionNodeEditor((JOPAFunctionNode) node);
+		} else if (nodeType.equals(JOPATypesNode.class)) {
+			JOPAMain.ui.openTypesListEditor(JOPAMain.currentProject);
 		} else if (nodeType.equals(JOPAConstantsNode.class)) {
 			JOPAMain.ui.openConstantsEditor(currentFunction);
 		} else if (nodeType.equals(JOPAStartNode.class)) {

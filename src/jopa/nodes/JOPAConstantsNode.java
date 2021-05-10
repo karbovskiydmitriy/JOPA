@@ -1,13 +1,14 @@
 package jopa.nodes;
 
+import static jopa.main.JOPAFunction.NEW_LINE;
+
 import java.awt.Rectangle;
 
-import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
 import jopa.main.JOPAMain;
-import jopa.main.JOPAProject;
+import jopa.main.JOPAProject;;
 
-public class JOPAConstantsNode extends JOPANode implements JOPACodeConvertible {
+public class JOPAConstantsNode extends JOPANode {
 
 	private static final long serialVersionUID = 6463101741433264603L;
 
@@ -49,7 +50,7 @@ public class JOPAConstantsNode extends JOPANode implements JOPACodeConvertible {
 		String constantsCode = "";
 
 		for (JOPAConstant constant : project.constants) {
-			constantsCode += constant.toString() + ";\n";
+			constantsCode += constant.toString() + ";" + NEW_LINE;
 		}
 
 		return constantsCode;

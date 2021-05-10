@@ -47,7 +47,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			JOPADataPort port = object.outputs.get(i);
 			addEditorPair("output[" + i + "]", port);
 		}
-		adjustGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();

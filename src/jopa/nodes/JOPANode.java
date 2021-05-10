@@ -71,8 +71,6 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 
 	public abstract boolean check();
 
-	public abstract String generateCode();
-
 	public abstract boolean remove();
 
 	protected boolean flowInconsistency() {

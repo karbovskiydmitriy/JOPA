@@ -132,6 +132,51 @@ public final class JOPATypeUtil {
 		}
 	}
 
+	public static int getTypeSize(String typeName) {
+		JOPAGLSLType glslType = getTypeForName(typeName);
+		switch (glslType) {
+		case JOPA_BOOL:
+			return 1;
+		case JOPA_BOOL_VECTOR_2:
+			return 2;
+		case JOPA_BOOL_VECTOR_3:
+			return 3;
+		case JOPA_BOOL_VECTOR_4:
+			return 4;
+		case JOPA_DOUBLE:
+			return 8;
+		case JOPA_FLOAT:
+			return 4;
+		case JOPA_FLOAT_VECTOR_2:
+			return 8;
+		case JOPA_FLOAT_VECTOR_3:
+			return 12;
+		case JOPA_FLOAT_VECTOR_4:
+			return 16;
+		case JOPA_INT:
+			return 4;
+		case JOPA_INT_VECTOR_2:
+			return 8;
+		case JOPA_INT_VECTOR_3:
+			return 12;
+		case JOPA_INT_VECTOR_4:
+			return 16;
+		case JOPA_UINT:
+			return 4;
+		case JOPA_UINT_VECTOR_2:
+			return 8;
+		case JOPA_UINT_VECTOR_3:
+			return 12;
+		case JOPA_UINT_VECTOR_4:
+			return 16;
+		case JOPA_VOID:
+		case JOPA_NONE:
+		default:
+			// TODO other types
+			return 0;
+		}
+	}
+
 	public static String[] getAllTypes() {
 		return glslTypes;
 	}

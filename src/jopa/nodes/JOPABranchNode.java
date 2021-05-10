@@ -3,10 +3,9 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import jopa.main.JOPACodeConvertible;
 import jopa.ports.JOPAPort;
 
-public class JOPABranchNode extends JOPANode implements JOPACodeConvertible {
+public class JOPABranchNode extends JOPANode {
 
 	private static final long serialVersionUID = -1257820350964560822L;
 

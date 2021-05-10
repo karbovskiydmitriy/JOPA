@@ -43,7 +43,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		});
 		area.add(projectTypeComboBox);
 		area.add(editResourceeButton);
-		adjustGrid(area, 2, 1, 10, 10, 10, 10);
+		adjustGrid(2, 1, 10, 10, 10, 10);
 
 		pack();
 	}

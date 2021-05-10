@@ -108,31 +108,66 @@ import static org.lwjgl.opengl.GL30.GL_RGBA8UI;
 import static org.lwjgl.opengl.GL30.glUniform1ui;
 import static org.lwjgl.opengl.GL40.glUniform1d;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
-import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import java.nio.ByteBuffer;
 
 import org.lwjgl.glfw.GLFWVidMode;
 
 import jopa.graphics.JOPAImage;
+import jopa.main.JOPAProjectType;
 import jopa.playground.JOPASimulationScript;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 
 public final class JOPAOGLUtil {
 
+	private static long createWindowForOpenGLContext() {
+		return createWindow(22, 22, false, null);
+	}
+
 	public static String getVersion() {
-		long window = createWindow(22, 22, false, null);
+		long window = createWindowForOpenGLContext();
 		String version = glGetString(GL_VERSION);
 		destroyWindow(window);
 
 		return version;
 	}
 
-	public static int createShader(int shaderType, String code) {
+	public static boolean validateShader(String shaderCode, JOPAProjectType projectType) {
+		long window = createWindowForOpenGLContext();
+		if (window == 0) {
+			return false;
+		}
+		int shader;
+		switch (projectType) {
+		case FRAGMENT:
+			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			break;
+		case COMPUTE:
+			shader = createShader(GL_COMPUTE_SHADER, shaderCode);
+			break;
+		case NONE:
+		default:
+			return false;
+		}
+		destroyWindow(window);
+		if (shader == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static int createShader(int shaderType, String shaderCode) {
 		int shader = glCreateShader(shaderType);
-		glShaderSource(shader, code);
+		glShaderSource(shader, shaderCode);
 		glCompileShader(shader);
-		if (glGetShaderi(shaderType, GL_COMPILE_STATUS) == 1) {
+		int status = glGetShaderi(shader, GL_COMPILE_STATUS);
+		System.out.println(status);
+		if (status == GL_FALSE) {
+			System.err.println(glGetShaderInfoLog(shader));
 			glDeleteShader(shader);
 
 			return 0;
@@ -140,13 +175,13 @@ public final class JOPAOGLUtil {
 
 		return shader;
 	}
-	
+
 	public static boolean deleteShader(int shader) {
 		if (!glIsShader(shader)) {
 			return false;
 		}
 		glDeleteShader(shader);
-		
+
 		return true;
 	}
 
@@ -181,7 +216,7 @@ public final class JOPAOGLUtil {
 
 		return program;
 	}
-	
+
 	public static boolean deleteProgram(int program) {
 		if (!glIsProgram(program)) {
 			return false;
@@ -190,7 +225,7 @@ public final class JOPAOGLUtil {
 			glUseProgram(0); // DECIDE return false?..
 		}
 		glDeleteProgram(program);
-		
+
 		return true;
 	}
 
@@ -242,7 +277,7 @@ public final class JOPAOGLUtil {
 
 	public static boolean tick(long window, JOPASimulationScript context) {
 		if (!glfwWindowShouldClose(window)) {
-			passUniforms(context);
+			passVariables(context);
 
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBegin(GL_QUADS);
@@ -277,7 +312,7 @@ public final class JOPAOGLUtil {
 		}
 
 		glEnable(GL_TEXTURE_2D);
-		JOPAImage image = new JOPAImage(width, height, glGenTextures());
+		JOPAImage image = new JOPAImage(width, height, glGenTextures(), format);
 		glBindTexture(GL_TEXTURE_2D, image.handle);
 		glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
 
@@ -309,19 +344,22 @@ public final class JOPAOGLUtil {
 
 		return true;
 	}
-	
-	public static int createBuffer() {
-		// TODO createBuffer
-		
-		return 42;
+
+	public static int createBuffer(ByteBuffer data) {
+		int buffer = glGenBuffers();
+		// DECIDE GL_SHADER_STORAGE_BUFFER?
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
+
+		return buffer;
 	}
-	
+
 	public static boolean deleteBuffer(int buffer) {
 		if (!glIsBuffer(buffer)) {
 			return false;
 		}
 		glDeleteBuffers(buffer);
-		
+
 		return true;
 	}
 
@@ -429,7 +467,7 @@ public final class JOPAOGLUtil {
 		}
 	}
 
-	public static void passUniforms(JOPASimulationScript script) {
+	public static void passVariables(JOPASimulationScript script) {
 		if (script != null) {
 			int program = glGetInteger(GL_CURRENT_PROGRAM);
 			if (program != 0) {
@@ -438,28 +476,39 @@ public final class JOPAOGLUtil {
 					if (name != null && name.length() > 0) {
 						int location = glGetUniformLocation(program, name);
 						if (location > -1) {
-							passUniformValue(resource, location);
+							passVariable(resource, location);
 						}
+						// TODO glGetProgramInterfaceiv for buffers/uniform blocks/shader storage blocks
 					}
 				});
 			}
 		}
 	}
 
-	public static void passUniformValue(JOPAResource resource, int location) {
+	public static boolean passVariable(JOPAResource resource, int location) {
 		if (resource != null && resource.type != null) {
 			switch (resource.type) {
-			case BUFFER_HANDLE:
+			case BUFFER_HANDLE: {
 				int buffer = safeCast(resource.getAsBuffer(), int.class);
-				// FIXME passing buffer
-				glUniform1i(location, buffer);
-				break;
-			case IMAGE: {
-				int value = safeCast(resource.getAsImage(), int.class);
-				glUniform1i(location, value);
+				int index = location;
+				System.out.println("Binding buffer " + buffer + " to index " + index);
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, buffer);
 				break;
 			}
-			case GLSL_TYPE:
+			case IMAGE: {
+				JOPAImage image = safeCast(resource.getAsImage(), JOPAImage.class);
+				if (image == null) {
+					return false;
+				}
+				int handle = image.handle;
+				if (handle == 0) {
+					return false;
+				}
+				int index = location;
+				glBindImageTexture(index, handle, 0, false, 0, GL_READ_WRITE, image.format);
+				break;
+			}
+			case GLSL_TYPE: {
 				if (resource.glslType != null) {
 					JOPAGLSLType type = resource.glslType;
 					switch (type) {
@@ -550,16 +599,19 @@ public final class JOPAOGLUtil {
 					}
 					// TODO remaining
 					case JOPA_NONE: {
-						return;
+						return false;
 					}
 					default:
-						return;
+						return false;
 					}
 				}
+			}
 			default:
-				return;
+				return false;
 			}
 		}
+
+		return true;
 	}
 
 }

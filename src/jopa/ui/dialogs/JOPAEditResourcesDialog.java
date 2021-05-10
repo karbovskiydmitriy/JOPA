@@ -30,7 +30,7 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 			JOPAResource resource = object.resources.get(i);
 			addEditorPair("resource[" + i + "]", resource);
 		}
-		adjustGrid(area, area.getComponentCount() / 3, 3, 10, 10, 10, 10);
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();

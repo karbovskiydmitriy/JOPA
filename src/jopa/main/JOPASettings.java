@@ -19,9 +19,10 @@ public class JOPASettings {
 	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY_PATH + "config.json";
 	private static final String PALETTE_FILE_PATH = CONFIG_DIRECTORY_PATH + "palette.json";
 
-	public JOPAPalette defaultPalette;
 	public boolean showPortTypes = true;
 	public boolean highlightNodes = true;
+	public boolean copyTempValues = true;
+	public JOPAPalette defaultPalette;
 
 	public JOPASettings() {
 		readSettings();

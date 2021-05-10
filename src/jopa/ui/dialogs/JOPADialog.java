@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.Spring;
@@ -54,8 +55,8 @@ public abstract class JOPADialog<T> extends JDialog {
 		return ((SpringLayout) parent.getLayout()).getConstraints(c);
 	}
 
-	protected static void adjustGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad,
-			int yPad) {
+	protected void adjustGrid(int rows, int cols, int initialX, int initialY, int xPad, int yPad) {
+		JComponent parent = area;
 		SpringLayout layout;
 		try {
 			layout = (SpringLayout) parent.getLayout();

@@ -13,6 +13,7 @@ import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.nodes.JOPATypesNode;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
@@ -26,21 +27,23 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 	public static final String BLOCK_START = "\n{\n";
 	public static final String BLOCK_END = "}\n";
 
-	public String name;
 	public JOPAGLSLType returnType;
+	public String name;
 	public ArrayList<JOPAVariable> args;
+	public JOPATypesNode typesNode;
+	public JOPAConstantsNode constantsNode;
 	public JOPAStartNode startNode;
 	public JOPAEndNode endNode;
-	public JOPAConstantsNode constantsNode;
 	public ArrayList<JOPANode> statementNodes;
 
-	public JOPAFunction(String name) {
-		this.name = name;
+	public JOPAFunction(String name, JOPAVariable... args) {
 		this.returnType = JOPAGLSLType.JOPA_VOID;
-		this.args = new ArrayList<JOPAVariable>();
+		this.name = name;
+		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
+		this.typesNode = new JOPATypesNode(50, 200);
+		this.constantsNode = new JOPAConstantsNode(50, 350, "CONSTANTS");
 		this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
 		this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
-		this.constantsNode = new JOPAConstantsNode(50, 200, "CONSTANTS");
 		this.statementNodes = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
 		init();
 	}
@@ -56,10 +59,11 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
-		statementNodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
-		startNode.draw(g, selectedNode, selectedPort);
+		typesNode.draw(g, selectedNode, selectedPort);
 		constantsNode.draw(g, selectedNode, selectedPort);
+		startNode.draw(g, selectedNode, selectedPort);
 		endNode.draw(g, selectedNode, selectedPort);
+		statementNodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
 	}
 
 	public JOPANode getNodeOnPoint(Point p) {
@@ -68,14 +72,17 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 				return node;
 			}
 		}
+		if (typesNode.hit(p)) {
+			return typesNode;
+		}
+		if (constantsNode.hit(p)) {
+			return constantsNode;
+		}
 		if (startNode.hit(p)) {
 			return startNode;
 		}
 		if (endNode.hit(p)) {
 			return endNode;
-		}
-		if (constantsNode.hit(p)) {
-			return constantsNode;
 		}
 
 		return null;
