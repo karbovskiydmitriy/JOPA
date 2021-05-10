@@ -39,6 +39,7 @@ import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glGetString;
 import static org.lwjgl.opengl.GL11.glIsTexture;
@@ -60,6 +61,7 @@ import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_SHADER_TYPE;
 import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
@@ -67,12 +69,11 @@ import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glDeleteShader;
 import static org.lwjgl.opengl.GL20.glDetachShader;
+import static org.lwjgl.opengl.GL20.glGetAttachedShaders;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glIsProgram;
-import static org.lwjgl.opengl.GL20.glIsShader;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUniform1f;
@@ -119,6 +120,7 @@ import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
+import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
@@ -186,9 +188,15 @@ public final class JOPAOGLUtil {
 	}
 
 	public static boolean deleteShader(int shader) {
-		if (!glIsShader(shader)) {
+		if (shader == 0) {
 			return false;
 		}
+		// FIXME not a shader???
+		// if (!glIsShader(shader)) {
+		// System.err.println(shader + " is not a shader???");
+		//
+		// return false;
+		// }
 		glDeleteShader(shader);
 
 		return true;
@@ -227,9 +235,15 @@ public final class JOPAOGLUtil {
 	}
 
 	public static boolean deleteProgram(int program) {
-		if (!glIsProgram(program)) {
+		if (program == 0) {
 			return false;
 		}
+		// FIXME not a program???
+		// if (!glIsProgram(program)) {
+		// System.err.println(program + " is not a program???");
+		//
+		// return false;
+		// }
 		if (glGetInteger(GL_CURRENT_PROGRAM) == program) {
 			glUseProgram(0); // DECIDE return false?..
 		}
@@ -309,8 +323,36 @@ public final class JOPAOGLUtil {
 		return false;
 	}
 
+	public static boolean compute(int x, int y, int z) {
+		int currentProgram = glGetInteger(GL_CURRENT_PROGRAM);
+		if (currentProgram == 0) {
+			return false;
+		}
+
+		int[] count = new int[1];
+		int[] shaders = new int[64];
+		glGetAttachedShaders(currentProgram, count, shaders);
+
+		boolean hasComputeShader = false;
+		for (int shader : shaders) {
+			int shaderType = glGetShaderi(shader, GL_SHADER_TYPE);
+			if (shaderType == GL_COMPUTE_SHADER) {
+				hasComputeShader = true;
+			}
+		}
+		if (!hasComputeShader) {
+			return false;
+		}
+		// TODO xyz check
+		glDispatchCompute(x, y, z);
+		if (glGetError() != 0) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public static void destroyWindow(long window) {
-		setCapabilities(null);
 		glfwDestroyWindow(window);
 		glfwTerminate();
 	}
@@ -370,6 +412,10 @@ public final class JOPAOGLUtil {
 		glDeleteBuffers(buffer);
 
 		return true;
+	}
+	
+	public static void deleteContext() {
+		setCapabilities(null);
 	}
 
 	public static int getTextureFormat(int channels, Class<?> type, boolean signed) {

@@ -93,7 +93,7 @@ public class JOPANodeTemplate {
 	private static void initStandardNodeTemplates() {
 		standardFormulas = new ArrayList<JOPANodeTemplate>();
 		try {
-			String standardTemplates = loadStandardTemplate("standard.json");
+			String standardTemplates = loadStandardTemplate("templates.json");
 			if (standardTemplates != null) {
 				JsonElement templatesElement = new JsonParser().parse(standardTemplates);
 				if (templatesElement != null) {

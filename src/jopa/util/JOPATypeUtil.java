@@ -101,6 +101,48 @@ public final class JOPATypeUtil {
 		}
 	}
 
+	public static Object getValueForType(JOPAGLSLType type, String value) {
+		if (type == null || value == null || value.length() == 0) {
+			return null;
+		}
+
+		try {
+			switch (type) {
+			case BOOL: {
+				return value.equals("true") ? true : value.equals("false") ? false : null;
+			}
+			case INT: {
+				return Integer.parseInt(value);
+			}
+			case UINT: {
+				return Integer.parseUnsignedInt(value);
+			}
+			case FLOAT: {
+				return (float) Double.parseDouble(value);
+			}
+			// TODO the rest
+			case BOOL_VECTOR_2:
+			case BOOL_VECTOR_3:
+			case BOOL_VECTOR_4:
+			case INT_VECTOR_2:
+			case INT_VECTOR_3:
+			case INT_VECTOR_4:
+			case UINT_VECTOR_2:
+			case UINT_VECTOR_3:
+			case UINT_VECTOR_4:
+			case FLOAT_VECTOR_2:
+			case FLOAT_VECTOR_3:
+			case FLOAT_VECTOR_4:
+			case VOID:
+			case NONE:
+			default:
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 	public static Color getColorForType(JOPAGLSLType type) {
 		if (type == null) {
 			return settings.defaultPalette.portColor;

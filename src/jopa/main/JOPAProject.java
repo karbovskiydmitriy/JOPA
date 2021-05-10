@@ -28,7 +28,6 @@ import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
-import jopa.types.JOPAResource;
 import jopa.types.JOPACustomType;
 
 public class JOPAProject implements Serializable {
@@ -48,11 +47,9 @@ public class JOPAProject implements Serializable {
 
 	public String name;
 	public JOPAProjectType projectType;
-	// DECIDE do I really need those here
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAVariable> publicVariables;
-	public ArrayList<JOPAResource> resources;
 	public JOPAFunction currentFunction;
 	public JOPASimulationScript script;
 
@@ -67,7 +64,6 @@ public class JOPAProject implements Serializable {
 		constants = new ArrayList<JOPAConstant>();
 		publicVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
-		resources = new ArrayList<JOPAResource>();
 		script = JOPASimulationScript.create(JOPASimulationType.CUSTOM);
 	}
 
@@ -326,12 +322,7 @@ public class JOPAProject implements Serializable {
 		if (verifyFunctions()) {
 			String shaderCode = "#version 130";
 			shaderCode += TWO_LINES;
-			if (types.size() > 0) {
-				for (JOPACustomType type : types) {
-					shaderCode += type.generateCode();
-				}
-				shaderCode += TWO_LINES;
-			}
+			shaderCode += mainFunction.typesNode.generateCode();
 			if (mainFunction.constantsNode.outputs.size() > 0) {
 				shaderCode += mainFunction.constantsNode.generateCode();
 				shaderCode += NEW_LINE;
@@ -341,14 +332,15 @@ public class JOPAProject implements Serializable {
 					if (port.variable.name.startsWith("gl_")) {
 						continue;
 					}
-					if (port.connections.size() == 0) {
-						continue;
-					}
+					// if (port.connections.size() == 0) {
+					// continue;
+					// }
 					String modifier = "uniform ";
-					shaderCode += modifier + port.generateCode() + ";\n";
+					shaderCode += modifier + port.generateCode() + ";" + NEW_LINE;
 				}
 				shaderCode += NEW_LINE;
 			}
+			// TODO globals
 			if (functions.size() > 1) {
 				for (JOPAFunction function : functions) {
 					if (function != mainFunction) {

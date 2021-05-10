@@ -77,6 +77,35 @@ public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
 	}
 
 	@Override
+	public boolean makeConnection(JOPAPort to) {
+		if (to == null) {
+			return false;
+		}
+		if (isOutput == to.isOutput) {
+			return false;
+		}
+		if (node == to.node) {
+			return false;
+		}
+		if (!getClass().equals(to.getClass())) {
+			return false;
+		}
+
+		if (!isOutput) {
+			destroyAllConnections();
+		} else if (!to.isOutput) {
+			to.destroyAllConnections();
+		}
+		if (!variable.type.equals(((JOPADataPort) to).variable.type)) {
+			return false;
+		}
+
+		connect(to);
+
+		return true;
+	}
+
+	@Override
 	public void destroyAllConnections() {
 		connections.forEach(port -> port.connections.remove(this));
 		connections.clear();

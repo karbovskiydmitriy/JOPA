@@ -2,12 +2,14 @@ package jopa.playground;
 
 import static jopa.io.JOPALoader.loadStandardScript;
 import static jopa.main.JOPAMain.currentProject;
+import static jopa.util.JOPAOGLUtil.compute;
 import static jopa.util.JOPAOGLUtil.createBuffer;
 import static jopa.util.JOPAOGLUtil.createProgram;
 import static jopa.util.JOPAOGLUtil.createShader;
 import static jopa.util.JOPAOGLUtil.createTexture;
 import static jopa.util.JOPAOGLUtil.createWindow;
 import static jopa.util.JOPAOGLUtil.deleteBuffer;
+import static jopa.util.JOPAOGLUtil.deleteContext;
 import static jopa.util.JOPAOGLUtil.deleteProgram;
 import static jopa.util.JOPAOGLUtil.deleteShader;
 import static jopa.util.JOPAOGLUtil.deleteTexture;
@@ -18,7 +20,9 @@ import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.loadTexture;
 import static jopa.util.JOPAOGLUtil.tick;
+import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
+import static jopa.util.JOPATypeUtil.getValueForType;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -49,21 +53,29 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] NEW_BUFFER = { "new", "buffer" };
 	private static final String[] NEW_SHADER = { "new", "shader" };
 	private static final String[] NEW_PROGRAM = { "new", "program" };
+	private static final String[] LOAD_TEXTURE = { "load", "texture" };
 	private static final String[] GENERATE_SHADER = { "generate", "shader" };
 	private static final String[] SET_PROGRAM = { "set", "program" };
-	private static final String[] LOAD_TEXTURE = { "load", "texture" };
-	private static final String[] DO_TICKS = { "do", "ticks" };
+	private static final String[] SET_VAR = { "set", "var" };
+	private static final String[] SET_BOOL = { "set", "bool" };
+	private static final String[] SET_INT = { "set", "int" };
+	private static final String[] SET_UINT = { "set", "uint" };
+	private static final String[] SET_FLOAT = { "set", "float" };
+	private static final String[] DRAW = { "draw" };
+	private static final String[] COMPUTE = { "compute" };
 	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
 	private static final String[] DELETE_TEXTURE = { "destroy", "texture" };
 	private static final String[] DELETE_BUFFER = { "destroy", "buffer" };
 	private static final String[] DELETE_SHADER = { "delete", "shader" };
 	private static final String[] DELETE_PROGRAM = { "delete", "program" };
+	private static final String[] EXIT = { "exit" };
 
 	private static long window;
 	private static int state = 0;
 	private static JOPAImage singleImage;
 
 	private boolean executed;
+	private boolean returnCode;
 	private int commandIndex;
 
 	private long startTime;
@@ -181,6 +193,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		JOPAResource bufferResource = new JOPAResource(JOPAResourceType.BUFFER_HANDLE, name, buffer);
+
 		addResource(bufferResource);
 
 		return true;
@@ -259,6 +272,28 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private final Predicate<String[]> LOAD_TEXTURE_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "LOAD TEXTURE uses 2 arguments (name, file name)", args);
+
+			return false;
+		}
+		String name = args[0];
+		String fileName = args[1];
+
+		JOPAImage image = loadTexture(fileName);
+		if (image == null) {
+			logSimulationError(this, "Could not load texture from file", fileName);
+
+			return false;
+		}
+
+		JOPAResource imageResource = new JOPAResource(JOPAResourceType.IMAGE, name, image);
+		addResource(imageResource);
+
+		return true;
+	};
+
 	private final Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "GENERATE SHADER uses 1 argument (name)", args);
@@ -315,7 +350,7 @@ public class JOPASimulationScript implements Serializable {
 		if (!programName.equals("0")) {
 			JOPAResource programResource = getResourceByName(programName);
 			if (programResource == null) {
-				logSimulationError(this, "Program could not be found", programName);
+				logSimulationError(this, "Program was not found", programName);
 
 				return false;
 			}
@@ -334,29 +369,146 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> LOAD_TEXTURE_OPERATION = args -> {
-		if (args.length != 2) {
-			logSimulationError(this, "LOAD TEXTURE uses 2 arguments (name, file name)", args);
+	private final Predicate<String[]> SET_VAR_OPERATION = args -> {
+		if (args.length != 3) {
+			logSimulationError(this, "SET VAR uses 3 arguments (name, type, value)", args);
 
 			return false;
 		}
+
 		String name = args[0];
-		String fileName = args[1];
-
-		JOPAImage image = loadTexture(fileName);
-		if (image == null) {
-			logSimulationError(this, "Could not load texture from file", fileName);
+		String typeString = args[1];
+		JOPAGLSLType type = getTypeForName(typeString);
+		if (type == JOPAGLSLType.NONE) {
+			logSimulationError(this, "Unknown type", typeString);
 
 			return false;
 		}
+		if (type == JOPAGLSLType.VOID) {
+			logSimulationError(this, "void is not a variable type", typeString);
 
-		JOPAResource imageResource = new JOPAResource(JOPAResourceType.IMAGE, name, image);
-		addResource(imageResource);
+			return false;
+		}
+		String valueString = args[2];
+		JOPAResource valueVariable = getResourceByName(valueString);
+		Object value;
+		if (valueVariable != null) {
+			if (valueVariable.glslType == type) {
+				value = valueVariable.getAsGLSLType();
+				if (value == null) {
+					logSimulationError(this, "Value is NULL", value);
+
+					return false;
+				}
+			} else {
+				logSimulationError(this, "Types do not match", valueVariable);
+
+				return false;
+			}
+		} else {
+			value = getValueForType(type, valueString);
+			if (value == null) {
+				logSimulationError(this, "Value is incorrect", valueString);
+
+				return false;
+			}
+		}
+
+		JOPAResource variableResource = new JOPAResource(type, name, value);
+		addResource(variableResource);
 
 		return true;
 	};
 
-	private final Predicate<String[]> DO_TICKS_PREDICATE = args -> {
+	private final Predicate<String[]> SET_BOOL_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+
+			return false;
+		}
+
+		String name = args[0];
+		String valueString = args[1];
+		Object value = getValueForType(JOPAGLSLType.BOOL, valueString);
+		if (value == null) {
+			logSimulationError(this, "Value is incorrect", valueString);
+
+			return false;
+		}
+
+		JOPAResource variableResource = new JOPAResource(JOPAGLSLType.BOOL, name, value);
+		addResource(variableResource);
+
+		return true;
+	};
+
+	private final Predicate<String[]> SET_INT_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+
+			return false;
+		}
+
+		String name = args[0];
+		String valueString = args[1];
+		Object value = getValueForType(JOPAGLSLType.INT, valueString);
+		if (value == null) {
+			logSimulationError(this, "Value is incorrect", valueString);
+
+			return false;
+		}
+
+		JOPAResource variableResource = new JOPAResource(JOPAGLSLType.INT, name, value);
+		addResource(variableResource);
+
+		return true;
+	};
+
+	private final Predicate<String[]> SET_UINT_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+
+			return false;
+		}
+
+		String name = args[0];
+		String valueString = args[1];
+		Object value = getValueForType(JOPAGLSLType.UINT, valueString);
+		if (value == null) {
+			logSimulationError(this, "Value is incorrect", valueString);
+
+			return false;
+		}
+
+		JOPAResource variableResource = new JOPAResource(JOPAGLSLType.UINT, name, value);
+		addResource(variableResource);
+
+		return true;
+	};
+
+	private final Predicate<String[]> SET_FLOAT_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+
+			return false;
+		}
+
+		String name = args[0];
+		String valueString = args[1];
+		Object value = getValueForType(JOPAGLSLType.FLOAT, valueString);
+		if (value == null) {
+			logSimulationError(this, "Value is incorrect", valueString);
+
+			return false;
+		}
+
+		JOPAResource variableResource = new JOPAResource(JOPAGLSLType.FLOAT, name, value);
+		addResource(variableResource);
+
+		return true;
+	};
+
+	private final Predicate<String[]> DRAW_PREDICATE = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "DO TICKS uses 0 arguments", args);
 
@@ -404,6 +556,60 @@ public class JOPASimulationScript implements Serializable {
 		}
 		commandIndex--;
 		prevTime = currentTime;
+
+		return true;
+	};
+
+	private final Predicate<String[]> COMPUTE_OPERATION = args -> {
+		if (args.length != 4) {
+			logSimulationError(this, "COMPUTE uses 3 args (x groups, y groups, z groups)", args);
+
+			return false;
+		}
+
+		String xString = args[1];
+		int xGroups;
+		try {
+			xGroups = Integer.parseInt(xString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"x groups\" should be positive unsigned integer", xString);
+
+			return false;
+		}
+		if (xGroups == 0) {
+			logSimulationError(this, "\"x groups\" is 0", xString);
+		}
+		String yString = args[2];
+		int yGroups;
+		try {
+			yGroups = Integer.parseInt(yString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"y groups\" should be positive unsigned integer", yString);
+
+			return false;
+		}
+		if (yGroups == 0) {
+			logSimulationError(this, "\"y groups\" is 0", xString);
+		}
+		String zString = args[3];
+		int zGroups;
+		try {
+			zGroups = Integer.parseInt(zString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"z groups\" should be positive unsigned integer", zString);
+
+			return false;
+		}
+		if (zGroups == 0) {
+			logSimulationError(this, "\"z groups\" is 0", xString);
+
+			return false;
+		}
+		if (!compute(xGroups, yGroups, zGroups)) {
+			logSimulationError(this, "Compute call failed", args);
+
+			return false;
+		}
 
 		return true;
 	};
@@ -550,6 +756,16 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private final Predicate<String[]> EXIT_OPERATION = args -> {
+		if (args.length != 0) {
+			logSimulationError(this, "EXIT uses 0 arguments", args);
+		}
+
+		deleteContext();
+
+		return false;
+	};
+
 	private JOPASimulationScript(JOPASimulationType simulationType) {
 		this.executionType = simulationType;
 		this.commands = new ArrayList<String>();
@@ -564,15 +780,22 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
 		operations.put(NEW_SHADER, NEW_SHADER_OPERATION);
 		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
+		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
 		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
 		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
-		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
-		operations.put(DO_TICKS, DO_TICKS_PREDICATE);
+		operations.put(SET_VAR, SET_VAR_OPERATION);
+		operations.put(SET_BOOL, SET_BOOL_OPERATION);
+		operations.put(SET_INT, SET_INT_OPERATION);
+		operations.put(SET_UINT, SET_UINT_OPERATION);
+		operations.put(SET_FLOAT, SET_FLOAT_OPERATION);
+		operations.put(DRAW, DRAW_PREDICATE);
+		operations.put(COMPUTE, COMPUTE_OPERATION);
 		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
 		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
 		operations.put(DELETE_BUFFER, DELETE_BUFFER_PREDICATE);
 		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
 		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
+		operations.put(EXIT, EXIT_OPERATION);
 
 		JOPAResource timeResource = new JOPAResource(JOPAGLSLType.FLOAT, "time", 0.0f);
 		addResource(timeResource);
@@ -650,7 +873,7 @@ public class JOPASimulationScript implements Serializable {
 			}
 
 			String command = commands.get(commandIndex++);
-			// System.out.println("Command: " + command);
+//			System.out.println("Command: " + command);
 			if (command.length() > 0) {
 				boolean result = executeCommand(command);
 
@@ -664,67 +887,71 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private boolean executeCommand(String command) {
-		boolean containsSpaces = command.contains(" ");
 		boolean containsBraces = command.contains("(") || command.contains(")");
-		boolean isPure = !containsSpaces && !containsBraces;
 
-		if (isPure) {
-			switch (command.toLowerCase()) {
-			case "exit":
-			case "quit":
-			case "end":
-			default:
-				return false;
-			}
-		} else {
-			if (containsBraces) {
-				if (command.contains("(") && command.contains(")")) {
-					if (command.indexOf('(') == command.lastIndexOf('(')) {
-						if (command.indexOf(')') == command.lastIndexOf(')')) {
-							int indexLeft = command.indexOf('(');
-							int indexRight = command.indexOf(')');
-							if (indexLeft < indexRight) {
-								String operationPart = command.substring(0, indexLeft);
-								String argsContent = command.substring(indexLeft + 1, indexRight);
-								StringBuilder argsBuilder = new StringBuilder(argsContent);
-								int index = 0;
-								while (true) {
-									index = argsBuilder.indexOf(" ");
-									if (index == -1) {
-										break;
-									}
-									argsBuilder.deleteCharAt(index);
+		switch (command.toLowerCase()) {
+		case "exit":
+		case "quit":
+		case "end":
+			return false;
+		}
+		if (containsBraces) {
+			if (command.contains("(") && command.contains(")")) {
+				if (command.indexOf('(') == command.lastIndexOf('(')) {
+					if (command.indexOf(')') == command.lastIndexOf(')')) {
+						int indexLeft = command.indexOf('(');
+						int indexRight = command.indexOf(')');
+						if (indexLeft < indexRight) {
+							String operationPart = command.substring(0, indexLeft);
+							String argsContent = command.substring(indexLeft + 1, indexRight);
+							StringBuilder argsBuilder = new StringBuilder(argsContent);
+							int index = 0;
+							while (true) {
+								index = argsBuilder.indexOf(" ");
+								if (index == -1) {
+									break;
 								}
-								String[] parts = operationPart.split(" ");
-								String[] args;
-								if (argsContent.length() > 0) {
-									args = argsBuilder.toString().split(",");
-								} else {
-									args = new String[0];
-								}
-								for (String s : parts) {
-									if (s.length() == 0) {
-										return false;
-									}
-								}
-								for (String s : args) {
-									if (s.length() == 0) {
-										return false;
-									}
-								}
-								executed = false;
-								operations.forEach((strings, operationPredicate) -> {
-									if (Arrays.equals(strings, parts)) {
-										Predicate<String[]> operation = operationPredicate;
-										executed = operation.test(args);
-
-										return;
-									}
-								});
-								if (executed) {
-									return true;
+								argsBuilder.deleteCharAt(index);
+							}
+							String[] parts;
+							if (operationPart.contains(" ")) {
+								parts = operationPart.split(" ");
+							} else {
+								parts = new String[] { operationPart };
+							}
+							String[] args;
+							if (argsContent.length() > 0) {
+								args = argsBuilder.toString().split(",");
+							} else {
+								args = new String[0];
+							}
+							for (String s : parts) {
+								if (s.length() == 0) {
+									return false;
 								}
 							}
+							for (String s : args) {
+								if (s.length() == 0) {
+									return false;
+								}
+							}
+							executed = false;
+							operations.forEach((strings, operationPredicate) -> {
+								if (Arrays.equals(strings, parts)) {
+									Predicate<String[]> operation = operationPredicate;
+									returnCode = operation.test(args);
+									executed = true;
+
+									return;
+								}
+							});
+							if (!executed) {
+								System.err.println("Unknown command: " + operationPart);
+							} else {
+								return true;
+							}
+
+							return returnCode;
 						}
 					}
 				}

@@ -59,10 +59,14 @@ public abstract class JOPAPort implements Serializable {
 			to.destroyAllConnections();
 		}
 
-		connections.add(to);
-		to.connections.add(this);
+		connect(to);
 
 		return true;
+	}
+	
+	protected void connect(JOPAPort to) {
+		connections.add(to);
+		to.connections.add(this);
 	}
 
 }
