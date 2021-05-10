@@ -2,6 +2,7 @@ package jopa.nodes;
 
 import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAFunction;
+import jopa.main.JOPAVariable;
 
 public class JOPAFunctionNode extends JOPANode implements JOPACodeConvertible {
 
@@ -9,6 +10,7 @@ public class JOPAFunctionNode extends JOPANode implements JOPACodeConvertible {
 
 	public JOPAFunctionNode(int x, int y, JOPAFunction function) {
 		super(x, y, "FUNCTION", null);
+		applyFunction(function);
 	}
 
 	@Override
@@ -36,6 +38,24 @@ public class JOPAFunctionNode extends JOPANode implements JOPACodeConvertible {
 		// TODO remove
 
 		return false;
+	}
+
+	public void applyFunction(JOPAFunction function) {
+		if (inputs != null) {
+			inputs.forEach(input -> input.destroyAllConnections());
+			inputs.clear();
+		}
+		if (outputs != null) {
+			outputs.forEach(output -> output.destroyAllConnections());
+			outputs.clear();
+		}
+		if (function != null) {
+			for (JOPAVariable arg : function.args) {
+				createPort(arg, false, false);
+			}
+			JOPAVariable outVariable = new JOPAVariable(function.returnType, function.name);
+			createPort(outVariable, true, true);
+		}
 	}
 
 }

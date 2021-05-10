@@ -20,7 +20,7 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 	private JTextArea scriptEditor;
 
 	public JOPAEditScriptDialog(Frame owner, JOPASimulationScript script) {
-		super(owner, "Script", script);
+		super(owner, "Edit script", script);
 
 		init();
 		initMenu();

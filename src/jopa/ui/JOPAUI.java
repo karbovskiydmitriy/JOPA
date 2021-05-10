@@ -15,9 +15,12 @@ import static jopa.main.JOPAMain.manual;
 import static jopa.main.JOPAMain.openProject;
 import static jopa.main.JOPAMain.quit;
 import static jopa.main.JOPAMain.saveProject;
+import static jopa.main.JOPAMain.saveSettings;
 import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
+import static jopa.main.JOPAMain.toggleHighlightingNodes;
+import static jopa.main.JOPAMain.toggleShowingPortTypes;
 import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
@@ -46,19 +49,20 @@ import jopa.main.JOPAProject;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
-import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
-import jopa.ui.dialogs.JOPAEditBranchNodeGialog;
+import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
+import jopa.ui.dialogs.JOPAEditFunctionNodeDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
 import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
+import jopa.ui.dialogs.JOPAQuestionDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 
 public class JOPAUI {
@@ -205,6 +209,26 @@ public class JOPAUI {
 			}
 
 			{
+				Menu settingsMenu = new Menu("settings");
+
+				MenuItem showPortTypesMenuItem = new MenuItem("show port types");
+				MenuItem hightlightNodesMenuItem = new MenuItem("highlight nodes");
+				MenuItem saveSettingsMenuItem = new MenuItem("save settings");
+
+				showPortTypesMenuItem.setShortcut(new MenuShortcut('T', true));
+				hightlightNodesMenuItem.setShortcut(new MenuShortcut('H', true));
+
+				showPortTypesMenuItem.addActionListener(e -> toggleShowingPortTypes());
+				hightlightNodesMenuItem.addActionListener(e -> toggleHighlightingNodes());
+				saveSettingsMenuItem.addActionListener(e -> saveSettings());
+
+				settingsMenu.add(showPortTypesMenuItem);
+				settingsMenu.add(hightlightNodesMenuItem);
+
+				menuBar.add(settingsMenu);
+			}
+
+			{
 				Menu playgroundMenu = new Menu("playground");
 
 				MenuItem editScriptMenuItem = new MenuItem("edit script");
@@ -331,38 +355,53 @@ public class JOPAUI {
 	}
 
 	public synchronized void openProjectEditor(JOPAProject project) {
-		new JOPAEditProjectDialog(window, project);
+		JOPAEditProjectDialog editProjectDialog = new JOPAEditProjectDialog(window, project);
+		editProjectDialog.dispose();
 	}
 
 	public synchronized void openScriptEditor(JOPASimulationScript script) {
-		new JOPAEditScriptDialog(window, script);
+		JOPAEditScriptDialog editScriptDialog = new JOPAEditScriptDialog(window, script);
+		editScriptDialog.dispose();
 	}
 
 	public synchronized void openResourcesEditor(JOPAProject project) {
-		new JOPAEditResourcesDialog(window, project);
+		JOPAEditResourcesDialog editResourcesDialog = new JOPAEditResourcesDialog(window, project);
+		editResourcesDialog.dispose();
 	}
 
 	public synchronized void openFunctionEditor(JOPAFunction function) {
-		new JOPAEditFunctionDialog(window, function);
+		JOPAEditFunctionDialog editFunctionDialog = new JOPAEditFunctionDialog(window, function);
+		editFunctionDialog.dispose();
 	}
 
 	public synchronized void openConstantsEditor(JOPAFunction function) {
-		new JOPAEditConstantsDialog(window, currentProject);
+		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, currentProject);
+		editConstantsDialog.dispose();
 	}
 
-	public synchronized void openNodeEditor(JOPANode node) {
-		Class<?> type = node.getClass();
-		if (type.equals(JOPAStatementNode.class)) {
-			new JOPAEditStatementNodeDialog(window, (JOPAStatementNode) node);
-		} else if (type.equals(JOPABranchNode.class)) {
-			new JOPAEditBranchNodeGialog(window, (JOPABranchNode) node);
-		} else if (type.equals(JOPALoopNode.class)) {
-			new JOPAEditLoopNodeDialog(window, (JOPALoopNode) node);
-		}
+	public synchronized void openFunctionNodeEditor(JOPAFunctionNode node) {
+		JOPAEditFunctionNodeDialog editFunctionNodeDialog = new JOPAEditFunctionNodeDialog(window, node);
+		editFunctionNodeDialog.dispose();
+	}
+
+	public synchronized void openStatementNodeEditor(JOPAStatementNode node) {
+		JOPAEditStatementNodeDialog editStatementNodeDialog = new JOPAEditStatementNodeDialog(window, node);
+		editStatementNodeDialog.dispose();
+	}
+
+	public synchronized void openBranchNodeEditor(JOPABranchNode node) {
+		JOPAEditBranchNodeDialog editBranchNodeDialog = new JOPAEditBranchNodeDialog(window, node);
+		editBranchNodeDialog.dispose();
+	}
+
+	public synchronized void openLoopNodeEditor(JOPALoopNode node) {
+		JOPAEditLoopNodeDialog editLoopNodeDialog = new JOPAEditLoopNodeDialog(window, node);
+		editLoopNodeDialog.dispose();
 	}
 
 	public synchronized void showShader(String shaderCode) {
-		new JOPAShowShaderDialog(window, shaderCode);
+		JOPAShowShaderDialog showShaderDialog = new JOPAShowShaderDialog(window, shaderCode);
+		showShaderDialog.dispose();
 	}
 
 	public synchronized void showMessage(String text) {
@@ -375,9 +414,10 @@ public class JOPAUI {
 		}
 	}
 
-	public synchronized boolean showQuestion(String message) {
-		showMessage(message);
-		// TODO buttons
+	public synchronized boolean showQuestion(String question) {
+		JOPAQuestionDialog questionDialog = new JOPAQuestionDialog(window, question);
+		questionDialog.dispose();
+		// TODO getting answer
 
 		return false;
 	}

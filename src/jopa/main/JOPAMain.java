@@ -237,6 +237,26 @@ public class JOPAMain {
 		}
 	}
 
+	public static void toggleShowingPortTypes() {
+		synchronized (projectSync) {
+			settings.showPortTypes = !settings.showPortTypes;
+			ui.repaint();
+		}
+	}
+
+	public static void toggleHighlightingNodes() {
+		synchronized (projectSync) {
+			settings.highlightNodes = !settings.highlightNodes;
+			ui.repaint();
+		}
+	}
+	
+	public static void saveSettings() {
+		synchronized (projectSync) {
+			settings.writeSettings();
+		}
+	}
+
 	public static void createPlayground(JOPASimulationType type) {
 		synchronized (projectSync) {
 			if (currentProject != null) {

@@ -11,8 +11,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.io.JOPASerializer;
+import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPAEndNode;
+import jopa.nodes.JOPAFunctionNode;
+import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
@@ -206,18 +209,7 @@ public class JOPAProject implements Serializable {
 				if (selectedNode == node) {
 					long currentTime = System.currentTimeMillis();
 					if (currentTime - lastSelectTick <= 500) {
-						Class<?> nodeType = node.getClass();
-						if (nodeType.equals(JOPAStatementNode.class)) {
-							JOPAMain.ui.openNodeEditor(node);
-						} else if (nodeType.equals(JOPAConstantsNode.class)) {
-							JOPAMain.ui.openConstantsEditor(currentFunction);
-						} else if (nodeType.equals(JOPAStatementNode.class)) {
-							JOPAMain.ui.openFunctionEditor(currentFunction);
-						} else if (nodeType.equals(JOPAStartNode.class)) {
-							JOPAMain.ui.openFunctionEditor(currentFunction);
-						} else if (nodeType.equals(JOPAEndNode.class)) {
-							JOPAMain.ui.openFunctionEditor(currentFunction);
-						}
+						openNodeEditor(node);
 					}
 					lastSelectTick = currentTime;
 				}
@@ -245,11 +237,11 @@ public class JOPAProject implements Serializable {
 			break;
 		case 10:
 			if (selectedNode != null) {
-				JOPAMain.ui.openNodeEditor(selectedNode);
+				openNodeEditor(selectedNode);
 			}
 			break;
 		case 'E':
-			JOPAMain.settings.highlightIncorrectNodes = !JOPAMain.settings.highlightIncorrectNodes;
+			JOPAMain.settings.highlightNodes = !JOPAMain.settings.highlightNodes;
 			JOPAMain.ui.repaint();
 			break;
 		case 'S':
@@ -267,6 +259,26 @@ public class JOPAProject implements Serializable {
 			break;
 		default:
 			break;
+		}
+	}
+
+	private void openNodeEditor(JOPANode node) {
+		System.out.println(node);
+		Class<?> nodeType = node.getClass();
+		if (nodeType.equals(JOPAStatementNode.class)) {
+			JOPAMain.ui.openStatementNodeEditor((JOPAStatementNode) node);
+		} else if (nodeType.equals(JOPABranchNode.class)) {
+			JOPAMain.ui.openBranchNodeEditor((JOPABranchNode) node);
+		} else if (nodeType.equals(JOPALoopNode.class)) {
+			JOPAMain.ui.openLoopNodeEditor((JOPALoopNode) node);
+		} else if (nodeType.equals(JOPAFunctionNode.class)) {
+			JOPAMain.ui.openFunctionNodeEditor((JOPAFunctionNode) node);
+		} else if (nodeType.equals(JOPAConstantsNode.class)) {
+			JOPAMain.ui.openConstantsEditor(currentFunction);
+		} else if (nodeType.equals(JOPAStartNode.class)) {
+			JOPAMain.ui.openFunctionEditor(currentFunction);
+		} else if (nodeType.equals(JOPAEndNode.class)) {
+			JOPAMain.ui.openFunctionEditor(currentFunction);
 		}
 	}
 

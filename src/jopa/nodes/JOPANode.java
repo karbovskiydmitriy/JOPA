@@ -94,6 +94,10 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 	}
 
 	private void assignTemplate(String formulaName) {
+		if (formulaName == null) {
+			return;
+		}
+
 		JOPANodeTemplate template = JOPANodeTemplate.getFormulaByName(formulaName);
 		this.template = template;
 		if (template != null) {
@@ -177,7 +181,7 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 			g.fillRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		}
 		boolean isCorrect = check();
-		if (JOPAMain.settings.highlightIncorrectNodes && !isCorrect) {
+		if (JOPAMain.settings.highlightNodes && !isCorrect) {
 			g.setColor(RED);
 		} else {
 			g.setColor(BLACK);

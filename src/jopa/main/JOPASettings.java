@@ -1,5 +1,8 @@
 package jopa.main;
 
+import static jopa.io.JOPAIO.loadTextFile;
+import static jopa.io.JOPAIO.saveTextFile;
+
 import java.awt.Color;
 
 import com.google.gson.Gson;
@@ -9,36 +12,55 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import jopa.graphics.JOPAPalette;
-import jopa.io.JOPAIO;
 
 public class JOPASettings {
 
 	private static final String CONFIG_DIRECTORY_PATH = ".\\configs\\";
-//	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY_PATH + "config.json";
+	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY_PATH + "config.json";
 	private static final String PALETTE_FILE_PATH = CONFIG_DIRECTORY_PATH + "palette.json";
 
 	public JOPAPalette defaultPalette;
 	public boolean showPortTypes = true;
-	public boolean highlightIncorrectNodes = false;
+	public boolean highlightNodes = true;
 
 	public JOPASettings() {
+		readSettings();
+		writeSettings();
+	}
+
+	public void readSettings() {
+		String text = loadTextFile(CONFIG_FILE_PATH);
+
+		JsonElement element = new JsonParser().parse(text);
+		JsonObject configObject = element.getAsJsonObject();
+		if (configObject != null) {
+			JsonElement showPortTypesElement = configObject.get("showPortTypes");
+			if (showPortTypesElement != null) {
+				showPortTypes = showPortTypesElement.getAsBoolean();
+			}
+			JsonElement highlightNodesElement = configObject.get("highlightNodes");
+			if (highlightNodesElement != null) {
+				highlightNodes = highlightNodesElement.getAsBoolean();
+			}
+		}
 		defaultPalette = loadPalette(PALETTE_FILE_PATH);
+	}
+
+	public void writeSettings() {
+		JsonObject configObject = new JsonObject();
+		configObject.addProperty("showPortTypes", showPortTypes);
+		configObject.addProperty("highlightNodes", highlightNodes);
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String text = gson.toJson(configObject);
+
+		saveTextFile(CONFIG_FILE_PATH, text);
 
 		savePalette(defaultPalette, PALETTE_FILE_PATH);
 	}
 
-	public void readSettings() {
-		// TODO readSettings
-	}
-
-	public void writeSettings() {
-		// TODO writeSettings
-	}
-
 	private static JOPAPalette loadPalette(String filePath) {
-		String text = null;
-
-		text = JOPAIO.loadTextFile(filePath);
+		String text = loadTextFile(filePath);
 
 		JsonElement element = new JsonParser().parse(text);
 		JsonObject paletteObject = element.getAsJsonObject();
@@ -79,7 +101,7 @@ public class JOPASettings {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String text = gson.toJson(obj);
 
-		JOPAIO.saveTextFile(filePath, text);
+		saveTextFile(filePath, text);
 	}
 
 	private static JsonObject serializeObject(Color color) {

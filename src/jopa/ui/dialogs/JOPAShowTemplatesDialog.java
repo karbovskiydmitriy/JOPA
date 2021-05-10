@@ -11,11 +11,13 @@ public class JOPAShowTemplatesDialog extends JOPADialog<ArrayList<JOPANodeTempla
 
 	public JOPAShowTemplatesDialog(Frame owner, ArrayList<JOPANodeTemplate> templates) {
 		super(owner, "Templates list", templates);
+		// TODO interface init
 		setVisible(true);
 	}
 
 	@Override
 	protected void closing() {
+		// TODO closing
 	}
 
 }

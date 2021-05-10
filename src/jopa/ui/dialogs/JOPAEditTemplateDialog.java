@@ -10,11 +10,13 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPANodeTemplate> {
 
 	public JOPAEditTemplateDialog(Frame owner, JOPANodeTemplate template) {
 		super(owner, "Edit template", template);
+		// TODO interface init
 		setVisible(true);
 	}
 
 	@Override
 	protected void closing() {
+		// TODO closing
 	}
 
 }

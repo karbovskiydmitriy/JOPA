@@ -67,6 +67,7 @@ public class JOPASimulationScript implements Serializable {
 	private long startTime;
 	private long prevTime;
 
+	private String plainCode;
 	private ArrayList<String> commands;
 	private JOPASimulationType executionType;
 	private ArrayList<JOPAResource> resources;
@@ -600,16 +601,11 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	public String getCode() {
-		String code = "";
-
-		for (String command : commands) {
-			code += command + '\n';
-		}
-
-		return code;
+		return plainCode;
 	}
 
 	public void setCode(String code) {
+		plainCode = code;
 		if (commands != null) {
 			commands.clear();
 		}
