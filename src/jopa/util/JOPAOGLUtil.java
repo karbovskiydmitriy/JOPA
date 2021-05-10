@@ -4,13 +4,13 @@ import static jopa.io.JOPALoader.loadStandardShader;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -30,6 +30,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -49,9 +50,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15.GL_READ_WRITE;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
@@ -74,6 +73,8 @@ import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glIsProgram;
+import static org.lwjgl.opengl.GL20.glIsShader;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUniform1f;
@@ -84,7 +85,6 @@ import static org.lwjgl.opengl.GL20.glUniform3fv;
 import static org.lwjgl.opengl.GL20.glUniform3iv;
 import static org.lwjgl.opengl.GL20.glUniform4fv;
 import static org.lwjgl.opengl.GL20.glUniform4iv;
-import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.GL_R16I;
 import static org.lwjgl.opengl.GL30.GL_R16UI;
 import static org.lwjgl.opengl.GL30.GL_R32F;
@@ -113,10 +113,8 @@ import static org.lwjgl.opengl.GL30.GL_RGBA32I;
 import static org.lwjgl.opengl.GL30.GL_RGBA32UI;
 import static org.lwjgl.opengl.GL30.GL_RGBA8I;
 import static org.lwjgl.opengl.GL30.GL_RGBA8UI;
-import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL30.glUniform1ui;
 import static org.lwjgl.opengl.GL40.glUniform1d;
-import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
@@ -142,7 +140,8 @@ public final class JOPAOGLUtil {
 	public static String getVersion() {
 		long window = createWindowForOpenGLContext();
 		String version = glGetString(GL_VERSION);
-		destroyWindow(window);
+		closeWindow(window);
+		deleteContext();
 
 		return version;
 	}
@@ -164,7 +163,7 @@ public final class JOPAOGLUtil {
 		default:
 			return false;
 		}
-		destroyWindow(window);
+		closeWindow(window);
 		if (shader == 0) {
 			return false;
 		}
@@ -191,12 +190,9 @@ public final class JOPAOGLUtil {
 		if (shader == 0) {
 			return false;
 		}
-		// FIXME not a shader???
-		// if (!glIsShader(shader)) {
-		// System.err.println(shader + " is not a shader???");
-		//
-		// return false;
-		// }
+		if (!glIsShader(shader)) {
+			return false;
+		}
 		glDeleteShader(shader);
 
 		return true;
@@ -214,7 +210,7 @@ public final class JOPAOGLUtil {
 		int program = glCreateProgram();
 		for (int shader : shaders) {
 			if (shader > 0) {
-				if (glGetShaderi(shader, GL_COMPILE_STATUS) == 1) {
+				if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_TRUE) {
 					glAttachShader(program, shader);
 				} else {
 					System.err.println(glGetShaderInfoLog(shader));
@@ -222,7 +218,7 @@ public final class JOPAOGLUtil {
 			}
 		}
 		glLinkProgram(program);
-		if (glGetProgrami(program, GL_LINK_STATUS) == 0) {
+		if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
 			for (int shader : shaders) {
 				glDetachShader(program, shader);
 			}
@@ -238,14 +234,11 @@ public final class JOPAOGLUtil {
 		if (program == 0) {
 			return false;
 		}
-		// FIXME not a program???
-		// if (!glIsProgram(program)) {
-		// System.err.println(program + " is not a program???");
-		//
-		// return false;
-		// }
+		if (!glIsProgram(program)) {
+			return false;
+		}
 		if (glGetInteger(GL_CURRENT_PROGRAM) == program) {
-			glUseProgram(0); // DECIDE return false?..
+			return false;
 		}
 		glDeleteProgram(program);
 
@@ -352,9 +345,8 @@ public final class JOPAOGLUtil {
 		return true;
 	}
 
-	public static void destroyWindow(long window) {
-		glfwDestroyWindow(window);
-		glfwTerminate();
+	public static void closeWindow(long window) {
+		glfwSetWindowShouldClose(window, true);
 	}
 
 	public static JOPAImage createTexture(int width, int height, int format) {
@@ -398,9 +390,8 @@ public final class JOPAOGLUtil {
 
 	public static int createBuffer(ByteBuffer data) {
 		int buffer = glGenBuffers();
-		// DECIDE GL_SHADER_STORAGE_BUFFER?
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, data, GL_DYNAMIC_DRAW);
 
 		return buffer;
 	}
@@ -413,8 +404,9 @@ public final class JOPAOGLUtil {
 
 		return true;
 	}
-	
+
 	public static void deleteContext() {
+		glfwTerminate();
 		setCapabilities(null);
 	}
 
@@ -543,26 +535,9 @@ public final class JOPAOGLUtil {
 	public static boolean passVariable(JOPAResource resource, int location) {
 		if (resource != null && resource.type != null) {
 			switch (resource.type) {
-			case BUFFER_HANDLE: {
-				int buffer = safeCast(resource.getAsBuffer(), int.class);
-				int index = location;
-				System.out.println("Binding buffer " + buffer + " to index " + index);
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, buffer);
-				break;
-			}
-			case IMAGE: {
-				JOPAImage image = safeCast(resource.getAsImage(), JOPAImage.class);
-				if (image == null) {
-					return false;
-				}
-				int handle = image.handle;
-				if (handle == 0) {
-					return false;
-				}
-				int index = location;
-				glBindImageTexture(index, handle, 0, false, 0, GL_READ_WRITE, image.format);
-				break;
-			}
+			case IMAGE:
+			case BUFFER_HANDLE:
+				return false;
 			case GLSL_TYPE: {
 				if (resource.glslType != null) {
 					JOPAGLSLType type = resource.glslType;

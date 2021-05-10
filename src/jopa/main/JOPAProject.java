@@ -60,11 +60,11 @@ public class JOPAProject implements Serializable {
 	}
 
 	private void init() {
+		currentProject = this;
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
 		publicVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
-		script = JOPASimulationScript.create(JOPASimulationType.CUSTOM);
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {

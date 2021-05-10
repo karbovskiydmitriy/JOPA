@@ -74,7 +74,6 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 				.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 		newTypeMenuItem.addActionListener(e -> {
-			// DECIDE type
 			object.types.add(new JOPACustomType("NewType"));
 			init();
 		});

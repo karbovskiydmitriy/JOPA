@@ -2,6 +2,7 @@ package jopa.playground;
 
 import static jopa.io.JOPALoader.loadStandardScript;
 import static jopa.main.JOPAMain.currentProject;
+import static jopa.util.JOPAOGLUtil.closeWindow;
 import static jopa.util.JOPAOGLUtil.compute;
 import static jopa.util.JOPAOGLUtil.createBuffer;
 import static jopa.util.JOPAOGLUtil.createProgram;
@@ -13,7 +14,6 @@ import static jopa.util.JOPAOGLUtil.deleteContext;
 import static jopa.util.JOPAOGLUtil.deleteProgram;
 import static jopa.util.JOPAOGLUtil.deleteShader;
 import static jopa.util.JOPAOGLUtil.deleteTexture;
-import static jopa.util.JOPAOGLUtil.destroyWindow;
 import static jopa.util.JOPAOGLUtil.getTextureFormat;
 import static jopa.util.JOPAOGLUtil.getWindowSize;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
@@ -23,10 +23,13 @@ import static jopa.util.JOPAOGLUtil.tick;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
 import static jopa.util.JOPATypeUtil.getValueForType;
+import static org.lwjgl.opengl.GL15.GL_READ_WRITE;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
+import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 
 import java.io.Serializable;
@@ -61,9 +64,11 @@ public class JOPASimulationScript implements Serializable {
 	private static final String[] SET_INT = { "set", "int" };
 	private static final String[] SET_UINT = { "set", "uint" };
 	private static final String[] SET_FLOAT = { "set", "float" };
+	private static final String[] BIND_IMAGE = { "bind", "image" };
+	private static final String[] BIND_BUFFER = { "bind", "buffer" };
 	private static final String[] DRAW = { "draw" };
 	private static final String[] COMPUTE = { "compute" };
-	private static final String[] DESTROY_WINDOW = { "destroy", "window" };
+	private static final String[] CLOSE_WINDOW = { "close", "window" };
 	private static final String[] DELETE_TEXTURE = { "destroy", "texture" };
 	private static final String[] DELETE_BUFFER = { "destroy", "buffer" };
 	private static final String[] DELETE_SHADER = { "delete", "shader" };
@@ -83,7 +88,6 @@ public class JOPASimulationScript implements Serializable {
 
 	private String plainCode;
 	private ArrayList<String> commands;
-	private JOPASimulationType executionType;
 	private ArrayList<JOPAResource> resources;
 
 	private final Map<String[], Predicate<String[]>> operations;
@@ -508,6 +512,91 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private final Predicate<String[]> BIND_IMAGE_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "BIND IMAGE uses 2 arguments (texture name, binding index)", args);
+
+			return false;
+		}
+
+		String textureName = args[0];
+		JOPAResource textureResource = getResourceByName(textureName);
+		if (textureResource == null) {
+			logSimulationError(this, "Texture resource was not found", textureName);
+
+			return false;
+		}
+		JOPAImage image = textureResource.getAsImage();
+		if (image == null) {
+			logSimulationError(this, "Image resource is NULL", textureResource);
+
+			return false;
+		}
+		if (image.handle == 0) {
+			logSimulationError(this, "Image handle is 0", image);
+
+			return false;
+		}
+		String indexString = args[1];
+		int index;
+		try {
+			index = Integer.parseUnsignedInt(indexString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"binding index\" should be positive unsigned integer", indexString);
+
+			return false;
+		}
+		if (index == 0) {
+			logSimulationError(this, "\"binding index\" is 0", indexString);
+
+			return false;
+		}
+
+		glBindImageTexture(index, image.handle, 0, false, 0, GL_READ_WRITE, image.format);
+
+		return true;
+	};
+
+	private final Predicate<String[]> BIND_BUFFER_OPERATION = args -> {
+		if (args.length != 2) {
+			logSimulationError(this, "BIND BUFFER uses 2 arguments (buffer name, binding index)", args);
+
+			return false;
+		}
+
+		String bufferName = args[0];
+		JOPAResource bufferResource = getResourceByName(bufferName);
+		if (bufferResource == null) {
+			logSimulationError(this, "Buffer resource was not found", bufferName);
+
+			return false;
+		}
+		int bufferHandle = bufferResource.getAsBuffer();
+		if (bufferHandle == 0) {
+			logSimulationError(this, "Buffer handle is 0", bufferName);
+
+			return false;
+		}
+		String indexString = args[1];
+		int index;
+		try {
+			index = Integer.parseUnsignedInt(indexString);
+		} catch (NumberFormatException e) {
+			logSimulationError(this, "\"binding index\" should be positive unsigned integer", indexString);
+
+			return false;
+		}
+		if (index == 0) {
+			logSimulationError(this, "\"binding index\" is 0", indexString);
+
+			return false;
+		}
+
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, bufferHandle);
+
+		return true;
+	};
+
 	private final Predicate<String[]> DRAW_PREDICATE = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "DO TICKS uses 0 arguments", args);
@@ -614,9 +703,9 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DESTROY_WINDOW_PREDICATE = args -> {
+	private final Predicate<String[]> CLOSE_WINDOW_PREDICATE = args -> {
 		if (args.length != 1) {
-			logSimulationError(this, "DESTROY WINDOW uses 1 argument (window)", args);
+			logSimulationError(this, "CLOSE WINDOW uses 1 argument (window)", args);
 
 			return false;
 		}
@@ -634,7 +723,7 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		destroyWindow(windowHandle);
+		closeWindow(windowHandle);
 		resources.remove(resource);
 
 		return true;
@@ -766,8 +855,7 @@ public class JOPASimulationScript implements Serializable {
 		return false;
 	};
 
-	private JOPASimulationScript(JOPASimulationType simulationType) {
-		this.executionType = simulationType;
+	private JOPASimulationScript() {
 		this.commands = new ArrayList<String>();
 		this.resources = new ArrayList<JOPAResource>();
 		this.operations = new HashMap<String[], Predicate<String[]>>();
@@ -788,9 +876,11 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(SET_INT, SET_INT_OPERATION);
 		operations.put(SET_UINT, SET_UINT_OPERATION);
 		operations.put(SET_FLOAT, SET_FLOAT_OPERATION);
+		operations.put(BIND_IMAGE, BIND_IMAGE_OPERATION);
+		operations.put(BIND_BUFFER, BIND_BUFFER_OPERATION);
 		operations.put(DRAW, DRAW_PREDICATE);
 		operations.put(COMPUTE, COMPUTE_OPERATION);
-		operations.put(DESTROY_WINDOW, DESTROY_WINDOW_PREDICATE);
+		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_PREDICATE);
 		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
 		operations.put(DELETE_BUFFER, DELETE_BUFFER_PREDICATE);
 		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
@@ -809,42 +899,62 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private void logSimulationError(Object source, String errorMessage, Object object) {
-		System.err.println(source.getClass().getSimpleName() + ": " + errorMessage + " " + object);
+		System.err.println(source.getClass().getSimpleName() + ": " + errorMessage);
+		System.err.println(object);
 	}
 
-	public static JOPASimulationScript create(JOPASimulationType simulationType) {
-		if (simulationType == null) {
-			return null;
-		}
-		if (simulationType == JOPASimulationType.NONE) {
+	public static JOPASimulationScript create(JOPASimulationType Type) {
+		if (Type == null) {
 			return null;
 		}
 
-		JOPASimulationScript script = new JOPASimulationScript(simulationType);
-		if (simulationType == JOPASimulationType.CUSTOM) {
+		switch (Type) {
+		case NONE:
+			return null;
+		case FRAGMENT:
 			try {
-				script.setupScript(loadStandardScript("test.jopascript"));
+				JOPASimulationScript script = new JOPASimulationScript();
+				script.setupScript(loadStandardScript("fragment.jopascript"));
+
+				return script;
 			} catch (JOPAPlaygroundException e) {
 				System.err.println(e.getMessage());
 
 				return null;
 			}
-		}
+		case COMPUTE:
+			try {
+				JOPASimulationScript script = new JOPASimulationScript();
+				script.setupScript(loadStandardScript("compute.jopascript"));
 
-		return script;
+				return script;
+			} catch (JOPAPlaygroundException e) {
+				System.err.println(e.getMessage());
+
+				return null;
+			}
+		case CUSTOM:
+			try {
+				JOPASimulationScript script = new JOPASimulationScript();
+				script.setupScript(loadStandardScript("test.jopascript"));
+
+				return script;
+			} catch (JOPAPlaygroundException e) {
+				System.err.println(e.getMessage());
+
+				return null;
+			}
+		default:
+			return null;
+		}
 	}
 
 	public void setupScript(String code) throws JOPAPlaygroundException {
-		if (executionType != JOPASimulationType.CUSTOM) {
-			throw new JOPAPlaygroundException("custom setup is only possible in custom script");
-		}
 		if (code == null) {
 			throw new JOPAPlaygroundException("commands is null");
 		}
 
 		setCode(code);
-		// this.resources.clear();
-		// this.resources.addAll(Arrays.asList(resources));
 	}
 
 	public String getCode() {
@@ -860,30 +970,33 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	public boolean execute() {
-		switch (executionType) {
-		case NONE:
-			return false;
-		case FRAGMENT:
-			return executeDefaultFragmentShaderSimulation();
-		case COMPUTE:
-			return executeDefaultComputeShaderSimulation();
-		case CUSTOM:
-			if (commandIndex == commands.size()) {
-				return false;
-			}
-
-			String command = commands.get(commandIndex++);
-//			System.out.println("Command: " + command);
-			if (command.length() > 0) {
-				boolean result = executeCommand(command);
-
-				return result;
-			}
-
-			return true;
-		default:
+		// switch (executionType) {
+		// case NONE:
+		// return false;
+		// case FRAGMENT:
+		// return executeDefaultFragmentShaderSimulation();
+		// case COMPUTE:
+		// return executeDefaultComputeShaderSimulation();
+		// case CUSTOM:
+		if (commandIndex == commands.size()) {
 			return false;
 		}
+
+		String command = commands.get(commandIndex++);
+		if (command.startsWith("#")) {
+			return true;
+		}
+		// System.out.println("Command: " + command);
+		if (command.length() > 0) {
+			boolean result = executeCommand(command);
+
+			return result;
+		}
+
+		return true;
+		// default:
+		// return false;
+		// }
 	}
 
 	private boolean executeCommand(String command) {
@@ -977,34 +1090,11 @@ public class JOPASimulationScript implements Serializable {
 			resources.remove(foundResource);
 		}
 		resources.add(resource);
-		System.out.println("Adding: " + resource.name);
+		System.out.println("Adding resource: " + resource.name);
 	}
 
 	public void forEachResource(Consumer<JOPAResource> consumer) {
 		resources.forEach(consumer);
-	}
-
-	private boolean executeDefaultFragmentShaderSimulation() {
-		switch (state) {
-		case 0:
-			defaultFragmentShaderInit();
-			state = 1;
-
-			return true;
-		case 1:
-			if (!defaultFragmentShaderTick()) {
-				state = 2;
-			}
-
-			return true;
-		case 2:
-			defaultFragmentShaderDeinit();
-			state = 0;
-
-			return false;
-		}
-
-		return false;
 	}
 
 	private boolean executeDefaultComputeShaderSimulation() {
@@ -1030,19 +1120,6 @@ public class JOPASimulationScript implements Serializable {
 		return false;
 	}
 
-	private void defaultFragmentShaderInit() {
-		window = createWindow(500, 500, false, this);
-		glUseProgram(createProgram(loadFragmentShader("fragment.glsl")));
-	}
-
-	private boolean defaultFragmentShaderTick() {
-		return tick(window, this);
-	}
-
-	private void defaultFragmentShaderDeinit() {
-		destroyWindow(window);
-	}
-
 	private void defaultComputeShaderInit() {
 		window = createWindow(500, 500, false, this);
 
@@ -1062,7 +1139,8 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private void defaultComputeShaderDeinit() {
-		destroyWindow(window);
+		closeWindow(window);
+		deleteContext();
 	}
 
 }
