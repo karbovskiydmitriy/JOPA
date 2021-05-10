@@ -1,6 +1,6 @@
 package jopa.ui.dialogs;
 
-import static jopa.util.JOPAOGLUtil.validateShader;
+import static jopa.main.JOPAMain.validateGeneratedShader;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -9,8 +9,6 @@ import java.awt.TextArea;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
-import jopa.main.JOPAMain;
 
 public class JOPAShowShaderDialog extends JOPADialog<String> {
 
@@ -44,13 +42,7 @@ public class JOPAShowShaderDialog extends JOPADialog<String> {
 
 			JMenuItem validateMenuItem = new JMenuItem("validate");
 
-			validateMenuItem.addActionListener(e -> {
-				if (validateShader(object, JOPAMain.currentProject.projectType)) {
-					JOPAMain.ui.showMessage("Shader compiled successfully");
-				} else {
-					JOPAMain.ui.showMessage("Shader did not compile");
-				}
-			});
+			validateMenuItem.addActionListener(e -> validateGeneratedShader());
 
 			shaderMenu.add(validateMenuItem);
 

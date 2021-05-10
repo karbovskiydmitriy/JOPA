@@ -2,6 +2,9 @@ package jopa.main;
 
 import static jopa.main.JOPAFunction.NEW_LINE;
 import static jopa.main.JOPAFunction.TWO_LINES;
+import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.gui;
+import static jopa.main.JOPAMain.settings;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -26,7 +29,7 @@ import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAResource;
-import jopa.types.JOPAType;
+import jopa.types.JOPACustomType;
 
 public class JOPAProject implements Serializable {
 
@@ -45,7 +48,8 @@ public class JOPAProject implements Serializable {
 
 	public String name;
 	public JOPAProjectType projectType;
-	public ArrayList<JOPAType> types;
+	// DECIDE do I really need those here
+	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAVariable> publicVariables;
 	public ArrayList<JOPAResource> resources;
@@ -59,7 +63,7 @@ public class JOPAProject implements Serializable {
 	}
 
 	private void init() {
-		types = new ArrayList<JOPAType>();
+		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
 		publicVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
@@ -233,7 +237,7 @@ public class JOPAProject implements Serializable {
 		case 8:
 			if (selectedNode != null) {
 				currentFunction.removeNode(selectedNode);
-				JOPAMain.ui.repaint();
+				gui.repaint();
 			}
 			break;
 		case 10:
@@ -242,8 +246,8 @@ public class JOPAProject implements Serializable {
 			}
 			break;
 		case 'E':
-			JOPAMain.settings.highlightNodes = !JOPAMain.settings.highlightNodes;
-			JOPAMain.ui.repaint();
+			settings.highlightNodes = !settings.highlightNodes;
+			gui.repaint();
 			break;
 		case 'S':
 			showGeneratedShader();
@@ -252,11 +256,11 @@ public class JOPAProject implements Serializable {
 			generateShader();
 			break;
 		case 'R':
-			JOPAMain.ui.repaint();
+			gui.repaint();
 			break;
 		case 'T':
-			JOPAMain.settings.showPortTypes = !JOPAMain.settings.showPortTypes;
-			JOPAMain.ui.repaint();
+			settings.showPortTypes = !settings.showPortTypes;
+			gui.repaint();
 			break;
 		default:
 			break;
@@ -266,21 +270,21 @@ public class JOPAProject implements Serializable {
 	private void openNodeEditor(JOPANode node) {
 		Class<?> nodeType = node.getClass();
 		if (nodeType.equals(JOPAStatementNode.class)) {
-			JOPAMain.ui.openStatementNodeEditor((JOPAStatementNode) node);
+			gui.openStatementNodeEditor((JOPAStatementNode) node);
 		} else if (nodeType.equals(JOPABranchNode.class)) {
-			JOPAMain.ui.openBranchNodeEditor((JOPABranchNode) node);
+			gui.openBranchNodeEditor((JOPABranchNode) node);
 		} else if (nodeType.equals(JOPALoopNode.class)) {
-			JOPAMain.ui.openLoopNodeEditor((JOPALoopNode) node);
+			gui.openLoopNodeEditor((JOPALoopNode) node);
 		} else if (nodeType.equals(JOPAFunctionNode.class)) {
-			JOPAMain.ui.openFunctionNodeEditor((JOPAFunctionNode) node);
+			gui.openFunctionNodeEditor((JOPAFunctionNode) node);
 		} else if (nodeType.equals(JOPATypesNode.class)) {
-			JOPAMain.ui.openTypesListEditor(JOPAMain.currentProject);
+			gui.openTypesListEditor(currentProject);
 		} else if (nodeType.equals(JOPAConstantsNode.class)) {
-			JOPAMain.ui.openConstantsEditor(currentFunction);
+			gui.openConstantsEditor(this);
 		} else if (nodeType.equals(JOPAStartNode.class)) {
-			JOPAMain.ui.openFunctionEditor(currentFunction);
+			gui.openFunctionEditor(currentFunction);
 		} else if (nodeType.equals(JOPAEndNode.class)) {
-			JOPAMain.ui.openFunctionEditor(currentFunction);
+			gui.openFunctionEditor(currentFunction);
 		}
 	}
 
@@ -323,7 +327,7 @@ public class JOPAProject implements Serializable {
 			String shaderCode = "#version 130";
 			shaderCode += TWO_LINES;
 			if (types.size() > 0) {
-				for (JOPAType type : types) {
+				for (JOPACustomType type : types) {
 					shaderCode += type.generateCode();
 				}
 				shaderCode += TWO_LINES;
@@ -358,7 +362,7 @@ public class JOPAProject implements Serializable {
 			}
 			this.generatedShader = shaderCode;
 		} else {
-			JOPAMain.ui.showMessage("project contains error!");
+			gui.showMessage("project contains error!");
 			generatedShader = null;
 		}
 	}
@@ -373,9 +377,9 @@ public class JOPAProject implements Serializable {
 
 	public synchronized void showGeneratedShader() {
 		if (generatedShader != null) {
-			JOPAMain.ui.showShader(generatedShader);
+			gui.showShader(generatedShader);
 		} else {
-			JOPAMain.ui.showMessage("shader not generated!");
+			gui.showMessage("shader not generated!");
 		}
 	}
 

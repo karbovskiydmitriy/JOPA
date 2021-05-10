@@ -60,7 +60,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 					.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newConstantMenuItem.addActionListener(e -> {
-				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.JOPA_INT, "foobar", "42");
+				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.INT, "foobar", "42");
 				object.constants.add(newConstant);
 				object.updateConstants();
 				init();

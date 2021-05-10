@@ -1,12 +1,13 @@
 package jopa.ports;
 
+import static jopa.main.JOPAMain.settings;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import jopa.main.JOPAMain;
 import jopa.nodes.JOPANode;
 
 public class JOPAControlPort extends JOPAPort {
@@ -36,7 +37,7 @@ public class JOPAControlPort extends JOPAPort {
 		if (selectedPort != this) {
 			g.setColor(Color.BLACK);
 		} else {
-			g.setColor(JOPAMain.settings.defaultPalette.selectedPortColor);
+			g.setColor(settings.defaultPalette.selectedPortColor);
 		}
 		g.drawRect(position.x, position.y, WIDTH, HEIGHT);
 		if (isOutput) {

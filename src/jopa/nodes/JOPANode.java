@@ -3,6 +3,8 @@ package jopa.nodes;
 import static java.awt.Color.BLACK;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
+import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.settings;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -12,14 +14,12 @@ import java.util.ArrayList;
 
 import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
-import jopa.main.JOPAMain;
 import jopa.main.JOPANodeTemplate;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
-import jopa.types.JOPANodeType;
 
 public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 
@@ -32,7 +32,6 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 	public String header;
 	public String command;
 	public transient JOPANodeTemplate template;
-	public JOPANodeType nodeType;
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
 
@@ -103,9 +102,9 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 				String input = template.inputs[i];
 				JOPAVariable variable = JOPAVariable.create(input);
 				if (variable == null) {
-					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, input);
+					variable = new JOPAVariable(JOPAGLSLType.NONE, input);
 				} else if (variable.getClass() == JOPAConstant.class) {
-					JOPAMain.currentProject.constants.add((JOPAConstant) variable);
+					currentProject.constants.add((JOPAConstant) variable);
 				}
 				createPort(variable, false, false);
 			}
@@ -113,9 +112,9 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 				String output = template.outputs[i];
 				JOPAVariable variable = JOPAVariable.create(output);
 				if (variable == null) {
-					variable = new JOPAVariable(JOPAGLSLType.JOPA_NONE, output);
+					variable = new JOPAVariable(JOPAGLSLType.NONE, output);
 				} else if (variable.getClass() == JOPAConstant.class) {
-					JOPAMain.currentProject.constants.add((JOPAConstant) variable);
+					currentProject.constants.add((JOPAConstant) variable);
 				}
 				createPort(variable, true, false);
 			}
@@ -175,11 +174,11 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 		g.setColor(WHITE);
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
 		if (isSelected) {
-			g.setColor(JOPAMain.settings.defaultPalette.selectedNodeColor);
+			g.setColor(settings.defaultPalette.selectedNodeColor);
 			g.fillRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		}
 		boolean isCorrect = check();
-		if (JOPAMain.settings.highlightNodes && !isCorrect) {
+		if (settings.highlightNodes && !isCorrect) {
 			g.setColor(RED);
 		} else {
 			g.setColor(BLACK);

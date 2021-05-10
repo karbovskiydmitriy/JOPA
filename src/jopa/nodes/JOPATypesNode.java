@@ -1,9 +1,9 @@
 package jopa.nodes;
 
 import static jopa.main.JOPAFunction.TWO_LINES;
+import static jopa.main.JOPAMain.currentProject;
 
-import jopa.main.JOPAMain;
-import jopa.types.JOPAType;
+import jopa.types.JOPACustomType;
 
 public class JOPATypesNode extends JOPANode {
 
@@ -17,7 +17,7 @@ public class JOPATypesNode extends JOPANode {
 	public String generateCode() {
 		String typesCode = "";
 
-		for (JOPAType customType : JOPAMain.currentProject.types) {
+		for (JOPACustomType customType : currentProject.types) {
 			typesCode += customType.generateCode() + TWO_LINES;
 		}
 

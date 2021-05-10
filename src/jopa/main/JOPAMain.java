@@ -1,6 +1,7 @@
 package jopa.main;
 
 import static jopa.io.JOPAIO.loadTextFile;
+import static jopa.util.JOPAOGLUtil.*;
 
 import java.io.File;
 
@@ -29,7 +30,7 @@ public class JOPAMain {
 	public static JOPASystem system;
 	public static JOPAProject currentProject;
 	public static JOPASettings settings;
-	public static JOPAUI ui;
+	public static JOPAUI gui;
 
 	public static void main(String[] args) {
 		init();
@@ -42,11 +43,11 @@ public class JOPAMain {
 	}
 
 	private static void init() {
-		ui = new JOPAUI();
+		gui = new JOPAUI();
 		system = JOPASystem.init();
 
 		if (!system.checkSystem()) {
-			ui.showMessage(SYSTEM_NOT_SUPPORTED);
+			gui.showMessage(SYSTEM_NOT_SUPPORTED);
 		}
 
 		if (!system.checkVersion()) {
@@ -60,10 +61,10 @@ public class JOPAMain {
 	}
 
 	private static void setupUI() {
-		ui.createWindow();
-		ui.createMenu();
-		ui.createTabs();
-		ui.createCanvas();
+		gui.createWindow();
+		gui.createMenu();
+		gui.createTabs();
+		gui.createCanvas();
 	}
 
 	public static void createNewProject() {
@@ -73,7 +74,7 @@ public class JOPAMain {
 			createPlayground(JOPASimulationType.CUSTOM);
 		}
 
-		ui.repaint();
+		gui.repaint();
 	}
 
 	public static boolean openProject() {
@@ -82,7 +83,7 @@ public class JOPAMain {
 				// TODO uncomment later
 				// askAsboutSavingTheProject();
 			}
-			File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
+			File selectedFile = gui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
 			if (selectedFile != null) {
 				currentProject = JOPAProject.loadFromFile(selectedFile);
 
@@ -96,7 +97,7 @@ public class JOPAMain {
 	public static boolean saveProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				File selectedFile = ui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, true);
+				File selectedFile = gui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, true);
 				if (selectedFile != null) {
 					if (JOPAProject.saveToFile(selectedFile, currentProject)) {
 						return true;
@@ -113,24 +114,24 @@ public class JOPAMain {
 	public static void closeProject() {
 		synchronized (projectSync) {
 			currentProject = null;
-			ui.closeProjectTabs();
+			gui.closeProjectTabs();
 		}
 
-		ui.repaint();
+		gui.repaint();
 	}
 
 	public static void quit() {
 		synchronized (projectSync) {
 			askAsboutSavingTheProject();
 			currentProject = null;
-			ui.close();
+			gui.close();
 		}
 	}
 
 	public static void editProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				ui.openProjectEditor(currentProject);
+				gui.openProjectEditor(currentProject);
 			} else {
 				projectNotCreated();
 			}
@@ -141,9 +142,9 @@ public class JOPAMain {
 		synchronized (projectSync) {
 			if (currentProject != null) {
 				if (currentProject.verifyFunctions()) {
-					ui.showMessage("project passed validation");
+					gui.showMessage("project passed validation");
 				} else {
-					ui.showMessage("project contains errors");
+					gui.showMessage("project contains errors");
 				}
 			} else {
 				projectNotCreated();
@@ -154,7 +155,7 @@ public class JOPAMain {
 	public static void createNewFunction() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				ui.addFunction(currentProject.createFunction(null));
+				gui.addFunction(currentProject.createFunction(null));
 			} else {
 				projectNotCreated();
 			}
@@ -166,12 +167,12 @@ public class JOPAMain {
 			if (currentProject != null) {
 				if (currentProject.currentFunction != null) {
 					if (currentProject.verifyFunction(currentProject.currentFunction)) {
-						ui.showMessage("function passed validation");
+						gui.showMessage("function passed validation");
 					} else {
-						ui.showMessage("function contains errors");
+						gui.showMessage("function contains errors");
 					}
 				} else {
-					ui.showMessage("Function not selected!");
+					gui.showMessage("Function not selected!");
 				}
 			} else {
 				projectNotCreated();
@@ -206,9 +207,9 @@ public class JOPAMain {
 			if (currentProject != null) {
 				if (currentProject.currentFunction != null) {
 					if (currentProject.currentFunction.verifyNodes()) {
-						ui.showMessage("Nodes in current function are OK");
+						gui.showMessage("Nodes in current function are OK");
 					} else {
-						ui.showMessage("Nodes in current function are not OK");
+						gui.showMessage("Nodes in current function are not OK");
 					}
 				}
 			} else {
@@ -237,20 +238,30 @@ public class JOPAMain {
 		}
 	}
 
+	public static void validateGeneratedShader() {
+		synchronized (projectSync) {
+			if (validateShader(currentProject.getGeneratedShader(), currentProject.projectType)) {
+				gui.showMessage("Shader is OK");
+			} else {
+				gui.showMessage("Shader contains errors");
+			}
+		}
+	}
+
 	public static void toggleShowingPortTypes() {
 		synchronized (projectSync) {
 			settings.showPortTypes = !settings.showPortTypes;
-			ui.repaint();
+			gui.repaint();
 		}
 	}
 
 	public static void toggleHighlightingNodes() {
 		synchronized (projectSync) {
 			settings.highlightNodes = !settings.highlightNodes;
-			ui.repaint();
+			gui.repaint();
 		}
 	}
-	
+
 	public static void saveSettings() {
 		synchronized (projectSync) {
 			settings.writeSettings();
@@ -270,7 +281,7 @@ public class JOPAMain {
 	public static void editScript() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				ui.openScriptEditor(currentProject.script);
+				gui.openScriptEditor(currentProject.script);
 			} else {
 				projectNotCreated();
 			}
@@ -308,21 +319,21 @@ public class JOPAMain {
 	}
 
 	private static void projectNotCreated() {
-		ui.showMessage("Project not created!");
+		gui.showMessage("Project not created!");
 	}
 
 	private static void askAsboutSavingTheProject() {
-		if (ui.showQuestion("Save project?")) {
+		if (gui.showQuestion("Save project?")) {
 			saveProject();
 		}
 	}
 
 	public static void about() {
-		ui.showMessage(helpString);
+		gui.showMessage(helpString);
 	}
 
 	public static void manual() {
-		ui.showMessage(manualString);
+		gui.showMessage(manualString);
 	}
 
 }

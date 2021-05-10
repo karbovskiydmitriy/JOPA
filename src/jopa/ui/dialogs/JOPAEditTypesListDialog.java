@@ -1,5 +1,7 @@
 package jopa.ui.dialogs;
 
+import static jopa.main.JOPAMain.gui;
+
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
@@ -11,10 +13,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import jopa.main.JOPAMain;
 import jopa.main.JOPAProject;
-import jopa.types.JOPAComplexType;
-import jopa.types.JOPAType;
+import jopa.types.JOPACustomType;
 
 public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 
@@ -38,13 +38,13 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 		area.removeAll();
 
 		for (int i = 0; i < object.types.size(); i++) {
-			JOPAType type = object.types.get(i);
+			JOPACustomType type = object.types.get(i);
 			JLabel typeIndexLabel = new JLabel("types[" + i + "]");
 			JLabel typeNameLabel = new JLabel("Type name: " + type.name);
 			JButton editTypeButton = new JButton("edit");
 			JButton deleteTypeButton = new JButton("delete");
 			editTypeButton.addActionListener(e -> {
-				JOPAMain.ui.openTypeEditor(type);
+				gui.openTypeEditor(type);
 			});
 			deleteTypeButton.addActionListener(e -> {
 				object.types.remove(type);
@@ -75,7 +75,7 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 
 		newTypeMenuItem.addActionListener(e -> {
 			// DECIDE type
-			object.types.add(new JOPAComplexType("new type"));
+			object.types.add(new JOPACustomType("NewType"));
 			init();
 		});
 		clearTypesMenuItem.addActionListener(e -> {

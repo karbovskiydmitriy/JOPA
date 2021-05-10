@@ -1,8 +1,10 @@
 package jopa.playground;
 
-import java.io.Closeable;
+import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.gui;
+import static jopa.main.JOPAMain.system;
 
-import jopa.main.JOPAMain;
+import java.io.Closeable;
 
 public class JOPAPlayground implements Closeable {
 
@@ -19,8 +21,8 @@ public class JOPAPlayground implements Closeable {
 
 	public static JOPAPlayground create(JOPASimulationType type) {
 		if (type == JOPASimulationType.COMPUTE) {
-			if (!JOPAMain.system.checkVersion()) {
-				JOPAMain.ui.showMessage("You system does not support compute shaders!");
+			if (!system.checkVersion()) {
+				gui.showMessage("You system does not support compute shaders!");
 
 				return null;
 			}
@@ -31,7 +33,7 @@ public class JOPAPlayground implements Closeable {
 
 	public synchronized void start() {
 		if (simulationThread == null) {
-			if (JOPAMain.currentProject.script == null) {
+			if (currentProject.script == null) {
 				System.out.println("Script not set up");
 				// DECIDE error handling?
 
@@ -39,7 +41,7 @@ public class JOPAPlayground implements Closeable {
 			}
 			System.out.println("Playground started");
 
-			simulationThread = new JOPASimulationThread(JOPAMain.currentProject.script);
+			simulationThread = new JOPASimulationThread(currentProject.script);
 			simulationThread.start();
 		}
 	}

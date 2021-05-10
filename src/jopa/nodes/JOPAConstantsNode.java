@@ -1,11 +1,11 @@
 package jopa.nodes;
 
 import static jopa.main.JOPAFunction.NEW_LINE;
+import static jopa.main.JOPAMain.currentProject;
 
 import java.awt.Rectangle;
 
 import jopa.main.JOPAConstant;
-import jopa.main.JOPAMain;
 import jopa.main.JOPAProject;;
 
 public class JOPAConstantsNode extends JOPANode {
@@ -25,7 +25,7 @@ public class JOPAConstantsNode extends JOPANode {
 	@Override
 	protected void init() {
 		super.init();
-		project = JOPAMain.currentProject;
+		project = currentProject;
 	}
 
 	public void updateConstants() {

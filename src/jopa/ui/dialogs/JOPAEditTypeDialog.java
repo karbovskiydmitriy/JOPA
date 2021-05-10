@@ -6,13 +6,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import jopa.types.JOPAType;
+import jopa.types.JOPACustomType;
 
-public class JOPAEditTypeDialog extends JOPADialog<JOPAType> {
+public class JOPAEditTypeDialog extends JOPADialog<JOPACustomType> {
 
 	private static final long serialVersionUID = -8762774190661954314L;
 
-	public JOPAEditTypeDialog(Frame owner, JOPAType type) {
+	public JOPAEditTypeDialog(Frame owner, JOPACustomType type) {
 		super(owner, "Edit type", type);
 
 		init();

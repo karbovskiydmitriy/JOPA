@@ -1,7 +1,7 @@
 package jopa.playground;
 
 import static jopa.io.JOPALoader.loadStandardScript;
-import static jopa.util.JOPATypeUtil.*;
+import static jopa.main.JOPAMain.currentProject;
 import static jopa.util.JOPAOGLUtil.createBuffer;
 import static jopa.util.JOPAOGLUtil.createProgram;
 import static jopa.util.JOPAOGLUtil.createShader;
@@ -18,6 +18,7 @@ import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.loadTexture;
 import static jopa.util.JOPAOGLUtil.tick;
+import static jopa.util.JOPATypeUtil.getTypeSize;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -35,7 +36,6 @@ import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
 import jopa.graphics.JOPAImage;
-import jopa.main.JOPAMain;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
@@ -267,19 +267,19 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		String shaderName = args[0];
-		String shaderCode = JOPAMain.currentProject.getGeneratedShader();
+		String shaderCode = currentProject.getGeneratedShader();
 		if (shaderCode == null) {
 			logSimulationError(this, "Shader code could not be generated", shaderName);
 
 			return false;
 		}
 		int shader;
-		if (JOPAMain.currentProject == null) {
+		if (currentProject == null) {
 			logSimulationError(this, "Project is not loaded", null);
 
 			return false;
 		}
-		switch (JOPAMain.currentProject.projectType) {
+		switch (currentProject.projectType) {
 		case FRAGMENT:
 			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
 			break;
@@ -287,7 +287,7 @@ public class JOPASimulationScript implements Serializable {
 			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
 			break;
 		default:
-			logSimulationError(this, "Shader type is not set up in the project", JOPAMain.currentProject);
+			logSimulationError(this, "Shader type is not set up in the project", currentProject);
 
 			return false;
 		}
@@ -574,9 +574,9 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
 		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
 
-		JOPAResource timeResource = new JOPAResource(JOPAGLSLType.JOPA_FLOAT, "time", 0.0f);
+		JOPAResource timeResource = new JOPAResource(JOPAGLSLType.FLOAT, "time", 0.0f);
 		addResource(timeResource);
-		JOPAResource deltaTimeResource = new JOPAResource(JOPAGLSLType.JOPA_FLOAT, "deltaTime", 0.0f);
+		JOPAResource deltaTimeResource = new JOPAResource(JOPAGLSLType.FLOAT, "deltaTime", 0.0f);
 		addResource(deltaTimeResource);
 	}
 

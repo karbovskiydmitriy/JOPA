@@ -20,6 +20,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_RGB;
@@ -47,7 +48,13 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.GL_READ_WRITE;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15.glIsBuffer;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM;
@@ -105,10 +112,13 @@ import static org.lwjgl.opengl.GL30.GL_RGBA32I;
 import static org.lwjgl.opengl.GL30.GL_RGBA32UI;
 import static org.lwjgl.opengl.GL30.GL_RGBA8I;
 import static org.lwjgl.opengl.GL30.GL_RGBA8UI;
+import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL30.glUniform1ui;
 import static org.lwjgl.opengl.GL40.glUniform1d;
+import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
@@ -165,7 +175,6 @@ public final class JOPAOGLUtil {
 		glShaderSource(shader, shaderCode);
 		glCompileShader(shader);
 		int status = glGetShaderi(shader, GL_COMPILE_STATUS);
-		System.out.println(status);
 		if (status == GL_FALSE) {
 			System.err.println(glGetShaderInfoLog(shader));
 			glDeleteShader(shader);
@@ -256,7 +265,7 @@ public final class JOPAOGLUtil {
 
 		if (context != null) {
 			int[] size = new int[] { windowWidht[0], windowHeight[0] };
-			JOPAResource windowSize = new JOPAResource(JOPAGLSLType.JOPA_INT_VECTOR_2, "windowSize", size);
+			JOPAResource windowSize = new JOPAResource(JOPAGLSLType.INT_VECTOR_2, "windowSize", size);
 			context.addResource(windowSize);
 		}
 
@@ -512,93 +521,93 @@ public final class JOPAOGLUtil {
 				if (resource.glslType != null) {
 					JOPAGLSLType type = resource.glslType;
 					switch (type) {
-					case JOPA_BOOL: {
+					case BOOL: {
 						int value = safeCast(resource.getAsObject(), boolean.class) ? 1 : 0;
 						glUniform1i(location, value);
 						break;
 					}
-					case JOPA_INT: {
+					case INT: {
 						int value = safeCast(resource.getAsObject(), int.class);
 						glUniform1i(location, value);
 						break;
 					}
-					case JOPA_UINT: {
+					case UINT: {
 						int value = safeCast(resource.getAsObject(), int.class);
 						glUniform1ui(location, value);
 						break;
 					}
-					case JOPA_FLOAT: {
+					case FLOAT: {
 						float value = safeCast(resource.getAsObject(), float.class);
 						glUniform1f(location, value);
 						break;
 					}
-					case JOPA_DOUBLE: {
+					case DOUBLE: {
 						double value = safeCast(resource.getAsObject(), double.class);
 						glUniform1d(location, value);
 						break;
 					}
-					case JOPA_BOOL_VECTOR_2: {
+					case BOOL_VECTOR_2: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
-					case JOPA_BOOL_VECTOR_3: {
+					case BOOL_VECTOR_3: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
-					case JOPA_BOOL_VECTOR_4: {
+					case BOOL_VECTOR_4: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
-					case JOPA_INT_VECTOR_2: {
+					case INT_VECTOR_2: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
-					case JOPA_INT_VECTOR_3: {
+					case INT_VECTOR_3: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
-					case JOPA_INT_VECTOR_4: {
+					case INT_VECTOR_4: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
-					case JOPA_UINT_VECTOR_2: {
+					case UINT_VECTOR_2: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform2iv(location, value);
 						break;
 					}
-					case JOPA_UINT_VECTOR_3: {
+					case UINT_VECTOR_3: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform3iv(location, value);
 						break;
 					}
-					case JOPA_UINT_VECTOR_4: {
+					case UINT_VECTOR_4: {
 						int[] value = safeCast(resource.getAsObject(), int[].class);
 						glUniform4iv(location, value);
 						break;
 					}
-					case JOPA_FLOAT_VECTOR_2: {
+					case FLOAT_VECTOR_2: {
 						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform2fv(location, value);
 						break;
 					}
-					case JOPA_FLOAT_VECTOR_3: {
+					case FLOAT_VECTOR_3: {
 						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform3fv(location, value);
 						break;
 					}
-					case JOPA_FLOAT_VECTOR_4: {
+					case FLOAT_VECTOR_4: {
 						float[] value = safeCast(resource.getAsObject(), float[].class);
 						glUniform4fv(location, value);
 						break;
 					}
 					// TODO remaining
-					case JOPA_NONE: {
+					case NONE: {
 						return false;
 					}
 					default:

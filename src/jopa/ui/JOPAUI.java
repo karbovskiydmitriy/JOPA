@@ -22,6 +22,7 @@ import static jopa.main.JOPAMain.stopPlayground;
 import static jopa.main.JOPAMain.toggleHighlightingNodes;
 import static jopa.main.JOPAMain.toggleShowingPortTypes;
 import static jopa.main.JOPAMain.validateFunction;
+import static jopa.main.JOPAMain.validateGeneratedShader;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
 
@@ -52,14 +53,13 @@ import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
 import jopa.playground.JOPASimulationType;
-import jopa.types.JOPAType;
+import jopa.types.JOPACustomType;
 import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditFunctionNodeDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
-import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAEditTypeDialog;
@@ -198,15 +198,19 @@ public class JOPAUI {
 
 				MenuItem generateShaderMenuItem = new MenuItem("generate shader");
 				MenuItem showShaderCodeMenuItem = new MenuItem("show shader code");
+				MenuItem validateShaderMenuITem = new MenuItem("validate shader");
 
 				generateShaderMenuItem.setShortcut(new MenuShortcut('G'));
 				showShaderCodeMenuItem.setShortcut(new MenuShortcut('S', true));
+				validateShaderMenuITem.setShortcut(new MenuShortcut('V', true));
 
 				generateShaderMenuItem.addActionListener(e -> generateShader());
 				showShaderCodeMenuItem.addActionListener(e -> showShaderCode());
+				validateShaderMenuITem.addActionListener(e -> validateGeneratedShader());
 
 				shaderMenu.add(generateShaderMenuItem);
 				shaderMenu.add(showShaderCodeMenuItem);
+				shaderMenu.add(validateShaderMenuITem);
 
 				menuBar.add(shaderMenu);
 			}
@@ -367,11 +371,6 @@ public class JOPAUI {
 		editScriptDialog.dispose();
 	}
 
-	public synchronized void openResourcesEditor(JOPAProject project) {
-		JOPAEditResourcesDialog editResourcesDialog = new JOPAEditResourcesDialog(window, project);
-		editResourcesDialog.dispose();
-	}
-
 	public synchronized void openFunctionEditor(JOPAFunction function) {
 		JOPAEditFunctionDialog editFunctionDialog = new JOPAEditFunctionDialog(window, function);
 		editFunctionDialog.dispose();
@@ -382,13 +381,13 @@ public class JOPAUI {
 		editTypesDialog.dispose();
 	}
 
-	public synchronized void openTypeEditor(JOPAType type) {
+	public synchronized void openTypeEditor(JOPACustomType type) {
 		JOPAEditTypeDialog editTypeDialog = new JOPAEditTypeDialog(window, type);
 		editTypeDialog.dispose();
 	}
 
-	public synchronized void openConstantsEditor(JOPAFunction function) {
-		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, currentProject);
+	public synchronized void openConstantsEditor(JOPAProject project) {
+		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, project);
 		editConstantsDialog.dispose();
 	}
 

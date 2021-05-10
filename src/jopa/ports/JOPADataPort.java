@@ -1,5 +1,6 @@
 package jopa.ports;
 
+import static jopa.main.JOPAMain.settings;
 import static jopa.util.JOPATypeUtil.getColorForType;
 import static jopa.util.JOPATypeUtil.getNameForType;
 
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 
 import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
-import jopa.main.JOPAMain;
 import jopa.main.JOPAVariable;
 import jopa.nodes.JOPANode;
 
@@ -50,14 +50,14 @@ public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
 		if (selectedPort != this) {
 			g.setColor(color);
 		} else {
-			g.setColor(JOPAMain.settings.defaultPalette.selectedPortColor);
+			g.setColor(settings.defaultPalette.selectedPortColor);
 		}
 		g.fillOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		g.setColor(Color.BLACK);
 		g.drawOval(position.x - PORT_RADIUS, position.y - PORT_RADIUS, PORT_RADIUS * 2, PORT_RADIUS * 2);
 		String text;
 		if (!variable.getClass().equals(JOPAConstant.class)) {
-			text = JOPAMain.settings.showPortTypes ? typeName + " " + variable.name : variable.name;
+			text = settings.showPortTypes ? typeName + " " + variable.name : variable.name;
 		} else {
 			text = variable.toString();
 		}

@@ -37,7 +37,7 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 	public ArrayList<JOPANode> statementNodes;
 
 	public JOPAFunction(String name, JOPAVariable... args) {
-		this.returnType = JOPAGLSLType.JOPA_VOID;
+		this.returnType = JOPAGLSLType.VOID;
 		this.name = name;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
 		this.typesNode = new JOPATypesNode(50, 200);

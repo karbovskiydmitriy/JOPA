@@ -1,6 +1,7 @@
 package jopa.main;
 
 import static jopa.io.JOPALoader.loadStandardTemplate;
+import static jopa.main.JOPAMain.gui;
 
 import java.util.ArrayList;
 
@@ -131,7 +132,7 @@ public class JOPANodeTemplate {
 	}
 
 	private static void fileCorrupted() {
-		JOPAMain.ui.showMessage("templates file is corrupted");
+		gui.showMessage("templates file is corrupted");
 	}
 
 	private static JOPANodeTemplate getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {

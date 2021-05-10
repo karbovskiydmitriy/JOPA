@@ -1,6 +1,8 @@
 package jopa.graphics;
 
 import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.gui;
+import static jopa.main.JOPAMain.settings;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,8 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import javax.swing.JPanel;
-
-import jopa.main.JOPAMain;
 
 public class JOPACanvas extends JPanel {
 
@@ -88,7 +88,7 @@ public class JOPACanvas extends JPanel {
 				} else if (graphics2D.scale >= 10.0f) {
 					graphics2D.scale = 10.0f;
 				}
-				JOPAMain.ui.repaint();
+				gui.repaint();
 			}
 		});
 		// FIXME keyTyped
@@ -109,11 +109,11 @@ public class JOPACanvas extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		graphics2D.implementation = (Graphics2D) g;
-		g.setColor(JOPAMain.settings.defaultPalette.backgroundColor);
+		g.setColor(settings.defaultPalette.backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		// synchronized (JOPAMain.projectSync) {
-		if (JOPAMain.currentProject != null) {
-			JOPAMain.currentProject.draw((Graphics2D) graphics2D);
+		if (currentProject != null) {
+			currentProject.draw((Graphics2D) graphics2D);
 		}
 		// }
 	}

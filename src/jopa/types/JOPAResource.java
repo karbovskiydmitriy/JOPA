@@ -16,7 +16,7 @@ public class JOPAResource implements Serializable {
 
 	public JOPAResource(JOPAResourceType type, String name, Object value) {
 		this.type = type;
-		this.glslType = JOPAGLSLType.JOPA_NONE;
+		this.glslType = JOPAGLSLType.NONE;
 		this.name = name;
 		this.value = value;
 	}

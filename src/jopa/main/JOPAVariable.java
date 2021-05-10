@@ -32,16 +32,16 @@ public class JOPAVariable implements Serializable {
 			String[] parts = template.split(":");
 			if (parts.length == 2) {
 				JOPAGLSLType type = getTypeForName(parts[0]);
-				if (type != JOPAGLSLType.JOPA_NONE) {
+				if (type != JOPAGLSLType.NONE) {
 					return new JOPAVariable(type, parts[1]);
 				}
 			} else if (parts.length == 3) {
 				JOPAGLSLType type = getTypeForName(parts[1]);
-				if (type != JOPAGLSLType.JOPA_NONE) {
+				if (type != JOPAGLSLType.NONE) {
 					return new JOPAVariable(type, parts[2], parts[0]);
 				} else {
 					type = getTypeForName(parts[0]);
-					if (type != JOPAGLSLType.JOPA_NONE) {
+					if (type != JOPAGLSLType.NONE) {
 						return new JOPAConstant(type, parts[1], parts[2]);
 					}
 				}

@@ -1,13 +1,18 @@
 package jopa.ui.dialogs;
 
+import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.gui;
+import static jopa.main.JOPAMain.verifyProject;
+
 import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
-import jopa.main.JOPAMain;
 import jopa.main.JOPAProject;
 import jopa.main.JOPAProjectType;
 
@@ -37,13 +42,18 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		projectTypeComboBox = new JComboBox<String>(PROJECT_TYPES);
 		projectTypeComboBox.setSelectedIndex((int) (object.projectType.ordinal() - 1));
 		projectTypeComboBox.setPreferredSize(new Dimension(200, 50));
-		JButton editResourceeButton = new JButton("Edit recources");
-		editResourceeButton.addActionListener(e -> {
-			JOPAMain.ui.openResourcesEditor(JOPAMain.currentProject);
+		JButton editTypesButton = new JButton("Edit types");
+		JButton editConstants = new JButton("Edit constants");
+		editTypesButton.addActionListener(e -> {
+			gui.openTypesListEditor(object);
+		});
+		editConstants.addActionListener(e -> {
+			gui.openConstantsEditor(currentProject);
 		});
 		area.add(projectTypeComboBox);
-		area.add(editResourceeButton);
-		adjustGrid(2, 1, 10, 10, 10, 10);
+		area.add(editTypesButton);
+		area.add(editConstants);
+		adjustGrid(area.getComponentCount(), 1, 10, 10, 10, 10);
 
 		pack();
 	}
@@ -52,7 +62,15 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		JMenuBar projectMenuBar = new JMenuBar();
 
 		{
+			JMenu projectMenu = new JMenu("project");
 
+			JMenuItem verifyMenuItem = new JMenuItem("verify");
+
+			verifyMenuItem.addActionListener(e -> verifyProject());
+
+			projectMenu.add(verifyMenuItem);
+
+			projectMenuBar.add(projectMenu);
 		}
 
 		setJMenuBar(projectMenuBar);

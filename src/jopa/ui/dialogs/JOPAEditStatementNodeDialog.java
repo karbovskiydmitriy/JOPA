@@ -65,7 +65,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newInputMenuItem.addActionListener(e -> {
-				object.createPort(new JOPAVariable(JOPAGLSLType.JOPA_FLOAT, "input_port"), false, true);
+				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "input_port"), false, true);
 				init();
 			});
 
@@ -83,7 +83,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			newOutputMenuItem.addActionListener(e -> {
-				object.createPort(new JOPAVariable(JOPAGLSLType.JOPA_FLOAT, "output_port"), true, true);
+				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "output_port"), true, true);
 				init();
 			});
 
