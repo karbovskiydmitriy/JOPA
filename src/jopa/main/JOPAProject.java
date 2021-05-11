@@ -25,7 +25,6 @@ import jopa.nodes.JOPAStatementNode;
 import jopa.nodes.JOPATypesNode;
 import jopa.playground.JOPAPlayground;
 import jopa.playground.JOPASimulationScript;
-import jopa.playground.JOPASimulationType;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPACustomType;
@@ -34,24 +33,24 @@ public class JOPAProject implements Serializable {
 
 	private static final long serialVersionUID = -5034273809770939736L;
 
-	private long lastSelectTick;
-	private Point prevPoint;
-	private JOPAPort selectedPort;
-	private JOPANode selectedNode;
-	private JOPANode draggingNode;
-	private Point cursorPosition;
+	private transient long lastSelectTick;
+	private transient Point prevPoint;
+	private transient JOPAPort selectedPort;
+	private transient JOPANode selectedNode;
+	private transient JOPANode draggingNode;
+	private transient Point cursorPosition;
+	private transient String generatedShader;
+	private transient JOPAPlayground playground;
 	private ArrayList<JOPAFunction> functions;
 	private JOPAFunction mainFunction;
-	private String generatedShader;
-	private JOPAPlayground playground;
 
+	public transient JOPASimulationScript script;
 	public String name;
 	public JOPAProjectType projectType;
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
-	public ArrayList<JOPAVariable> publicVariables;
+	public ArrayList<JOPAVariable> globalVariables;
 	public JOPAFunction currentFunction;
-	public JOPASimulationScript script;
 
 	public JOPAProject(String name, JOPAProjectType type) {
 		this.name = name;
@@ -63,7 +62,7 @@ public class JOPAProject implements Serializable {
 		currentProject = this;
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
-		publicVariables = new ArrayList<JOPAVariable>();
+		globalVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
 	}
 
@@ -99,7 +98,7 @@ public class JOPAProject implements Serializable {
 		}
 	}
 
-	public synchronized void createPlayground(JOPASimulationType type) {
+	public synchronized void createPlayground(JOPAProjectType type) {
 		if (playground != null) {
 			playground.stop();
 			playground.close();
@@ -127,19 +126,7 @@ public class JOPAProject implements Serializable {
 		}
 	}
 
-	// public synchronized JOPAType createNewType(String name) {
-	// JOPAType type = new JOPAType(name);
-	// types.add(type);
-	//
-	// return type;
-	// }
-	//
-	// public synchronized boolean deleteType(String name) {
-	// return types.removeIf(type -> type.name.equals(name));
-	// }
-
 	public synchronized void draw(Graphics2D g) {
-		// functions.forEach(function -> function.draw(g, selectedNode, selectedPort));
 		if (currentFunction != null) {
 			currentFunction.draw(g, selectedNode, selectedPort);
 		}
@@ -320,21 +307,34 @@ public class JOPAProject implements Serializable {
 
 	public synchronized void generateShader() {
 		if (verifyFunctions()) {
-			String shaderCode = "#version 130";
+			String shaderCode = "#version ";
+			switch (projectType) {
+			case CUSTOM:
+				return;
+			case FRAGMENT:
+				shaderCode += "130";
+				break;
+			case COMPUTE:
+				shaderCode += "430";
+				break;
+			}
 			shaderCode += TWO_LINES;
+			// TODO defines
+			if (projectType == JOPAProjectType.COMPUTE) {
+				shaderCode += ""; // TODO local groups size
+				shaderCode += TWO_LINES;
+			}
 			shaderCode += mainFunction.typesNode.generateCode();
 			if (mainFunction.constantsNode.outputs.size() > 0) {
 				shaderCode += mainFunction.constantsNode.generateCode();
 				shaderCode += NEW_LINE;
 			}
+			// TODO bind buffers, images
 			if (mainFunction.startNode.outputs.size() > 0) {
 				for (JOPADataPort port : mainFunction.startNode.outputs) {
 					if (port.variable.name.startsWith("gl_")) {
 						continue;
 					}
-					// if (port.connections.size() == 0) {
-					// continue;
-					// }
 					String modifier = "uniform ";
 					shaderCode += modifier + port.generateCode() + ";" + NEW_LINE;
 				}
@@ -360,6 +360,7 @@ public class JOPAProject implements Serializable {
 	}
 
 	public synchronized String getGeneratedShader() {
+		// TODO updating
 		if (generatedShader == null) {
 			generateShader();
 		}

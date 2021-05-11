@@ -1,14 +1,17 @@
 package jopa.ui.dialogs;
 
+import static jopa.main.JOPAMain.saveGeneratedShader;
 import static jopa.main.JOPAMain.validateGeneratedShader;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.TextArea;
+import java.awt.Toolkit;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 public class JOPAShowShaderDialog extends JOPADialog<String> {
 
@@ -41,10 +44,16 @@ public class JOPAShowShaderDialog extends JOPADialog<String> {
 			JMenu shaderMenu = new JMenu("shader");
 
 			JMenuItem validateMenuItem = new JMenuItem("validate");
+			JMenuItem saveToFileMenuItem = new JMenuItem("save to file");
+
+			saveToFileMenuItem
+					.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 			validateMenuItem.addActionListener(e -> validateGeneratedShader());
+			saveToFileMenuItem.addActionListener(e -> saveGeneratedShader());
 
 			shaderMenu.add(validateMenuItem);
+			shaderMenu.add(saveToFileMenuItem);
 
 			showShaderMenuBar.add(shaderMenu);
 		}

@@ -159,11 +159,12 @@ public final class JOPAOGLUtil {
 		case COMPUTE:
 			shader = createShader(GL_COMPUTE_SHADER, shaderCode);
 			break;
-		case NONE:
+		case CUSTOM:
 		default:
 			return false;
 		}
 		closeWindow(window);
+		deleteContext();
 		if (shader == 0) {
 			return false;
 		}
@@ -177,6 +178,7 @@ public final class JOPAOGLUtil {
 		glCompileShader(shader);
 		int status = glGetShaderi(shader, GL_COMPILE_STATUS);
 		if (status == GL_FALSE) {
+			System.err.println("Shader code:\n" + shaderCode);
 			System.err.println(glGetShaderInfoLog(shader));
 			glDeleteShader(shader);
 
@@ -249,7 +251,7 @@ public final class JOPAOGLUtil {
 		glfwInit();
 
 		long window;
-		String title = "Default fragment shader showcase";
+		String title = "JOPA simulation window";
 		if (!isFullscreen) {
 			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 			window = glfwCreateWindow(width, height, title, NULL, NULL);

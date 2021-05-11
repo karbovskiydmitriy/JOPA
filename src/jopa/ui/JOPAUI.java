@@ -47,12 +47,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
 import jopa.main.JOPAProject;
+import jopa.main.JOPAProjectType;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
-import jopa.playground.JOPASimulationType;
 import jopa.types.JOPACustomType;
 import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
@@ -258,9 +258,9 @@ public class JOPAUI {
 					MenuItem defaultComputeShaderMenuItem = new MenuItem("default compute shader");
 					MenuItem customShaderMenuItem = new MenuItem("custom shader");
 
-					defaultFragmentShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.FRAGMENT));
-					defaultComputeShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.COMPUTE));
-					customShaderMenuItem.addActionListener(e -> createPlayground(JOPASimulationType.CUSTOM));
+					defaultFragmentShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.FRAGMENT));
+					defaultComputeShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.COMPUTE));
+					customShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.CUSTOM));
 
 					createPlaygroundMenuItem.add(defaultFragmentShaderMenuItem);
 					createPlaygroundMenuItem.add(defaultComputeShaderMenuItem);
@@ -429,9 +429,8 @@ public class JOPAUI {
 	public synchronized boolean showQuestion(String question) {
 		JOPAQuestionDialog questionDialog = new JOPAQuestionDialog(window, question);
 		questionDialog.dispose();
-		// TODO getting answer
 
-		return false;
+		return questionDialog.getAnswer();
 	}
 
 	public synchronized File showFileDialog(String path, FileNameExtensionFilter filter, String title, boolean save) {
@@ -441,6 +440,7 @@ public class JOPAUI {
 			fileChooser.setDialogTitle(title);
 		}
 		if (filter != null) {
+			// FIXME add extension
 			fileChooser.setFileFilter(filter);
 		}
 		if (path != null) {

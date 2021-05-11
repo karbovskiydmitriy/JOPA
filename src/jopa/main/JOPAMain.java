@@ -1,18 +1,18 @@
 package jopa.main;
 
 import static jopa.io.JOPAIO.loadTextFile;
-import static jopa.util.JOPAOGLUtil.*;
+import static jopa.util.JOPAOGLUtil.validateShader;
 
 import java.io.File;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jopa.io.JOPAIO;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
-import jopa.playground.JOPASimulationType;
 import jopa.ui.JOPAUI;
 
 public class JOPAMain {
@@ -23,6 +23,7 @@ public class JOPAMain {
 	private static final String TEST_PROJECT_NAME = ".\\projects\\";
 
 	private static FileNameExtensionFilter projectFileFilter;
+	private static FileNameExtensionFilter shaderFileFilter;
 	private static Object projectSync;
 	private static String helpString;
 	private static String manualString;
@@ -33,11 +34,13 @@ public class JOPAMain {
 	public static JOPAUI gui;
 
 	public static void main(String[] args) {
+		projectSync = new Object();
+
 		init();
 
 		settings = new JOPASettings();
-		projectSync = new Object();
 		projectFileFilter = new FileNameExtensionFilter("JOPA project file", "jopa");
+		shaderFileFilter = new FileNameExtensionFilter("GLSL shader file", "glsl");
 
 		createNewProject();
 	}
@@ -71,7 +74,7 @@ public class JOPAMain {
 		synchronized (projectSync) {
 			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
-			createPlayground(JOPASimulationType.CUSTOM);
+			createPlayground(JOPAProjectType.CUSTOM);
 		}
 
 		gui.repaint();
@@ -248,6 +251,16 @@ public class JOPAMain {
 		}
 	}
 
+	public static void saveGeneratedShader() {
+		synchronized (projectSync) {
+			String shaderCode = currentProject.getGeneratedShader();
+			File file = gui.showFileDialog(null, shaderFileFilter, "Save generated shader", true);
+			if (file != null) {
+				JOPAIO.saveTextFile(file.getAbsolutePath(), shaderCode);
+			}
+		}
+	}
+
 	public static void toggleShowingPortTypes() {
 		synchronized (projectSync) {
 			settings.showPortTypes = !settings.showPortTypes;
@@ -268,7 +281,7 @@ public class JOPAMain {
 		}
 	}
 
-	public static void createPlayground(JOPASimulationType type) {
+	public static void createPlayground(JOPAProjectType type) {
 		synchronized (projectSync) {
 			if (currentProject != null) {
 				currentProject.createPlayground(type);

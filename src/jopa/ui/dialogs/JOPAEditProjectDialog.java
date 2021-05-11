@@ -20,7 +20,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 
 	private static final long serialVersionUID = -6455920925968222447L;
 
-	private static final String[] PROJECT_TYPES = new String[] { "Fragment", "Compute" };
+	private static final String[] PROJECT_TYPES = new String[] { "Fragment", "Compute", "Custom" };
 
 	private JComboBox<String> projectTypeComboBox;
 
@@ -40,10 +40,14 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 
 	private void init() {
 		projectTypeComboBox = new JComboBox<String>(PROJECT_TYPES);
-		projectTypeComboBox.setSelectedIndex((int) (object.projectType.ordinal() - 1));
+		projectTypeComboBox.setSelectedIndex((int) object.projectType.ordinal());
 		projectTypeComboBox.setPreferredSize(new Dimension(200, 50));
+		JButton editDefines = new JButton("Edit defines");
 		JButton editTypesButton = new JButton("Edit types");
 		JButton editConstants = new JButton("Edit constants");
+		editDefines.addActionListener(e -> {
+			// TODO defines editor
+		});
 		editTypesButton.addActionListener(e -> {
 			gui.openTypesListEditor(object);
 		});
@@ -51,6 +55,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 			gui.openConstantsEditor(currentProject);
 		});
 		area.add(projectTypeComboBox);
+		area.add(editDefines);
 		area.add(editTypesButton);
 		area.add(editConstants);
 		adjustGrid(area.getComponentCount(), 1, 10, 10, 10, 10);

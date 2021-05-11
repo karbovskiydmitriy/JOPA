@@ -41,6 +41,7 @@ import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
 import jopa.graphics.JOPAImage;
+import jopa.main.JOPAProjectType;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
@@ -49,44 +50,41 @@ public class JOPASimulationScript implements Serializable {
 
 	private static final long serialVersionUID = -5030460984321077507L;
 
-	private static final String[] NEW_WINDOW = { "new", "window" };
-	private static final String[] NEW_TEXTURE = { "new", "texture" };
-	private static final String[] NEW_BUFFER = { "new", "buffer" };
-	private static final String[] NEW_SHADER = { "new", "shader" };
-	private static final String[] NEW_PROGRAM = { "new", "program" };
-	private static final String[] LOAD_TEXTURE = { "load", "texture" };
-	private static final String[] GENERATE_SHADER = { "generate", "shader" };
-	private static final String[] SET_PROGRAM = { "set", "program" };
-	private static final String[] SET_VAR = { "set", "var" };
-	private static final String[] SET_BOOL = { "set", "bool" };
-	private static final String[] SET_INT = { "set", "int" };
-	private static final String[] SET_UINT = { "set", "uint" };
-	private static final String[] SET_FLOAT = { "set", "float" };
-	private static final String[] BIND_IMAGE = { "bind", "image" };
-	private static final String[] BIND_BUFFER = { "bind", "buffer" };
-	private static final String[] DRAW = { "draw" };
-	private static final String[] COMPUTE = { "compute" };
-	private static final String[] CLOSE_WINDOW = { "close", "window" };
-	private static final String[] DELETE_TEXTURE = { "destroy", "texture" };
-	private static final String[] DELETE_BUFFER = { "destroy", "buffer" };
-	private static final String[] DELETE_SHADER = { "delete", "shader" };
-	private static final String[] DELETE_PROGRAM = { "delete", "program" };
-	private static final String[] EXIT = { "exit" };
+	private transient static final String[] NEW_WINDOW = { "new", "window" };
+	private transient static final String[] NEW_TEXTURE = { "new", "texture" };
+	private transient static final String[] NEW_BUFFER = { "new", "buffer" };
+	private transient static final String[] NEW_SHADER = { "new", "shader" };
+	private transient static final String[] NEW_PROGRAM = { "new", "program" };
+	private transient static final String[] LOAD_TEXTURE = { "load", "texture" };
+	private transient static final String[] GENERATE_SHADER = { "generate", "shader" };
+	private transient static final String[] SET_PROGRAM = { "set", "program" };
+	private transient static final String[] SET_VAR = { "set", "var" };
+	private transient static final String[] SET_BOOL = { "set", "bool" };
+	private transient static final String[] SET_INT = { "set", "int" };
+	private transient static final String[] SET_UINT = { "set", "uint" };
+	private transient static final String[] SET_FLOAT = { "set", "float" };
+	private transient static final String[] BIND_IMAGE = { "bind", "image" };
+	private transient static final String[] BIND_BUFFER = { "bind", "buffer" };
+	private transient static final String[] DRAW = { "draw" };
+	private transient static final String[] COMPUTE = { "compute" };
+	private transient static final String[] CLOSE_WINDOW = { "close", "window" };
+	private transient static final String[] DELETE_TEXTURE = { "destroy", "texture" };
+	private transient static final String[] DELETE_BUFFER = { "destroy", "buffer" };
+	private transient static final String[] DELETE_SHADER = { "delete", "shader" };
+	private transient static final String[] DELETE_PROGRAM = { "delete", "program" };
+	private transient static final String[] EXIT = { "exit" };
 
-	private boolean executed;
-	private boolean returnCode;
-	private int commandIndex;
-
-	private long startTime;
-	private long prevTime;
-
+	private transient long startTime;
+	private transient long prevTime;
+	private transient boolean executed;
+	private transient boolean returnCode;
+	private transient int commandIndex;
+	private transient Map<String[], Predicate<String[]>> operations;
 	private String plainCode;
 	private ArrayList<String> commands;
 	private ArrayList<JOPAResource> resources;
 
-	private final Map<String[], Predicate<String[]>> operations;
-
-	private final Predicate<String[]> NEW_WINDOW_OPERATION = args -> {
+	private transient final Predicate<String[]> NEW_WINDOW_OPERATION = args -> {
 		if (args.length != 4) {
 			logSimulationError(this, "NEW WINDOW uses 4 arguments! (name, width, height, fullscreen)", args);
 
@@ -127,7 +125,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
+	private transient final Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "CREATE WINDOW uses 2 arguments (texture name, window name)", args);
 
@@ -167,7 +165,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
+	private transient final Predicate<String[]> NEW_BUFFER_OPERATION = args -> {
 		if (args.length != 3) {
 			logSimulationError(this, "NEW BUFFER uses 3 arguments (name, type name, count)", args);
 
@@ -211,7 +209,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> NEW_SHADER_OPERATION = args -> {
+	private transient final Predicate<String[]> NEW_SHADER_OPERATION = args -> {
 		if (args.length != 3) {
 			logSimulationError(this, "NEW SHADER uses 3 arguments (name, type, file)", args);
 
@@ -246,7 +244,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> NEW_PROGRAM_OPERATION = args -> {
+	private transient final Predicate<String[]> NEW_PROGRAM_OPERATION = args -> {
 		if (args.length < 2) {
 			logSimulationError(this, "NEW PROGRAM uses 2+ arguments (program, shader0, shader1, ...)", args);
 
@@ -285,7 +283,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> LOAD_TEXTURE_OPERATION = args -> {
+	private transient final Predicate<String[]> LOAD_TEXTURE_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "LOAD TEXTURE uses 2 arguments (name, file name)", args);
 
@@ -307,7 +305,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
+	private transient final Predicate<String[]> GENERATE_SHADER_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "GENERATE SHADER uses 1 argument (name)", args);
 
@@ -351,7 +349,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_PROGRAM_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "SET PROGRAM uses 1 argument (name or 0)", args);
 
@@ -382,7 +380,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_VAR_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_VAR_OPERATION = args -> {
 		if (args.length != 3) {
 			logSimulationError(this, "SET VAR uses 3 arguments (name, type, value)", args);
 
@@ -433,7 +431,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_BOOL_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_BOOL_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
 
@@ -455,7 +453,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_INT_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_INT_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
 
@@ -477,7 +475,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_UINT_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_UINT_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
 
@@ -499,7 +497,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> SET_FLOAT_OPERATION = args -> {
+	private transient final Predicate<String[]> SET_FLOAT_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
 
@@ -521,7 +519,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> BIND_IMAGE_OPERATION = args -> {
+	private transient final Predicate<String[]> BIND_IMAGE_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "BIND IMAGE uses 2 arguments (texture name, binding index)", args);
 
@@ -566,7 +564,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> BIND_BUFFER_OPERATION = args -> {
+	private transient final Predicate<String[]> BIND_BUFFER_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "BIND BUFFER uses 2 arguments (buffer name, binding index)", args);
 
@@ -606,7 +604,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DRAW_PREDICATE = args -> {
+	private transient final Predicate<String[]> DRAW_PREDICATE = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "DO TICKS uses 0 arguments", args);
 
@@ -658,7 +656,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> COMPUTE_OPERATION = args -> {
+	private transient final Predicate<String[]> COMPUTE_OPERATION = args -> {
 		if (args.length != 4) {
 			logSimulationError(this, "COMPUTE uses 3 args (x groups, y groups, z groups)", args);
 
@@ -716,7 +714,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> CLOSE_WINDOW_PREDICATE = args -> {
+	private transient final Predicate<String[]> CLOSE_WINDOW_PREDICATE = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "CLOSE WINDOW uses 1 argument (window)", args);
 
@@ -742,7 +740,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DELETE_TEXTURE_PREDICATE = args -> {
+	private transient final Predicate<String[]> DELETE_TEXTURE_PREDICATE = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE TEXTURE uses 1 argument (texture)", args);
 
@@ -771,7 +769,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DELETE_BUFFER_PREDICATE = args -> {
+	private transient final Predicate<String[]> DELETE_BUFFER_PREDICATE = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE BUFFER uses 1 argument (name)", args);
 
@@ -800,7 +798,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DELETE_SHADER_OPERATION = args -> {
+	private transient final Predicate<String[]> DELETE_SHADER_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE SHADER uses 1 argument (name)", args);
 
@@ -829,7 +827,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> DELETE_PROGRAM_OPERATION = args -> {
+	private transient final Predicate<String[]> DELETE_PROGRAM_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE PROGRAM uses 1 argument (name)", args);
 
@@ -858,7 +856,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private final Predicate<String[]> EXIT_OPERATION = args -> {
+	private transient final Predicate<String[]> EXIT_OPERATION = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "EXIT uses 0 arguments", args);
 		}
@@ -871,11 +869,11 @@ public class JOPASimulationScript implements Serializable {
 	private JOPASimulationScript() {
 		this.commands = new ArrayList<String>();
 		this.resources = new ArrayList<JOPAResource>();
-		this.operations = new HashMap<String[], Predicate<String[]>>();
-		init();
 	}
 
-	private void init() {
+	public void init() {
+		operations = new HashMap<String[], Predicate<String[]>>();
+		operations.clear();
 		operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
 		operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
 		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
@@ -909,6 +907,7 @@ public class JOPASimulationScript implements Serializable {
 	public void start() {
 		startTime = System.currentTimeMillis();
 		commandIndex = 0;
+		init();
 	}
 
 	private void logSimulationError(Object source, String errorMessage, Object object) {
@@ -916,11 +915,8 @@ public class JOPASimulationScript implements Serializable {
 		System.err.println(object);
 	}
 
-	public static JOPASimulationScript create(JOPASimulationType type) {
+	public static JOPASimulationScript create(JOPAProjectType type) {
 		if (type == null) {
-			return null;
-		}
-		if (type == JOPASimulationType.NONE) {
 			return null;
 		}
 
@@ -935,8 +931,6 @@ public class JOPASimulationScript implements Serializable {
 				break;
 			case CUSTOM:
 				script.setupScript(loadStandardScript("test.jopascript"));
-				break;
-			case NONE:
 				break;
 			default:
 				return null;
@@ -1088,10 +1082,12 @@ public class JOPASimulationScript implements Serializable {
 	public void addResource(JOPAResource resource) {
 		JOPAResource foundResource = getResourceByName(resource.name);
 		if (foundResource != null) {
+			System.out.println("Updating resource: " + resource.name);
 			resources.remove(foundResource);
+		} else {
+			System.out.println("Adding resource: " + resource.name);
 		}
 		resources.add(resource);
-		System.out.println("Adding resource: " + resource.name);
 	}
 
 	public void forEachResource(Consumer<JOPAResource> consumer) {

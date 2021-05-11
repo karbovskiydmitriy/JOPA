@@ -40,5 +40,8 @@
 			],
 			"template": "t *= speed;vec2 uv = vec2(coord.yx) / vec2(size);uv.xy = vec2(uv.x * cos(t), sin(uv.y) / 2.0 + 0.5);vec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);"
 		}
+	},
+	"types": {
+		
 	}
 }

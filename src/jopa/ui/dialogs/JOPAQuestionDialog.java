@@ -2,17 +2,35 @@ package jopa.ui.dialogs;
 
 import java.awt.Frame;
 
-import javax.swing.JDialog;
+import javax.swing.JButton;
 
-public class JOPAQuestionDialog extends JDialog {
+public class JOPAQuestionDialog extends JOPADialog<Boolean> {
 
 	private static final long serialVersionUID = 8969733818418438240L;
 
 	public JOPAQuestionDialog(Frame owner, String question) {
-		super(owner);
-		setTitle(question);
-		// TODO interface
+		super(owner, question, false);
+
+		init();
+
 		setVisible(true);
+	}
+
+	@Override
+	protected void closing() {
+	}
+
+	private void init() {
+		JButton okButton = new JButton("OK");
+		okButton.addActionListener(e -> {
+			object = true;
+			setVisible(true);
+		});
+		area.add(okButton);
+	}
+	
+	public boolean getAnswer() {
+		return object;
 	}
 
 }
