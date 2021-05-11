@@ -117,6 +117,7 @@ import static org.lwjgl.opengl.GL30.glUniform1ui;
 import static org.lwjgl.opengl.GL40.glUniform1d;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.opengl.GL43.GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -323,6 +324,12 @@ public final class JOPAOGLUtil {
 		if (currentProgram == 0) {
 			return false;
 		}
+		if (x * y * z == 0) {
+			return false;
+		}
+		if (x * y * z > glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS)) {
+			return false;
+		}
 
 		int[] count = new int[1];
 		int[] shaders = new int[64];
@@ -338,7 +345,6 @@ public final class JOPAOGLUtil {
 		if (!hasComputeShader) {
 			return false;
 		}
-		// TODO xyz check
 		glDispatchCompute(x, y, z);
 		if (glGetError() != 0) {
 			return false;
@@ -527,7 +533,6 @@ public final class JOPAOGLUtil {
 						if (location > -1) {
 							passVariable(resource, location);
 						}
-						// TODO glGetProgramInterfaceiv for buffers/uniform blocks/shader storage blocks
 					}
 				});
 			}

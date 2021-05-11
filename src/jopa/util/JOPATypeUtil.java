@@ -120,7 +120,7 @@ public final class JOPATypeUtil {
 			case FLOAT: {
 				return (float) Double.parseDouble(value);
 			}
-			// TODO the rest
+			// DECIDE handling commas
 			case BOOL_VECTOR_2:
 			case BOOL_VECTOR_3:
 			case BOOL_VECTOR_4:

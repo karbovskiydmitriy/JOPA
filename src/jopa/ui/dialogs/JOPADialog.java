@@ -3,6 +3,7 @@ package jopa.ui.dialogs;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import jopa.ui.editors.JOPAEditorComponent;
 public abstract class JOPADialog<T> extends JDialog {
 
 	private static final long serialVersionUID = 5368138759243687896L;
+
+	protected static final int CTRL_MODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 	protected T object;
 	protected JPanel area;

@@ -88,6 +88,12 @@ public class JOPAProject implements Serializable {
 		});
 	}
 
+	public void updateGlobals() {
+		functions.forEach(function -> {
+			function.globalsNode.updateGlobals();
+		});
+	}
+
 	public synchronized boolean deleteFunction(String name) {
 		return functions.removeIf(function -> function.name.equals(name));
 	}
@@ -329,18 +335,22 @@ public class JOPAProject implements Serializable {
 				shaderCode += mainFunction.constantsNode.generateCode();
 				shaderCode += NEW_LINE;
 			}
-			// TODO bind buffers, images
+			// TODO buffers, images
 			if (mainFunction.startNode.outputs.size() > 0) {
 				for (JOPADataPort port : mainFunction.startNode.outputs) {
 					if (port.variable.name.startsWith("gl_")) {
 						continue;
 					}
 					String modifier = "uniform ";
-					shaderCode += modifier + port.generateCode() + ";" + NEW_LINE;
+					shaderCode += modifier + port.generateCode() + ";";
+					shaderCode += NEW_LINE;
 				}
 				shaderCode += NEW_LINE;
 			}
-			// TODO globals
+			if (globalVariables.size() > 0) {
+				shaderCode += mainFunction.globalsNode.generateCode();
+				shaderCode += TWO_LINES;
+			}
 			if (functions.size() > 1) {
 				for (JOPAFunction function : functions) {
 					if (function != mainFunction) {
@@ -360,7 +370,7 @@ public class JOPAProject implements Serializable {
 	}
 
 	public synchronized String getGeneratedShader() {
-		// TODO updating
+		// DECIDE update?
 		if (generatedShader == null) {
 			generateShader();
 		}

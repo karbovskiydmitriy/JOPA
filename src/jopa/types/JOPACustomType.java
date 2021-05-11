@@ -13,9 +13,7 @@ public class JOPACustomType implements JOPACodeConvertible {
 
 	@Override
 	public String generateCode() {
-		// TODO generateCode
-
-		return null;
+		return template;
 	}
 
 }

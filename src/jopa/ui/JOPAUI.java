@@ -296,7 +296,7 @@ public class JOPAUI {
 		}
 
 		/*
-		 * if (menuPanel == null) { menuPanel = new JOPAMenuPanel(); // TODO stuff
+		 * if (menuPanel == null) { menuPanel = new JOPAMenuPanel();
 		 * window.add(menuPanel); menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
 		 * menuPanel.setSize(window.getWidth(), 40); // menuPanel.init(); }
 		 */ // FIXME panel menu

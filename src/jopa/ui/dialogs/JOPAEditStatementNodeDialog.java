@@ -1,7 +1,6 @@
 package jopa.ui.dialogs;
 
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -61,8 +60,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			JMenuItem newInputMenuItem = new JMenuItem("new input");
 
-			newInputMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			newInputMenuItem.setAccelerator(KeyStroke.getKeyStroke('I', CTRL_MODIFIER));
 
 			newInputMenuItem.addActionListener(e -> {
 				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "input_port"), false, true);
@@ -79,8 +77,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			JMenuItem newOutputMenuItem = new JMenuItem("new output");
 
-			newOutputMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			newOutputMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 
 			newOutputMenuItem.addActionListener(e -> {
 				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "output_port"), true, true);
@@ -90,6 +87,22 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			outputsMenu.add(newOutputMenuItem);
 
 			statementMenuBar.add(outputsMenu);
+		}
+
+		{
+			JMenu templateMenu = new JMenu("template");
+
+			JMenuItem editMenuItem = new JMenuItem("edit");
+
+			editMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
+
+			editMenuItem.addActionListener(e -> {
+				// TODO
+			});
+
+			templateMenu.add(editMenuItem);
+
+			statementMenuBar.add(templateMenu);
 		}
 
 		setJMenuBar(statementMenuBar);

@@ -1,7 +1,6 @@
 package jopa.ui.dialogs;
 
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -40,8 +39,7 @@ public class JOPAEditSettingsDialog extends JOPADialog<JOPASettings> {
 
 			JMenuItem restoreDefaultsMenuItem = new JMenuItem("restore defaults");
 
-			restoreDefaultsMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('R', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			restoreDefaultsMenuItem.setAccelerator(KeyStroke.getKeyStroke('R', CTRL_MODIFIER));
 
 			restoreDefaultsMenuItem.addActionListener(e -> {
 				object.showPortTypes = true;

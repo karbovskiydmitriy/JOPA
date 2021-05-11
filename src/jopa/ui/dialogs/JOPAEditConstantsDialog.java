@@ -1,7 +1,6 @@
 package jopa.ui.dialogs;
 
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -56,8 +55,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 			JMenuItem newConstantMenuItem = new JMenuItem("new constant");
 
-			newConstantMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			newConstantMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
 			newConstantMenuItem.addActionListener(e -> {
 				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.INT, "foobar", "42");

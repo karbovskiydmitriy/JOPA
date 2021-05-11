@@ -2,12 +2,16 @@ package jopa.nodes;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
+import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
 public class JOPABranchNode extends JOPANode {
 
 	private static final long serialVersionUID = -1257820350964560822L;
+
+	public ArrayList<JOPAControlPort> branches;
 
 	public JOPABranchNode(Rectangle rect) {
 		super(rect, "BRANCH");
@@ -20,14 +24,20 @@ public class JOPABranchNode extends JOPANode {
 	@Override
 	protected void init() {
 		super.init();
-		// TODO init
+
+		branches = new ArrayList<JOPAControlPort>();
 	}
 
 	@Override
 	public boolean remove() {
-		// TODO remove
+		inputs.forEach(input -> input.destroyAllConnections());
+		outputs.forEach(output -> output.destroyAllConnections());
+		branches.forEach(branch -> branch.destroyAllConnections());
+		inputs.clear();
+		outputs.clear();
+		branches.clear();
 
-		return false;
+		return true;
 	}
 
 	@Override
@@ -35,6 +45,8 @@ public class JOPABranchNode extends JOPANode {
 		if (flowInconsistency()) {
 			return false;
 		}
+
+		// TODO check
 
 		return true;
 	}

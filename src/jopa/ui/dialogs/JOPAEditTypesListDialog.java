@@ -4,7 +4,6 @@ import static jopa.main.JOPAMain.gui;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -70,8 +69,7 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 		JMenuItem newTypeMenuItem = new JMenuItem("new type");
 		JMenuItem clearTypesMenuItem = new JMenuItem("clear types");
 
-		newTypeMenuItem
-				.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		newTypeMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
 		newTypeMenuItem.addActionListener(e -> {
 			object.types.add(new JOPACustomType("NewType"));

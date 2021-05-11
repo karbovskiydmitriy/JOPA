@@ -76,9 +76,8 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient long startTime;
 	private transient long prevTime;
-	private transient boolean executed;
-	private transient boolean returnCode;
 	private transient int commandIndex;
+	private transient Predicate<String[]> foundOperation;
 	private transient Map<String[], Predicate<String[]>> operations;
 	private String plainCode;
 	private ArrayList<String> commands;
@@ -1043,23 +1042,14 @@ public class JOPASimulationScript implements Serializable {
 									return false;
 								}
 							}
-							executed = false;
-							operations.forEach((strings, operationPredicate) -> {
-								if (Arrays.equals(strings, parts)) {
-									Predicate<String[]> operation = operationPredicate;
-									returnCode = operation.test(args);
-									executed = true;
-
-									return;
-								}
-							});
-							if (!executed) {
+							Predicate<String[]> operation = getOperation(parts);
+							if (operation == null) {
 								System.err.println("Unknown command: " + operationPart);
-							} else {
-								return true;
+
+								return false;
 							}
 
-							return returnCode;
+							return operation.test(args);
 						}
 					}
 				}
@@ -1092,6 +1082,19 @@ public class JOPASimulationScript implements Serializable {
 
 	public void forEachResource(Consumer<JOPAResource> consumer) {
 		resources.forEach(consumer);
+	}
+
+	public Predicate<String[]> getOperation(String[] parts) {
+		foundOperation = null;
+		operations.forEach((name, operation) -> {
+			if (Arrays.equals(name, parts)) {
+				foundOperation = operation;
+
+				return;
+			}
+		});
+
+		return foundOperation;
 	}
 
 }

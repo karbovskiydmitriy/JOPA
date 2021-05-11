@@ -1,9 +1,9 @@
 package jopa.ui.dialogs;
 
+import static jopa.main.JOPAMain.*;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -50,14 +50,34 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 			JMenuItem newScriptMenuItem = new JMenuItem("new script");
 			JMenuItem validateMenuItem = new JMenuItem("validate");
 
-			newScriptMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			newScriptMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
 			newScriptMenuItem.addActionListener(e -> {
 				scriptEditor.setText("");
 			});
 			validateMenuItem.addActionListener(e -> {
-				// TODO script validation (good luck)
+				boolean correct = true;
+				String code = scriptEditor.getText();
+				String[] lines = code.split(" ");
+				for (String line : lines) {
+					if (!line.contains("(") || !line.contains(")")) {
+						correct = false;
+						gui.showMessage(line + " is not a command");
+						break;
+					}
+					String operationPart = line.substring(0, line.indexOf('('));
+					String[] parts = operationPart.split(" ");
+					if (object.getOperation(parts) == null) {
+						correct = false;
+						gui.showMessage("Unknown operation: " + operationPart);
+						break;
+					}
+				}
+				if (correct) {
+					gui.showMessage("Script is correct");
+				} else {
+					gui.showMessage("Script contains errors");
+				}
 			});
 
 			scriptMenu.add(newScriptMenuItem);

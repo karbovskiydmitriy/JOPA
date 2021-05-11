@@ -6,7 +6,6 @@ import static jopa.main.JOPAMain.validateGeneratedShader;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.TextArea;
-import java.awt.Toolkit;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -46,8 +45,7 @@ public class JOPAShowShaderDialog extends JOPADialog<String> {
 			JMenuItem validateMenuItem = new JMenuItem("validate");
 			JMenuItem saveToFileMenuItem = new JMenuItem("save to file");
 
-			saveToFileMenuItem
-					.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			saveToFileMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_MODIFIER));
 
 			validateMenuItem.addActionListener(e -> validateGeneratedShader());
 			saveToFileMenuItem.addActionListener(e -> saveGeneratedShader());

@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPAEndNode;
+import jopa.nodes.JOPAGlobalsNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
 import jopa.nodes.JOPAStatementNode;
@@ -32,6 +33,7 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 	public ArrayList<JOPAVariable> args;
 	public JOPATypesNode typesNode;
 	public JOPAConstantsNode constantsNode;
+	public JOPAGlobalsNode globalsNode;
 	public JOPAStartNode startNode;
 	public JOPAEndNode endNode;
 	public ArrayList<JOPANode> statementNodes;
@@ -41,7 +43,8 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 		this.name = name;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
 		this.typesNode = new JOPATypesNode(50, 200);
-		this.constantsNode = new JOPAConstantsNode(50, 350, "CONSTANTS");
+		this.constantsNode = new JOPAConstantsNode(50, 350);
+		this.globalsNode = new JOPAGlobalsNode(200, 350);
 		this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
 		this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
 		this.statementNodes = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
@@ -61,6 +64,7 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
 		typesNode.draw(g, selectedNode, selectedPort);
 		constantsNode.draw(g, selectedNode, selectedPort);
+		globalsNode.draw(g, selectedNode, selectedPort);
 		startNode.draw(g, selectedNode, selectedPort);
 		endNode.draw(g, selectedNode, selectedPort);
 		statementNodes.forEach(node -> node.draw(g, selectedNode, selectedPort));
@@ -77,6 +81,9 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 		}
 		if (constantsNode.hit(p)) {
 			return constantsNode;
+		}
+		if (globalsNode.hit(p)) {
+			return globalsNode;
 		}
 		if (startNode.hit(p)) {
 			return startNode;
