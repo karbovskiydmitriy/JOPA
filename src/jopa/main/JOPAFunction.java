@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPAGlobalsNode;
@@ -18,7 +19,7 @@ import jopa.nodes.JOPATypesNode;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
-public class JOPAFunction implements Serializable, JOPACodeConvertible {
+public class JOPAFunction implements Serializable {
 
 	private static final long serialVersionUID = -8041471689492839874L;
 
@@ -47,11 +48,13 @@ public class JOPAFunction implements Serializable, JOPACodeConvertible {
 		this.globalsNode = new JOPAGlobalsNode(200, 350);
 		this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
 		this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
-		this.statementNodes = new ArrayList<JOPANode>(Arrays.asList(new JOPAStatementNode(350, 50, "FRAGMENT_TEST")));
+		this.statementNodes = new ArrayList<JOPANode>();
 		init();
 	}
 
 	private void init() {
+		statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
+		statementNodes.add(new JOPABranchNode(350, 200));
 		JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
 		startNode.flowStart.makeConnection(statement.incomingControlFlow);
 		statement.outcomingControlFlow.makeConnection(endNode.flowEnd);

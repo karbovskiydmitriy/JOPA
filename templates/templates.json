@@ -1,11 +1,13 @@
 {
 	"nodes": {
 		"EMPTY": {
+			"type" : "statement",
 			"inputs": [],
 			"outputs": [],
 			"template": null
 		},
 		"CONSTANTS": {
+			"type" : "constants",
 			"inputs": [],
 			"outputs": [
 				"float:PI:3.14"
@@ -13,6 +15,7 @@
 			"template": null
 		},
 		"FRAGMENT_INPUT": {
+			"type" : "start",
 			"inputs": [],
 			"outputs": [
 				"vec4:gl_FragCoord",
@@ -23,6 +26,7 @@
 			"template": null
 		},
 		"FRAGMENT_OUTPUT": {
+			"type" : "end",
 			"inputs": [
 				"vec4:gl_FragColor"
 			],
@@ -30,6 +34,7 @@
 			"template": null
 		},
 		"FRAGMENT_TEST": {
+			"type" : "statement",
 			"inputs": [
 				"vec4:coord",
 				"ivec2:size",

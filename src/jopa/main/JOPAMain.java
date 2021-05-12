@@ -164,6 +164,12 @@ public class JOPAMain {
 			}
 		}
 	}
+	
+	public static void showFunctionList() {
+		synchronized (projectSync) {
+			// TODO showFunctionList
+		}
+	}
 
 	public static void validateFunction() {
 		synchronized (projectSync) {

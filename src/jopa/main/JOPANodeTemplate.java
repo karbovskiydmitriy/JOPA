@@ -17,6 +17,7 @@ public class JOPANodeTemplate {
 	public String name;
 	public String inputs[];
 	public String outputs[];
+	public String type;
 	public String template;
 
 	private static ArrayList<JOPANodeTemplate> standardFormulas;
@@ -40,6 +41,13 @@ public class JOPANodeTemplate {
 			if (element != null) {
 				JsonObject object = element.getAsJsonObject();
 				if (object != null) {
+					JsonElement typeElement = object.get("type");
+					if (typeElement != null) {
+						String typeString = typeElement.getAsString();
+						if (typeString != null) {
+							type = typeString;
+						}
+					}
 					JsonElement inputsElement = object.get("inputs");
 					if (inputsElement != null) {
 						JsonArray inputsArray = inputsElement.getAsJsonArray();

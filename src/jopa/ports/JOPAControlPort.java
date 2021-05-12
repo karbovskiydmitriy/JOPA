@@ -19,7 +19,7 @@ public class JOPAControlPort extends JOPAPort {
 
 	public JOPAControlPort(JOPANode node, String name, boolean isOutput) {
 		super(node, isOutput);
-		this.position = getControlPortPosition(node.rect, isOutput);
+		this.position = getControlPortPosition(node.rect, isOutput, 0);
 		this.connections = new ArrayList<JOPAPort>();
 	}
 
@@ -30,7 +30,6 @@ public class JOPAControlPort extends JOPAPort {
 
 	@Override
 	public void update() {
-		// DECIDE update?
 	}
 
 	public void draw(Graphics2D g, JOPAPort selectedPort) {
@@ -54,8 +53,11 @@ public class JOPAControlPort extends JOPAPort {
 		connections.clear();
 	}
 
-	private static Point getControlPortPosition(Rectangle rect, boolean isOutput) {
-		return isOutput ? new Point(rect.x + rect.width - JOPAControlPort.WIDTH, rect.y) : new Point(rect.x, rect.y);
+	private static Point getControlPortPosition(Rectangle rect, boolean isOutput, int index) {
+		int x = isOutput ? rect.x + rect.width - JOPAControlPort.WIDTH : rect.x;
+		int y = rect.y + index * HEIGHT;
+
+		return new Point(x, y);
 	}
 
 }

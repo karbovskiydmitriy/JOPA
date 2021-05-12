@@ -16,6 +16,7 @@ import static jopa.main.JOPAMain.openProject;
 import static jopa.main.JOPAMain.quit;
 import static jopa.main.JOPAMain.saveProject;
 import static jopa.main.JOPAMain.saveSettings;
+import static jopa.main.JOPAMain.showFunctionList;
 import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.startPlayground;
 import static jopa.main.JOPAMain.stopPlayground;
@@ -100,30 +101,30 @@ public class JOPAUI {
 			{
 				Menu fileMenu = new Menu("file");
 
-				MenuItem newFileMenuItem = new MenuItem("new");
-				MenuItem openFileMenuItem = new MenuItem("open");
-				MenuItem saveFileMenuItem = new MenuItem("save");
-				MenuItem closeFileMenuItem = new MenuItem("close");
-				MenuItem quitFileMenuItem = new MenuItem("quit");
+				MenuItem newMenuItem = new MenuItem("new");
+				MenuItem openMenuItem = new MenuItem("open");
+				MenuItem saveMenuItem = new MenuItem("save");
+				MenuItem closeMenuItem = new MenuItem("close");
+				MenuItem quitMenuItem = new MenuItem("quit");
 
-				newFileMenuItem.setShortcut(new MenuShortcut('N'));
-				openFileMenuItem.setShortcut(new MenuShortcut('O'));
-				saveFileMenuItem.setShortcut(new MenuShortcut('S'));
-				closeFileMenuItem.setShortcut(new MenuShortcut('W'));
-				quitFileMenuItem.setShortcut(new MenuShortcut('Q'));
+				newMenuItem.setShortcut(new MenuShortcut('N'));
+				openMenuItem.setShortcut(new MenuShortcut('O'));
+				saveMenuItem.setShortcut(new MenuShortcut('S'));
+				closeMenuItem.setShortcut(new MenuShortcut('W'));
+				quitMenuItem.setShortcut(new MenuShortcut('Q'));
 
-				newFileMenuItem.addActionListener(e -> createNewProject());
-				openFileMenuItem.addActionListener(e -> openProject());
-				saveFileMenuItem.addActionListener(e -> saveProject());
-				closeFileMenuItem.addActionListener(e -> closeProject());
-				quitFileMenuItem.addActionListener(e -> quit());
+				newMenuItem.addActionListener(e -> createNewProject());
+				openMenuItem.addActionListener(e -> openProject());
+				saveMenuItem.addActionListener(e -> saveProject());
+				closeMenuItem.addActionListener(e -> closeProject());
+				quitMenuItem.addActionListener(e -> quit());
 
-				fileMenu.add(newFileMenuItem);
-				fileMenu.add(openFileMenuItem);
-				fileMenu.add(saveFileMenuItem);
-				fileMenu.add(closeFileMenuItem);
+				fileMenu.add(newMenuItem);
+				fileMenu.add(openMenuItem);
+				fileMenu.add(saveMenuItem);
+				fileMenu.add(closeMenuItem);
 				fileMenu.addSeparator();
-				fileMenu.add(quitFileMenuItem);
+				fileMenu.add(quitMenuItem);
 
 				menuBar.add(fileMenu);
 			}
@@ -131,14 +132,14 @@ public class JOPAUI {
 			{
 				Menu projectMenu = new Menu("project");
 
-				MenuItem editProjectMenuItem = new MenuItem("edit");
-				MenuItem verifyProjectMenuItem = new MenuItem("verify");
+				MenuItem editMenuItem = new MenuItem("edit");
+				MenuItem verifyMenuItem = new MenuItem("verify");
 
-				editProjectMenuItem.addActionListener(e -> editProject());
-				verifyProjectMenuItem.addActionListener(e -> verifyProject());
+				editMenuItem.addActionListener(e -> editProject());
+				verifyMenuItem.addActionListener(e -> verifyProject());
 
-				projectMenu.add(editProjectMenuItem);
-				projectMenu.add(verifyProjectMenuItem);
+				projectMenu.add(editMenuItem);
+				projectMenu.add(verifyMenuItem);
 
 				menuBar.add(projectMenu);
 			}
@@ -146,16 +147,19 @@ public class JOPAUI {
 			{
 				Menu functionMenu = new Menu("function");
 
-				MenuItem createNewFunctionMenuItem = new MenuItem("create new function");
-				MenuItem validateFunctionMenuItem = new MenuItem("validate functions");
+				MenuItem createNewMenuItem = new MenuItem("create new");
+				MenuItem showListMenuItem = new MenuItem("show list");
+				MenuItem validateMenuItem = new MenuItem("validate");
 
-				createNewFunctionMenuItem.setShortcut(new MenuShortcut('F'));
+				createNewMenuItem.setShortcut(new MenuShortcut('F'));
+				showListMenuItem.setShortcut(new MenuShortcut('L'));
 
-				createNewFunctionMenuItem.addActionListener(e -> createNewFunction());
-				validateFunctionMenuItem.addActionListener(e -> validateFunction());
+				createNewMenuItem.addActionListener(e -> createNewFunction());
+				showListMenuItem.addActionListener(e -> showFunctionList());
+				validateMenuItem.addActionListener(e -> validateFunction());
 
-				functionMenu.add(createNewFunctionMenuItem);
-				functionMenu.add(validateFunctionMenuItem);
+				functionMenu.add(createNewMenuItem);
+				functionMenu.add(validateMenuItem);
 
 				menuBar.add(functionMenu);
 			}
@@ -163,32 +167,32 @@ public class JOPAUI {
 			{
 				Menu nodeMenu = new Menu("node");
 
-				MenuItem validateNodeMenuItem = new MenuItem("validate nodes");
+				MenuItem validateNodesMenuItem = new MenuItem("validate nodes");
 
-				validateNodeMenuItem.addActionListener(e -> validateNodes());
+				validateNodesMenuItem.addActionListener(e -> validateNodes());
 
 				{
 					Menu createNewNodeMenu = new Menu("create new node");
 
-					MenuItem statementNode = new MenuItem("statement node");
-					MenuItem functionNode = new MenuItem("function node");
-					MenuItem branchNode = new MenuItem("brach node");
-					MenuItem loopNode = new MenuItem("loop node");
+					MenuItem statementNodeMenuItem = new MenuItem("statement node");
+					MenuItem functionNodeMenuItem = new MenuItem("function node");
+					MenuItem branchNodeMenuItem = new MenuItem("brach node");
+					MenuItem loopNodeMenuItem = new MenuItem("loop node");
 
-					statementNode.addActionListener(e -> createNewNode(JOPAStatementNode.class));
-					functionNode.addActionListener(e -> createNewNode(JOPAFunctionNode.class));
-					branchNode.addActionListener(e -> createNewNode(JOPABranchNode.class));
-					loopNode.addActionListener(e -> createNewNode(JOPALoopNode.class));
+					statementNodeMenuItem.addActionListener(e -> createNewNode(JOPAStatementNode.class));
+					functionNodeMenuItem.addActionListener(e -> createNewNode(JOPAFunctionNode.class));
+					branchNodeMenuItem.addActionListener(e -> createNewNode(JOPABranchNode.class));
+					loopNodeMenuItem.addActionListener(e -> createNewNode(JOPALoopNode.class));
 
-					createNewNodeMenu.add(statementNode);
-					createNewNodeMenu.add(functionNode);
-					createNewNodeMenu.add(branchNode);
-					createNewNodeMenu.add(loopNode);
+					createNewNodeMenu.add(statementNodeMenuItem);
+					createNewNodeMenu.add(functionNodeMenuItem);
+					createNewNodeMenu.add(branchNodeMenuItem);
+					createNewNodeMenu.add(loopNodeMenuItem);
 
 					nodeMenu.add(createNewNodeMenu);
 				}
 
-				nodeMenu.add(validateNodeMenuItem);
+				nodeMenu.add(validateNodesMenuItem);
 
 				menuBar.add(nodeMenu);
 			}
@@ -280,14 +284,14 @@ public class JOPAUI {
 			{
 				Menu helpMenu = new Menu("help");
 
-				MenuItem aboutHelpMenuItem = new MenuItem("about");
-				MenuItem manualHelpMenuItem = new MenuItem("manual");
+				MenuItem aboutMenuItem = new MenuItem("about");
+				MenuItem manualMenuItem = new MenuItem("manual");
 
-				aboutHelpMenuItem.addActionListener(e -> about());
-				manualHelpMenuItem.addActionListener(e -> manual());
+				aboutMenuItem.addActionListener(e -> about());
+				manualMenuItem.addActionListener(e -> manual());
 
-				helpMenu.add(aboutHelpMenuItem);
-				helpMenu.add(manualHelpMenuItem);
+				helpMenu.add(aboutMenuItem);
+				helpMenu.add(manualMenuItem);
 
 				menuBar.add(helpMenu);
 			}
@@ -376,6 +380,11 @@ public class JOPAUI {
 		editFunctionDialog.dispose();
 	}
 
+	public synchronized void openConstantsEditor(JOPAProject project) {
+		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, project);
+		editConstantsDialog.dispose();
+	}
+
 	public synchronized void openTypesListEditor(JOPAProject project) {
 		JOPAEditTypesListDialog editTypesDialog = new JOPAEditTypesListDialog(window, project);
 		editTypesDialog.dispose();
@@ -386,9 +395,8 @@ public class JOPAUI {
 		editTypeDialog.dispose();
 	}
 
-	public synchronized void openConstantsEditor(JOPAProject project) {
-		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, project);
-		editConstantsDialog.dispose();
+	public synchronized void openGlobalsEditor(JOPAFunction function) {
+		// TODO openGlobalsEditor
 	}
 
 	public synchronized void openFunctionNodeEditor(JOPAFunctionNode node) {

@@ -1,8 +1,6 @@
 package jopa.types;
 
-import jopa.main.JOPACodeConvertible;
-
-public class JOPACustomType implements JOPACodeConvertible {
+public class JOPACustomType {
 
 	public String name;
 	public String template;
@@ -11,7 +9,6 @@ public class JOPACustomType implements JOPACodeConvertible {
 		this.name = name;
 	}
 
-	@Override
 	public String generateCode() {
 		return template;
 	}

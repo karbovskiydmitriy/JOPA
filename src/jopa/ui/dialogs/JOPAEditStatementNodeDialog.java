@@ -53,7 +53,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 	}
 
 	private void initMenu() {
-		JMenuBar statementMenuBar = new JMenuBar();
+		JMenuBar statementNodeMenuBar = new JMenuBar();
 
 		{
 			JMenu inputsMenu = new JMenu("inputs");
@@ -69,7 +69,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			inputsMenu.add(newInputMenuItem);
 
-			statementMenuBar.add(inputsMenu);
+			statementNodeMenuBar.add(inputsMenu);
 		}
 
 		{
@@ -86,7 +86,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			outputsMenu.add(newOutputMenuItem);
 
-			statementMenuBar.add(outputsMenu);
+			statementNodeMenuBar.add(outputsMenu);
 		}
 
 		{
@@ -102,10 +102,10 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			templateMenu.add(editMenuItem);
 
-			statementMenuBar.add(templateMenu);
+			statementNodeMenuBar.add(templateMenu);
 		}
 
-		setJMenuBar(statementMenuBar);
+		setJMenuBar(statementNodeMenuBar);
 	}
 
 	protected void addEditorPair(String name, JOPADataPort port) {

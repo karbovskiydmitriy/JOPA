@@ -12,7 +12,6 @@ import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
 import jopa.main.JOPANodeTemplate;
 import jopa.main.JOPAVariable;
@@ -21,7 +20,7 @@ import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPAGLSLType;
 
-public abstract class JOPANode implements Serializable, JOPACodeConvertible {
+public abstract class JOPANode implements Serializable {
 
 	private static final long serialVersionUID = 3421947909279717819L;
 
@@ -71,6 +70,8 @@ public abstract class JOPANode implements Serializable, JOPACodeConvertible {
 	public abstract boolean check();
 
 	public abstract boolean remove();
+	
+	public abstract String generateCode();
 
 	protected boolean flowInconsistency() {
 		return false;

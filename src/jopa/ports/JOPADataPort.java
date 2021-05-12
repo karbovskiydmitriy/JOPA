@@ -12,12 +12,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import jopa.main.JOPACodeConvertible;
 import jopa.main.JOPAConstant;
 import jopa.main.JOPAVariable;
 import jopa.nodes.JOPANode;
 
-public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
+public class JOPADataPort extends JOPAPort {
 
 	private static final long serialVersionUID = 6506059782634794376L;
 
@@ -111,7 +110,6 @@ public class JOPADataPort extends JOPAPort implements JOPACodeConvertible {
 		connections.clear();
 	}
 
-	@Override
 	public String generateCode() {
 		return variable.toString();
 	}

@@ -26,7 +26,6 @@ public class JOPAGlobalsNode extends JOPANode {
 		return true;
 	}
 
-	@Override
 	public String generateCode() {
 		String code = "";
 

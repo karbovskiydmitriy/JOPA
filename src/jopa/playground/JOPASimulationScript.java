@@ -126,7 +126,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
 		if (args.length != 1) {
-			logSimulationError(this, "CREATE WINDOW uses 2 arguments (texture name, window name)", args);
+			logSimulationError(this, "CREATE TEXTURE uses 2 arguments (texture name, window name)", args);
 
 			return false;
 		}
@@ -432,7 +432,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> SET_BOOL_OPERATION = args -> {
 		if (args.length != 2) {
-			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+			logSimulationError(this, "SET BOOL uses 2 arguments (name, value)", args);
 
 			return false;
 		}
@@ -454,7 +454,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> SET_INT_OPERATION = args -> {
 		if (args.length != 2) {
-			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+			logSimulationError(this, "SET INT uses 2 arguments (name, value)", args);
 
 			return false;
 		}
@@ -476,7 +476,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> SET_UINT_OPERATION = args -> {
 		if (args.length != 2) {
-			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+			logSimulationError(this, "SET UINT uses 2 arguments (name, value)", args);
 
 			return false;
 		}
@@ -498,7 +498,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> SET_FLOAT_OPERATION = args -> {
 		if (args.length != 2) {
-			logSimulationError(this, "SET VAR uses 2 arguments (name, value)", args);
+			logSimulationError(this, "SET FLOAT uses 2 arguments (name, value)", args);
 
 			return false;
 		}
@@ -605,7 +605,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> DRAW_PREDICATE = args -> {
 		if (args.length != 0) {
-			logSimulationError(this, "DO TICKS uses 0 arguments", args);
+			logSimulationError(this, "DRAW uses 0 arguments", args);
 
 			return false;
 		}

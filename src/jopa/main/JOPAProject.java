@@ -18,6 +18,7 @@ import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPAFunctionNode;
+import jopa.nodes.JOPAGlobalsNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
@@ -266,10 +267,12 @@ public class JOPAProject implements Serializable {
 			gui.openLoopNodeEditor((JOPALoopNode) node);
 		} else if (nodeType.equals(JOPAFunctionNode.class)) {
 			gui.openFunctionNodeEditor((JOPAFunctionNode) node);
-		} else if (nodeType.equals(JOPATypesNode.class)) {
-			gui.openTypesListEditor(currentProject);
 		} else if (nodeType.equals(JOPAConstantsNode.class)) {
 			gui.openConstantsEditor(this);
+		} else if (nodeType.equals(JOPATypesNode.class)) {
+			gui.openTypesListEditor(currentProject);
+		} else if (nodeType.equals(JOPAGlobalsNode.class)) {
+			gui.openGlobalsEditor(currentFunction);
 		} else if (nodeType.equals(JOPAStartNode.class)) {
 			gui.openFunctionEditor(currentFunction);
 		} else if (nodeType.equals(JOPAEndNode.class)) {
@@ -288,6 +291,27 @@ public class JOPAProject implements Serializable {
 	private JOPAPort getPortOnPoint(Point p) {
 		if (currentFunction != null) {
 			return currentFunction.getPortOnPoint(p);
+		}
+
+		return null;
+	}
+
+	public synchronized String[] getFunctions() {
+		String[] functionsArray = new String[functions.size()];
+
+		for (int i = 0; i < functions.size(); i++) {
+			JOPAFunction function = functions.get(i);
+			functionsArray[i] = function.name;
+		}
+
+		return functionsArray;
+	}
+
+	public synchronized JOPAFunction getFunctionByName(String functionName) {
+		for (JOPAFunction function : functions) {
+			if (function.name.equals(functionName)) {
+				return function;
+			}
 		}
 
 		return null;

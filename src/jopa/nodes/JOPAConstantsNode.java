@@ -27,7 +27,6 @@ public class JOPAConstantsNode extends JOPANode {
 		return true;
 	}
 
-	@Override
 	public String generateCode() {
 		String constantsCode = "";
 
