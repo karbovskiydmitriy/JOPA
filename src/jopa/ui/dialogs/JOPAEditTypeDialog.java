@@ -12,8 +12,8 @@ import javax.swing.JTextArea;
 import static jopa.main.JOPAMain.*;
 import static jopa.util.JOPAOGLUtil.*;
 
-import jopa.main.JOPAProjectType;
 import jopa.types.JOPACustomType;
+import jopa.types.JOPAProjectType;
 
 public class JOPAEditTypeDialog extends JOPADialog<JOPACustomType> {
 

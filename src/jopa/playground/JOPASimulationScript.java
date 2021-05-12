@@ -41,8 +41,8 @@ import java.util.function.Predicate;
 
 import jopa.exceptions.JOPAPlaygroundException;
 import jopa.graphics.JOPAImage;
-import jopa.main.JOPAProjectType;
 import jopa.types.JOPAGLSLType;
+import jopa.types.JOPAProjectType;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
 
@@ -125,7 +125,7 @@ public class JOPASimulationScript implements Serializable {
 	};
 
 	private transient final Predicate<String[]> NEW_TEXTURE_OPERATION = args -> {
-		if (args.length != 1) {
+		if (args.length != 2) {
 			logSimulationError(this, "CREATE TEXTURE uses 2 arguments (texture name, window name)", args);
 
 			return false;
@@ -923,10 +923,10 @@ public class JOPASimulationScript implements Serializable {
 			JOPASimulationScript script = new JOPASimulationScript();
 			switch (type) {
 			case FRAGMENT:
-				script.setupScript(loadStandardScript("fragment.jopascript"));
+				script.setupScript(loadStandardScript("frag.jopascript"));
 				break;
 			case COMPUTE:
-				script.setupScript(loadStandardScript("compute.jopascript"));
+				script.setupScript(loadStandardScript("comp.jopascript"));
 				break;
 			case CUSTOM:
 				script.setupScript(loadStandardScript("test.jopascript"));

@@ -97,7 +97,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			editMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 
 			editMenuItem.addActionListener(e -> {
-				// TODO
+//				gui.
 			});
 
 			templateMenu.add(editMenuItem);

@@ -26,7 +26,6 @@ public class JOPASettings {
 
 	public JOPASettings() {
 		readSettings();
-		writeSettings();
 	}
 
 	public void readSettings() {

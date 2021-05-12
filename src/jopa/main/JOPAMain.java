@@ -13,6 +13,7 @@ import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStatementNode;
+import jopa.types.JOPAProjectType;
 import jopa.ui.JOPAUI;
 
 public class JOPAMain {

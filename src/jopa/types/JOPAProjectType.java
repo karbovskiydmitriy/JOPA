@@ -1,4 +1,4 @@
-package jopa.main;
+package jopa.types;
 
 public enum JOPAProjectType {
 	FRAGMENT,

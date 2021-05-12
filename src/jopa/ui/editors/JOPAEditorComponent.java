@@ -8,7 +8,7 @@ public abstract class JOPAEditorComponent<T> extends JPanel {
 
 	protected T object;
 
-	protected JOPAEditorComponent(T object) {
+	public JOPAEditorComponent(T object) {
 		this.object = object;
 	}
 

@@ -34,6 +34,8 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -48,17 +50,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
 import jopa.main.JOPAProject;
-import jopa.main.JOPAProjectType;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
 import jopa.types.JOPACustomType;
+import jopa.types.JOPAProjectType;
 import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
+import jopa.ui.dialogs.JOPAEditDefinesDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
 import jopa.ui.dialogs.JOPAEditFunctionNodeDialog;
+import jopa.ui.dialogs.JOPAEditGlobalsDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
@@ -91,7 +95,13 @@ public class JOPAUI {
 		window.setEnabled(true);
 		window.setVisible(true);
 		window.setLayout(new BorderLayout());
-		window.requestFocus();
+		window.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				System.out.println(e);
+				currentProject.keyPressed(e.getKeyCode());
+			}
+		});
 	}
 
 	public synchronized void createMenu() {
@@ -370,19 +380,9 @@ public class JOPAUI {
 		editProjectDialog.dispose();
 	}
 
-	public synchronized void openScriptEditor(JOPASimulationScript script) {
-		JOPAEditScriptDialog editScriptDialog = new JOPAEditScriptDialog(window, script);
-		editScriptDialog.dispose();
-	}
-
-	public synchronized void openFunctionEditor(JOPAFunction function) {
-		JOPAEditFunctionDialog editFunctionDialog = new JOPAEditFunctionDialog(window, function);
-		editFunctionDialog.dispose();
-	}
-
-	public synchronized void openConstantsEditor(JOPAProject project) {
-		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, project);
-		editConstantsDialog.dispose();
+	public synchronized void openDefinesEditor(JOPAProject project) {
+		JOPAEditDefinesDialog editDefinesDialog = new JOPAEditDefinesDialog(window, currentProject);
+		editDefinesDialog.dispose();
 	}
 
 	public synchronized void openTypesListEditor(JOPAProject project) {
@@ -395,8 +395,24 @@ public class JOPAUI {
 		editTypeDialog.dispose();
 	}
 
+	public synchronized void openConstantsEditor(JOPAProject project) {
+		JOPAEditConstantsDialog editConstantsDialog = new JOPAEditConstantsDialog(window, project);
+		editConstantsDialog.dispose();
+	}
+
 	public synchronized void openGlobalsEditor(JOPAFunction function) {
-		// TODO openGlobalsEditor
+		JOPAEditGlobalsDialog editGlobalsDialog = new JOPAEditGlobalsDialog(window, currentProject);
+		editGlobalsDialog.dispose();
+	}
+
+	public synchronized void openFunctionEditor(JOPAFunction function) {
+		JOPAEditFunctionDialog editFunctionDialog = new JOPAEditFunctionDialog(window, function);
+		editFunctionDialog.dispose();
+	}
+
+	public synchronized void openScriptEditor(JOPASimulationScript script) {
+		JOPAEditScriptDialog editScriptDialog = new JOPAEditScriptDialog(window, script);
+		editScriptDialog.dispose();
 	}
 
 	public synchronized void openFunctionNodeEditor(JOPAFunctionNode node) {

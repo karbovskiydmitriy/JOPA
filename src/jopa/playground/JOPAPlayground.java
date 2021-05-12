@@ -6,7 +6,7 @@ import static jopa.main.JOPAMain.system;
 
 import java.io.Closeable;
 
-import jopa.main.JOPAProjectType;
+import jopa.types.JOPAProjectType;
 
 public class JOPAPlayground implements Closeable {
 

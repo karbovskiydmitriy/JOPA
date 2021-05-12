@@ -7,8 +7,6 @@ import static jopa.main.JOPAMain.settings;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -23,6 +21,7 @@ public class JOPACanvas extends JPanel {
 
 	public JOPACanvas() {
 		setDoubleBuffered(true);
+		setFocusable(true);
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -91,14 +90,6 @@ public class JOPACanvas extends JPanel {
 				gui.repaint();
 			}
 		});
-		// FIXME keyTyped
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				currentProject.keyTyped(e.getKeyCode());
-			}
-		});
-
 		graphics2D = new JOPAGraphics2D();
 	}
 

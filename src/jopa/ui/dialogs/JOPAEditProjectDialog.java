@@ -14,7 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import jopa.main.JOPAProject;
-import jopa.main.JOPAProjectType;
+import jopa.types.JOPAProjectType;
 
 public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 

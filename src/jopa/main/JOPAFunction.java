@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAConstantsNode;
+import jopa.nodes.JOPADefinesNode;
 import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPAGlobalsNode;
 import jopa.nodes.JOPANode;
@@ -32,6 +32,7 @@ public class JOPAFunction implements Serializable {
 	public JOPAGLSLType returnType;
 	public String name;
 	public ArrayList<JOPAVariable> args;
+	public JOPADefinesNode definesNode;
 	public JOPATypesNode typesNode;
 	public JOPAConstantsNode constantsNode;
 	public JOPAGlobalsNode globalsNode;
@@ -43,6 +44,7 @@ public class JOPAFunction implements Serializable {
 		this.returnType = JOPAGLSLType.VOID;
 		this.name = name;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
+		this.definesNode = new JOPADefinesNode(200, 200);
 		this.typesNode = new JOPATypesNode(50, 200);
 		this.constantsNode = new JOPAConstantsNode(50, 350);
 		this.globalsNode = new JOPAGlobalsNode(200, 350);
@@ -54,7 +56,7 @@ public class JOPAFunction implements Serializable {
 
 	private void init() {
 		statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
-		statementNodes.add(new JOPABranchNode(350, 200));
+		// statementNodes.add(new JOPABranchNode(350, 200));
 		JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
 		startNode.flowStart.makeConnection(statement.incomingControlFlow);
 		statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
@@ -65,6 +67,7 @@ public class JOPAFunction implements Serializable {
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {
+		definesNode.draw(g, selectedNode, selectedPort);
 		typesNode.draw(g, selectedNode, selectedPort);
 		constantsNode.draw(g, selectedNode, selectedPort);
 		globalsNode.draw(g, selectedNode, selectedPort);
@@ -78,6 +81,9 @@ public class JOPAFunction implements Serializable {
 			if (node.hit(p)) {
 				return node;
 			}
+		}
+		if (definesNode.hit(p)) {
+			return definesNode;
 		}
 		if (typesNode.hit(p)) {
 			return typesNode;

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import jopa.io.JOPASerializer;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAConstantsNode;
+import jopa.nodes.JOPADefinesNode;
 import jopa.nodes.JOPAEndNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPAGlobalsNode;
@@ -29,6 +30,7 @@ import jopa.playground.JOPASimulationScript;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPACustomType;
+import jopa.types.JOPAProjectType;
 
 public class JOPAProject implements Serializable {
 
@@ -48,6 +50,8 @@ public class JOPAProject implements Serializable {
 	public transient JOPASimulationScript script;
 	public String name;
 	public JOPAProjectType projectType;
+	public int[] localGroupSize;
+	public ArrayList<JOPASymbol> defines;
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAVariable> globalVariables;
@@ -61,6 +65,8 @@ public class JOPAProject implements Serializable {
 
 	private void init() {
 		currentProject = this;
+		localGroupSize = new int[] { 1, 1, 1 };
+		defines = new ArrayList<JOPASymbol>();
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
 		globalVariables = new ArrayList<JOPAVariable>();
@@ -222,9 +228,10 @@ public class JOPAProject implements Serializable {
 		}
 	}
 
-	public synchronized void keyTyped(int keyCode) {
+	public synchronized void keyPressed(int keyCode) {
 		switch (keyCode) {
 		case 8:
+		case 127:
 			if (selectedNode != null) {
 				currentFunction.removeNode(selectedNode);
 				gui.repaint();
@@ -267,10 +274,12 @@ public class JOPAProject implements Serializable {
 			gui.openLoopNodeEditor((JOPALoopNode) node);
 		} else if (nodeType.equals(JOPAFunctionNode.class)) {
 			gui.openFunctionNodeEditor((JOPAFunctionNode) node);
-		} else if (nodeType.equals(JOPAConstantsNode.class)) {
-			gui.openConstantsEditor(this);
+		} else if (nodeType.equals(JOPADefinesNode.class)) {
+			gui.openDefinesEditor(currentProject);
 		} else if (nodeType.equals(JOPATypesNode.class)) {
 			gui.openTypesListEditor(currentProject);
+		} else if (nodeType.equals(JOPAConstantsNode.class)) {
+			gui.openConstantsEditor(this);
 		} else if (nodeType.equals(JOPAGlobalsNode.class)) {
 			gui.openGlobalsEditor(currentFunction);
 		} else if (nodeType.equals(JOPAStartNode.class)) {
@@ -349,13 +358,21 @@ public class JOPAProject implements Serializable {
 				break;
 			}
 			shaderCode += TWO_LINES;
-			// TODO defines
-			if (projectType == JOPAProjectType.COMPUTE) {
-				shaderCode += ""; // TODO local groups size
+			if (defines.size() > 0) {
+				shaderCode += mainFunction.definesNode.generateCode();
 				shaderCode += TWO_LINES;
 			}
-			shaderCode += mainFunction.typesNode.generateCode();
-			if (mainFunction.constantsNode.outputs.size() > 0) {
+			if (projectType == JOPAProjectType.COMPUTE) {
+				shaderCode += "layout(local_size_x = " + localGroupSize[0] + ", ";
+				shaderCode += "local_size_y = " + localGroupSize[1] + ", ";
+				shaderCode += "local_size_z = " + localGroupSize[2] + ") in;";
+				shaderCode += TWO_LINES;
+			}
+			if (types.size() > 0) {
+				shaderCode += mainFunction.typesNode.generateCode();
+				shaderCode += TWO_LINES;
+			}
+			if (constants.size() > 0) {
 				shaderCode += mainFunction.constantsNode.generateCode();
 				shaderCode += NEW_LINE;
 			}

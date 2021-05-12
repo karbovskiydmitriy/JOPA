@@ -127,9 +127,9 @@ import java.nio.ByteBuffer;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import jopa.graphics.JOPAImage;
-import jopa.main.JOPAProjectType;
 import jopa.playground.JOPASimulationScript;
 import jopa.types.JOPAGLSLType;
+import jopa.types.JOPAProjectType;
 import jopa.types.JOPAResource;
 
 public final class JOPAOGLUtil {

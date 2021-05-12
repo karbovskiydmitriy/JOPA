@@ -60,6 +60,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 			newConstantMenuItem.addActionListener(e -> {
 				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.INT, "foobar", "42");
 				object.constants.add(newConstant);
+				editors.forEach(editor -> editor.writeBack());
 				object.updateConstants();
 				init();
 			});
