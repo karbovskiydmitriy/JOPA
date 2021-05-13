@@ -68,7 +68,6 @@ public class JOPAMain {
 		gui.createWindow();
 		gui.createMenu();
 		gui.createTabs();
-		gui.createCanvas();
 	}
 
 	public static void createNewProject() {

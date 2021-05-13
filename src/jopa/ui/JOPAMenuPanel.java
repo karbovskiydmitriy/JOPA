@@ -1,7 +1,12 @@
 package jopa.ui;
 
 import java.awt.Button;
+import java.awt.FlowLayout;
 import java.awt.Panel;
+
+import jopa.nodes.JOPAStatementNode;
+
+import static jopa.main.JOPAMain.*;
 
 public class JOPAMenuPanel extends Panel {
 
@@ -9,17 +14,28 @@ public class JOPAMenuPanel extends Panel {
 
 	public Button[] buttons;
 
-	public void init() {
-		buttons = new Button[10];
-		int width = getWidth() / 10;
-		width -= 20;
-		int height = getHeight() - 20;
-		for (int i = 0, offset = 10; i < 10; i++, offset += width + 20) {
-			Button b = new Button();
-			b.setLocation(offset, 10);
-			b.setSize(width, height);
-			buttons[i] = b;
+	public JOPAMenuPanel() {
+		setLayout(new FlowLayout(FlowLayout.LEFT));
+	}
+
+	public void initMenu() {
+		{
+			Button newFunctionButton = new Button("new function");
+			newFunctionButton.addActionListener(e -> createNewFunction());
+			add(newFunctionButton);
+		}
+
+		{
+			Button newNodeButton = new Button("new node");
+			newNodeButton.addActionListener(e -> createNewNode(JOPAStatementNode.class));
+			add(newNodeButton);
+		}
+
+		{
+			Button showShaderButton = new Button("show shader");
+			showShaderButton.addActionListener(e -> showShaderCode());
+			add(showShaderButton);
 		}
 	}
-	
+
 }

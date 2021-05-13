@@ -28,20 +28,23 @@ import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
-import java.awt.Panel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -77,9 +80,14 @@ public class JOPAUI {
 
 	private JFrame window;
 	private MenuBar menuBar;
-	private Panel menuPanel;
+	private JOPAMenuPanel menuPanel;
 	private JTabbedPane tabs;
-	private JOPACanvas canvas;
+	private HashMap<String, JOPACanvas> canvases;
+	private JOPACanvas currentCanvas;
+
+	public JOPAUI() {
+		canvases = new HashMap<String, JOPACanvas>(1);
+	}
 
 	public synchronized void createWindow() {
 		String title = "Java and OpenGL parallel algorithms application (JOPA) v1.0 by Karbovskiy Dmitriy (2020-2021)";
@@ -94,7 +102,7 @@ public class JOPAUI {
 		window.setSize(800, 600);
 		window.setEnabled(true);
 		window.setVisible(true);
-		window.setLayout(new BorderLayout());
+		// window.setLayout(new BorderLayout());
 		window.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -102,6 +110,10 @@ public class JOPAUI {
 				currentProject.keyPressed(e.getKeyCode());
 			}
 		});
+
+		JPanel contentPane = new JPanel(new BorderLayout(), true);
+		window.add(contentPane);
+		window.setContentPane(contentPane);
 	}
 
 	public synchronized void createMenu() {
@@ -309,11 +321,12 @@ public class JOPAUI {
 			window.setMenuBar(menuBar);
 		}
 
-		/*
-		 * if (menuPanel == null) { menuPanel = new JOPAMenuPanel();
-		 * window.add(menuPanel); menuPanel.setBackground(new Color(0.3f, 0.8f, 0.9f));
-		 * menuPanel.setSize(window.getWidth(), 40); // menuPanel.init(); }
-		 */ // FIXME panel menu
+		if (menuPanel == null) {
+			menuPanel = new JOPAMenuPanel();
+		}
+		window.getContentPane().add(menuPanel, BorderLayout.NORTH);
+		menuPanel.setPreferredSize(new Dimension(window.getWidth(), 40));
+		menuPanel.initMenu();
 	}
 
 	public synchronized void createTabs() {
@@ -323,56 +336,30 @@ public class JOPAUI {
 			tabs.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					// if (currentCanvas != null) {
-					// currentCanvas.setEnabled(false); // TODO the switch
-					// }
-					int selectedIndex = tabs.getSelectedIndex();
-					if (selectedIndex != -1) {
-						currentProject.selectFunction(selectedIndex);
+					Component tab = tabs.getComponents()[tabs.getSelectedIndex()];
+					if (tab.getClass().equals(JOPACanvas.class)) {
+						JOPACanvas canvas = (JOPACanvas) tab;
+						String functionName = tabs.getTitleAt(tabs.getSelectedIndex());
+						System.out.println("[UI] new active function: " + functionName);
+						currentProject.selectFunction(functionName);
+						currentCanvas = canvas;
 					}
-					// if (function != null) {
-					// currentCanvas = function.canvas;
-					// currentCanvas.setEnabled(true);
-					// } else {
-					// currentCanvas = null;
-					// }
 				}
 			});
-			window.add(tabs);
-			int y;
-			if (menuPanel != null) {
-				y = menuPanel.getLocation().y + menuPanel.getHeight();
-			} else {
-				y = 0;
-			}
-			// System.out.println(y);
-			tabs.setLocation(0, y);
-			tabs.setSize(window.getWidth(), window.getHeight() - y);
-			// System.out.println(tabs.getLocation());
-			// menuPanel.setVisible(false);
-		}
-	}
-
-	public synchronized void createCanvas() {
-		if (canvas == null) {
-			canvas = new JOPACanvas();
-			canvas.repaint();
+			int offset = menuPanel.getHeight();
+			window.getContentPane().add(tabs, BorderLayout.CENTER);
+			tabs.setLocation(0, offset);
+			Dimension tabsSize = new Dimension(window.getWidth(), window.getHeight() - offset);
+			tabs.setPreferredSize(tabsSize);
 		}
 	}
 
 	public synchronized void addFunction(JOPAFunction function) {
-		// synchronized (projectSync) {
-		// if (currentProject != null) {
-		// JOPACanvas canvas = createCanvas();
-		// function.canvas = canvas;
-		// if (openEditor) {
-		// editFunctionPrototype(function);
-		// }
-		// Panel panel = new Panel();
-		// panel.add(canvas);
+		JOPACanvas canvas = new JOPACanvas();
 		tabs.addTab(function.name, canvas);
-		// }
-		// }
+		canvases.put(function.name, canvas);
+		currentCanvas.setPreferredSize(tabs.getSize());
+		currentCanvas = canvas;
 	}
 
 	public synchronized void openProjectEditor(JOPAProject project) {
@@ -464,7 +451,6 @@ public class JOPAUI {
 			fileChooser.setDialogTitle(title);
 		}
 		if (filter != null) {
-			// FIXME add extension
 			fileChooser.setFileFilter(filter);
 		}
 		if (path != null) {
@@ -481,7 +467,17 @@ public class JOPAUI {
 		} else {
 			int returnValue = fileChooser.showSaveDialog(window);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				return fileChooser.getSelectedFile();
+				File selectedFile = fileChooser.getSelectedFile();
+				if (selectedFile != null) {
+					String selectedPath = selectedFile.getAbsolutePath();
+					String extension = "." + filter.getExtensions()[0];
+					if (!selectedPath.endsWith(extension)) {
+						selectedPath += extension;
+						selectedFile = new File(selectedPath);
+					}
+				}
+
+				return selectedFile;
 			}
 		}
 
@@ -495,8 +491,8 @@ public class JOPAUI {
 	}
 
 	public synchronized void repaint() {
-		if (canvas != null) {
-			canvas.repaint();
+		if (currentCanvas != null) {
+			currentCanvas.repaint();
 		}
 	}
 

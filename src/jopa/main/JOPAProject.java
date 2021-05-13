@@ -105,10 +105,14 @@ public class JOPAProject implements Serializable {
 		return functions.removeIf(function -> function.name.equals(name));
 	}
 
-	public synchronized void selectFunction(int index) {
-		if (functions.size() > 0) {
-			currentFunction = functions.get(index);
-		}
+	public synchronized void selectFunction(String name) {
+		functions.forEach(function -> {
+			if (function.name.equals(name)) {
+				currentFunction = function;
+
+				return;
+			}
+		});
 	}
 
 	public synchronized void createPlayground(JOPAProjectType type) {
@@ -408,7 +412,7 @@ public class JOPAProject implements Serializable {
 			gui.showMessage("project contains error!");
 			generatedShader = null;
 		}
-		
+
 		return true;
 	}
 
