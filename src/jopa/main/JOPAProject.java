@@ -45,10 +45,12 @@ public class JOPAProject implements Serializable {
 	private transient Point cursorPosition;
 	private transient String generatedShader;
 	private transient JOPAPlayground playground;
+	private boolean projectChanged;
 	private ArrayList<JOPAFunction> functions;
 	private JOPAFunction mainFunction;
 
 	public transient JOPASimulationScript script;
+	public boolean isCustom;
 	public String name;
 	public JOPAProjectType projectType;
 	public int[] localGroupSize;
@@ -127,16 +129,18 @@ public class JOPAProject implements Serializable {
 
 	public synchronized void startPlayground() {
 		if (playground != null) {
-			if (projectType == JOPAProjectType.CUSTOM) {
+			if (isCustom) {
 				String scriptCode = loadStandardScript("test.jopascript");
 				if (scriptCode != null) {
 					script.setupScript(scriptCode);
-					playground.stop();
-					playground.start();
 				} else {
 					gui.showMessage("Shader generation failed");
+
+					return;
 				}
 			}
+			playground.stop();
+			playground.start();
 		}
 	}
 
@@ -360,10 +364,9 @@ public class JOPAProject implements Serializable {
 
 	public synchronized boolean generateShader() {
 		if (verifyFunctions()) {
+			System.out.println("[PROJECT] Generating " + projectType + " shader");
 			String shaderCode = "#version ";
 			switch (projectType) {
-			// HACK!!!
-			case CUSTOM:
 			case FRAGMENT:
 				shaderCode += "130";
 				break;
@@ -427,9 +430,9 @@ public class JOPAProject implements Serializable {
 	}
 
 	public synchronized String getGeneratedShader() {
-		// DECIDE update?
-		if (generatedShader == null) {
+		if (projectChanged || generatedShader == null) {
 			generateShader();
+			projectChanged = false;
 		}
 
 		return generatedShader;

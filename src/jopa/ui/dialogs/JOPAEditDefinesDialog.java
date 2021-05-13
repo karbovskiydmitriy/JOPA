@@ -40,6 +40,7 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 			JOPASymbol symbol = object.defines.get(i);
 			addEditorPair("defines[" + i + "]", symbol);
 		}
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();
@@ -52,10 +53,22 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 			JMenu definesMenu = new JMenu("defines");
 
 			JMenuItem newMenuItem = new JMenuItem("new");
+			JMenuItem clearMenuItem = new JMenuItem("clear");
 
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
+			newMenuItem.addActionListener(e -> {
+				JOPASymbol preprocessorSymbol = new JOPASymbol("name", "value");
+				object.defines.add(preprocessorSymbol);
+				init();
+			});
+			clearMenuItem.addActionListener(e -> {
+				object.defines.clear();
+				init();
+			});
+
 			definesMenu.add(newMenuItem);
+			definesMenu.add(clearMenuItem);
 
 			definesMenuBar.add(definesMenu);
 		}
@@ -76,7 +89,6 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

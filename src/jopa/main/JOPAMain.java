@@ -72,9 +72,9 @@ public class JOPAMain {
 
 	public static void createNewProject() {
 		synchronized (projectSync) {
-			currentProject = new JOPAProject("New project", JOPAProjectType.CUSTOM);
+			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
-			createPlayground(currentProject.projectType);
+			createCustomPlayground(currentProject.projectType);
 		}
 
 		gui.repaint();
@@ -292,6 +292,17 @@ public class JOPAMain {
 	public static void createPlayground(JOPAProjectType type) {
 		synchronized (projectSync) {
 			if (currentProject != null) {
+				currentProject.createPlayground(type);
+			} else {
+				projectNotCreated();
+			}
+		}
+	}
+
+	public static void createCustomPlayground(JOPAProjectType type) {
+		synchronized (projectSync) {
+			if (currentProject != null) {
+				currentProject.isCustom = true;
 				currentProject.createPlayground(type);
 			} else {
 				projectNotCreated();

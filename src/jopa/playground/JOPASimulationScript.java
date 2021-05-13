@@ -352,15 +352,7 @@ public class JOPASimulationScript implements Serializable {
 			checkForError("generate shader");
 			break;
 		default:
-			// HACK gonna replace this
-			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
-			if (shader == 0) {
-				shader = createShader(GL_COMPUTE_SHADER, shaderCode);
-			}
-			// logSimulationError(this, "Shader type is not set up in the project",
-			// currentProject);
-
-			// return false;
+			shader = 0;
 		}
 		if (shader == 0) {
 			logSimulationError(this, "Shader was not compiled", shaderCode);
@@ -1022,7 +1014,7 @@ public class JOPASimulationScript implements Serializable {
 		// if (type == null) {
 		// return null;
 		// }
-		System.out.println("[SCRIPT] creating with type: " + type);
+		System.out.println("[SCRIPT] Creating with type: " + type);
 		JOPASimulationScript script = new JOPASimulationScript();
 		switch (type) {
 		case FRAGMENT:
@@ -1044,7 +1036,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		setCode(code);
-		System.out.println("[SCRIPT] set up with " + commands.size() + " lines");
+		System.out.println("[SCRIPT] Set up with " + commands.size() + " lines");
 
 		return true;
 	}
@@ -1091,7 +1083,7 @@ public class JOPASimulationScript implements Serializable {
 		int error = glGetError();
 		if (error != 0) {
 			if (context.length > 0) {
-				System.out.println("[SCRIPT] " + context[0]);
+				System.out.println("[SCRIPT] Context: " + context[0]);
 			}
 			System.out.println("[SCRIPT] Error code: " + error);
 

@@ -55,7 +55,6 @@ public class JOPAFunction implements Serializable {
 
 	private void setupInitialNodes() {
 		switch (currentProject.projectType) {
-		case CUSTOM:
 		case FRAGMENT: {
 			statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
 			// statementNodes.add(new JOPABranchNode(350, 200));

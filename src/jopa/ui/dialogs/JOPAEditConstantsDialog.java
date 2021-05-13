@@ -42,6 +42,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 			JOPAConstant constant = object.constants.get(i);
 			addEditorPair("constants[" + i + "]", constant);
 		}
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();
@@ -86,7 +87,6 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

@@ -20,7 +20,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 
 	private static final long serialVersionUID = -6455920925968222447L;
 
-	private static final String[] PROJECT_TYPES = new String[] { "Fragment", "Compute", "Custom" };
+	private static final String[] PROJECT_TYPES = new String[] { "Fragment", "Compute", };
 
 	private JComboBox<String> projectTypeComboBox;
 

@@ -3,6 +3,7 @@ package jopa.ui;
 import static jopa.main.JOPAMain.about;
 import static jopa.main.JOPAMain.closePlayground;
 import static jopa.main.JOPAMain.closeProject;
+import static jopa.main.JOPAMain.createCustomPlayground;
 import static jopa.main.JOPAMain.createNewFunction;
 import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewProject;
@@ -106,7 +107,7 @@ public class JOPAUI {
 		window.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				System.out.println("[UI] " + e);
+				System.out.println("[UI] KeyPressed event: " + e);
 				currentProject.keyPressed(e.getKeyCode());
 			}
 		});
@@ -286,7 +287,7 @@ public class JOPAUI {
 
 					defaultFragmentShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.FRAGMENT));
 					defaultComputeShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.COMPUTE));
-					customShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.CUSTOM));
+					customShaderMenuItem.addActionListener(e -> createCustomPlayground(JOPAProjectType.FRAGMENT));
 
 					createPlaygroundMenuItem.add(defaultFragmentShaderMenuItem);
 					createPlaygroundMenuItem.add(defaultComputeShaderMenuItem);
@@ -340,7 +341,7 @@ public class JOPAUI {
 					if (tab.getClass().equals(JOPACanvas.class)) {
 						JOPACanvas canvas = (JOPACanvas) tab;
 						String functionName = tabs.getTitleAt(tabs.getSelectedIndex());
-						System.out.println("[UI] new active function: " + functionName);
+						System.out.println("[UI] New active function: " + functionName);
 						currentProject.selectFunction(functionName);
 						currentCanvas = canvas;
 					}

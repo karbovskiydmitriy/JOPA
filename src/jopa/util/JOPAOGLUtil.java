@@ -158,7 +158,7 @@ public final class JOPAOGLUtil {
 		ByteBuffer log = ByteBuffer.allocate(256);
 		glGetDebugMessageLog(count, sources, types, ids, severities, lengths, log);
 		glGetError();
-		System.out.println(new String(log.array()));
+		System.out.println("[OPENGL] Denug:" + new String(log.array()));
 	}
 
 	public static boolean validateShader(String shaderCode, JOPAProjectType projectType) {
@@ -174,7 +174,6 @@ public final class JOPAOGLUtil {
 		case COMPUTE:
 			shader = createShader(GL_COMPUTE_SHADER, shaderCode);
 			break;
-		case CUSTOM:
 		default:
 			return false;
 		}
@@ -584,7 +583,7 @@ public final class JOPAOGLUtil {
 						int location = glGetUniformLocation(program, name);
 						if (location > -1) {
 							if (passVariable(variable, location)) {
-								System.out.println("Variable " + name + " passed");
+								System.out.println("[OPENGL] Variable " + name + " passed");
 							}
 						}
 					}

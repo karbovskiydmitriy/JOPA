@@ -4,9 +4,14 @@ import java.awt.Frame;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 import jopa.main.JOPAProject;
 import jopa.main.JOPAVariable;
+import jopa.types.JOPAGLSLType;
 import jopa.ui.editors.JOPAEditorComponent;
 import jopa.ui.editors.JOPAGlobalVariableEditor;
 
@@ -36,13 +41,36 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 			JOPAVariable variable = object.globalVariables.get(i);
 			addEditorPair("defines[" + i + "]", variable);
 		}
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
 		revalidate();
 		repaint();
 	}
 
 	private void initMenu() {
+		JMenuBar globalsMenuBar = new JMenuBar();
 
+		{
+			JMenu globalsMenu = new JMenu("global");
+
+			JMenuItem newMenuItem = new JMenuItem("new");
+
+			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
+
+			newMenuItem.addActionListener(e -> {
+				JOPAVariable globalVariable = new JOPAVariable(JOPAGLSLType.INT, "foobar");
+				object.globalVariables.add(globalVariable);
+				System.out.println(object.globalVariables.size());
+				object.updateGlobals();
+				init();
+			});
+
+			globalsMenu.add(newMenuItem);
+
+			globalsMenuBar.add(globalsMenu);
+		}
+
+		setJMenuBar(globalsMenuBar);
 	}
 
 	protected void addEditorPair(String name, JOPAVariable variable) {
@@ -59,7 +87,6 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 		area.add(editor);
 		area.add(deleteButton);
 		editors.add(editor);
-		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 	}
 
 }

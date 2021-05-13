@@ -20,10 +20,6 @@ public class JOPASystem {
 		system.os = System.getProperty("os.name");
 		system.version = System.getProperty("os.version");
 
-		// System.out.println(system.arch);
-		// System.out.println(system.os);
-		// System.out.println(system.version);
-
 		return system;
 	}
 
@@ -49,7 +45,6 @@ public class JOPASystem {
 	public boolean checkVersion() {
 		if (versionRawString == null) {
 			versionRawString = getVersion();
-			// System.out.println("OpenGL version: " + versionRawString);
 			String[] versionParts = versionRawString.split(" ")[0].split("\\.");
 			majorVersion = Integer.parseInt(versionParts[0]);
 			minorVersion = Integer.parseInt(versionParts[1]);

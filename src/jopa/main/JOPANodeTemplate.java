@@ -81,9 +81,9 @@ public class JOPANodeTemplate {
 				}
 			}
 		} catch (IllegalStateException e) {
-			System.out.println(e);
+			System.err.println(e);
 		} catch (Exception e) {
-			System.out.println(e);
+			System.err.println(e);
 			e.printStackTrace();
 		}
 	}

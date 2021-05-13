@@ -36,6 +36,12 @@ public class JOPAMenuPanel extends Panel {
 			showShaderButton.addActionListener(e -> showShaderCode());
 			add(showShaderButton);
 		}
+
+		{
+			Button runSimulationButton = new Button("run simulation");
+			runSimulationButton.addActionListener(e -> startPlayground());
+			add(runSimulationButton);
+		}
 	}
 
 }
