@@ -20,36 +20,42 @@ public class JOPAMenuPanel extends Panel {
 
 	public JOPAMenuPanel() {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
+		setFocusable(false);
 	}
 
 	public void initMenu() {
 		{
 			Button newProjectButton = new Button("new project");
 			newProjectButton.addActionListener(e -> createNewProject());
+			newProjectButton.setFocusable(false);
 			add(newProjectButton);
 		}
 
 		{
 			Button newFunctionButton = new Button("new function");
 			newFunctionButton.addActionListener(e -> createNewFunction());
+			newFunctionButton.setFocusable(false);
 			add(newFunctionButton);
 		}
 
 		{
 			Button newNodeButton = new Button("new node");
 			newNodeButton.addActionListener(e -> createNewNode(JOPAStatementNode.class));
+			newNodeButton.setFocusable(false);
 			add(newNodeButton);
 		}
 
 		{
 			Button showShaderButton = new Button("show shader");
 			showShaderButton.addActionListener(e -> showShaderCode());
+			showShaderButton.setFocusable(false);
 			add(showShaderButton);
 		}
 
 		{
 			Button runSimulationButton = new Button("run simulation");
 			runSimulationButton.addActionListener(e -> startPlayground());
+			runSimulationButton.setFocusable(false);
 			add(runSimulationButton);
 		}
 	}

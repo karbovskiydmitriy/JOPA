@@ -27,6 +27,7 @@ import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateGeneratedShader;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
+import static jopa.util.JOPAOGLUtil.getScreenSize;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -101,10 +102,10 @@ public class JOPAUI {
 			}
 		});
 
-		window.setSize(800, 600);
+		int[] screenSize = getScreenSize();
+		window.setSize(screenSize[0], screenSize[1]);
 		window.setEnabled(true);
 		window.setVisible(true);
-		// window.setLayout(new BorderLayout());
 		window.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {

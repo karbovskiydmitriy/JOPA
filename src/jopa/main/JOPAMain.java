@@ -72,6 +72,7 @@ public class JOPAMain {
 
 	public static void createNewProject() {
 		synchronized (projectSync) {
+			gui.closeProjectTabs();
 			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
 			createCustomPlayground(currentProject.projectType);

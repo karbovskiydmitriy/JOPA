@@ -16,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -140,9 +140,8 @@ public final class JOPAOGLUtil {
 	}
 
 	public static String getVersion() {
-		long window = createWindowForOpenGLContext();
+		createWindowForOpenGLContext();
 		String version = glGetString(GL_VERSION);
-		closeWindow(window);
 		deleteContext();
 
 		return version;
@@ -294,7 +293,6 @@ public final class JOPAOGLUtil {
 		glfwShowWindow(window);
 
 		createCapabilities();
-		glEnable(GL_TEXTURE_2D);
 
 		glViewport(0, 0, windowWidht[0], windowHeight[0]);
 
@@ -305,6 +303,15 @@ public final class JOPAOGLUtil {
 		}
 
 		return window;
+	}
+
+	public static int[] getScreenSize() {
+		createWindowForOpenGLContext();
+		long monitor = glfwGetPrimaryMonitor();
+		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
+		deleteContext();
+
+		return new int[] { videoMode.width(), videoMode.height() };
 	}
 
 	public static int[] getWindowSize(long window) {
@@ -687,7 +694,7 @@ public final class JOPAOGLUtil {
 						glUniform4fv(location, value);
 						break;
 					}
-					// TODO remaining
+					// TODO remaining types
 					case NONE: {
 						return false;
 					}

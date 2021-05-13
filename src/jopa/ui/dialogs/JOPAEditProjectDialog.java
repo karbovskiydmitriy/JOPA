@@ -46,7 +46,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		JButton editTypesButton = new JButton("Edit types");
 		JButton editConstants = new JButton("Edit constants");
 		editDefines.addActionListener(e -> {
-			// TODO defines editor
+			gui.openDefinesEditor(currentProject);
 		});
 		editTypesButton.addActionListener(e -> {
 			gui.openTypesListEditor(object);

@@ -27,7 +27,6 @@ public class JOPAShowFunctionListDialog extends JOPADialog<JOPAProject> {
 
 	private void init() {
 		for (String functionName : object.getFunctions()) {
-			System.out.println(functionName);
 			JOPAFunction function = object.getFunctionByName(functionName);
 			JButton functionButton = new JButton("Edit \"" + functionName + "\"");
 			functionButton.addActionListener(e -> {
