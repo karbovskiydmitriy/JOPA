@@ -1,13 +1,13 @@
 {
 	"nodes": {
 		"EMPTY": {
-			"type" : "statement",
+			"type": "statement",
 			"inputs": [],
 			"outputs": [],
 			"template": null
 		},
 		"CONSTANTS": {
-			"type" : "constants",
+			"type": "constants",
 			"inputs": [],
 			"outputs": [
 				"float:PI:3.14"
@@ -15,7 +15,7 @@
 			"template": null
 		},
 		"FRAGMENT_INPUT": {
-			"type" : "start",
+			"type": "start",
 			"inputs": [],
 			"outputs": [
 				"vec4:gl_FragCoord",
@@ -26,7 +26,7 @@
 			"template": null
 		},
 		"FRAGMENT_OUTPUT": {
-			"type" : "end",
+			"type": "end",
 			"inputs": [
 				"vec4:gl_FragColor"
 			],
@@ -34,7 +34,7 @@
 			"template": null
 		},
 		"FRAGMENT_TEST": {
-			"type" : "statement",
+			"type": "statement",
 			"inputs": [
 				"vec4:coord",
 				"ivec2:size",
@@ -46,7 +46,7 @@
 			"template": "t *= speed;vec2 uv = vec2(coord.yx) / vec2(size);uv.xy = vec2(uv.x * cos(t), sin(uv.y) / 2.0 + 0.5);vec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);"
 		},
 		"COMPUTE_INPUT": {
-			"type" : "start",
+			"type": "start",
 			"inputs": [],
 			"outputs": [
 				"vec4:gl_FragCoord",
@@ -57,7 +57,7 @@
 			"template": null
 		},
 		"COMPUTE_OUTPUT": {
-			"type" : "end",
+			"type": "end",
 			"inputs": [
 				"vec4:gl_FragColor"
 			],
@@ -65,7 +65,7 @@
 			"template": null
 		},
 		"COMPUTE_TEST": {
-			"type" : "statement",
+			"type": "statement",
 			"inputs": [
 				"vec4:coord",
 				"ivec2:size",
@@ -78,6 +78,9 @@
 		}
 	},
 	"types": {
+		
+	},
+	"functions": {
 		
 	}
 }

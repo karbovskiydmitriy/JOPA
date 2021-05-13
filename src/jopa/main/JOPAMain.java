@@ -167,7 +167,9 @@ public class JOPAMain {
 
 	public static void showFunctionList() {
 		synchronized (projectSync) {
-			// TODO showFunctionList
+			if (currentProject != null) {
+				gui.showFunctionsList(currentProject);
+			}
 		}
 	}
 

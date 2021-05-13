@@ -75,6 +75,7 @@ import jopa.ui.dialogs.JOPAEditTypeDialog;
 import jopa.ui.dialogs.JOPAEditTypesListDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAQuestionDialog;
+import jopa.ui.dialogs.JOPAShowFunctionListDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 
 public class JOPAUI {
@@ -182,6 +183,7 @@ public class JOPAUI {
 				validateMenuItem.addActionListener(e -> validateFunction());
 
 				functionMenu.add(createNewMenuItem);
+				functionMenu.add(showListMenuItem);
 				functionMenu.add(validateMenuItem);
 
 				menuBar.add(functionMenu);
@@ -421,6 +423,11 @@ public class JOPAUI {
 	public synchronized void openLoopNodeEditor(JOPALoopNode node) {
 		JOPAEditLoopNodeDialog editLoopNodeDialog = new JOPAEditLoopNodeDialog(window, node);
 		editLoopNodeDialog.dispose();
+	}
+
+	public synchronized void showFunctionsList(JOPAProject project) {
+		JOPAShowFunctionListDialog showFunctionListDialog = new JOPAShowFunctionListDialog(window, project);
+		showFunctionListDialog.dispose();
 	}
 
 	public synchronized void showShader(String shaderCode) {

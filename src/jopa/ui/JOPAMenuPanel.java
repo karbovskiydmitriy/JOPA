@@ -1,12 +1,16 @@
 package jopa.ui;
 
+import static jopa.main.JOPAMain.createNewFunction;
+import static jopa.main.JOPAMain.createNewNode;
+import static jopa.main.JOPAMain.createNewProject;
+import static jopa.main.JOPAMain.showShaderCode;
+import static jopa.main.JOPAMain.startPlayground;
+
 import java.awt.Button;
 import java.awt.FlowLayout;
 import java.awt.Panel;
 
 import jopa.nodes.JOPAStatementNode;
-
-import static jopa.main.JOPAMain.*;
 
 public class JOPAMenuPanel extends Panel {
 
@@ -19,6 +23,12 @@ public class JOPAMenuPanel extends Panel {
 	}
 
 	public void initMenu() {
+		{
+			Button newProjectButton = new Button("new project");
+			newProjectButton.addActionListener(e -> createNewProject());
+			add(newProjectButton);
+		}
+
 		{
 			Button newFunctionButton = new Button("new function");
 			newFunctionButton.addActionListener(e -> createNewFunction());

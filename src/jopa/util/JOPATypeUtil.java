@@ -3,6 +3,7 @@ package jopa.util;
 import static jopa.main.JOPAMain.settings;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 import jopa.types.JOPAGLSLType;
 
@@ -108,31 +109,38 @@ public final class JOPATypeUtil {
 
 		try {
 			switch (type) {
-			case BOOL: {
-				return value.equals("true") ? true : value.equals("false") ? false : null;
-			}
-			case INT: {
-				return Integer.parseInt(value);
-			}
-			case UINT: {
-				return Integer.parseUnsignedInt(value);
-			}
-			case FLOAT: {
-				return (float) Double.parseDouble(value);
-			}
-			// DECIDE handling commas
+			case BOOL:
+				return parseBool(value);
+			case INT:
+				return parseInt(value);
+			case UINT:
+				return parseUint(value);
+			case FLOAT:
+				return parseFloat(value);
 			case BOOL_VECTOR_2:
+				return parseBvec2(value);
 			case BOOL_VECTOR_3:
+				return parseBvec3(value);
 			case BOOL_VECTOR_4:
+				return parseBvec4(value);
 			case INT_VECTOR_2:
+				return parseIvec2(value);
 			case INT_VECTOR_3:
+				return parseIvec3(value);
 			case INT_VECTOR_4:
+				return parseIvec4(value);
 			case UINT_VECTOR_2:
+				return parseUvec2(value);
 			case UINT_VECTOR_3:
+				return parseUvec3(value);
 			case UINT_VECTOR_4:
+				return parseUvec4(value);
 			case FLOAT_VECTOR_2:
+				return parseVec2(value);
 			case FLOAT_VECTOR_3:
+				return parseVec3(value);
 			case FLOAT_VECTOR_4:
+				return parseVec4(value);
 			case VOID:
 			case NONE:
 			default:
@@ -141,6 +149,238 @@ public final class JOPATypeUtil {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	private static boolean parseBool(String value) {
+		return value.equals("true") ? true : value.equals("false") ? false : null;
+	}
+
+	private static boolean[] parseBvec2(String value) {
+		boolean[] result = new boolean[2];
+		String typeName = "bvec2";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseBool(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static boolean[] parseBvec3(String value) {
+		boolean[] result = new boolean[3];
+		String typeName = "bvec3";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseBool(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static boolean[] parseBvec4(String value) {
+		boolean[] result = new boolean[4];
+		String typeName = "bvec4";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseBool(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int parseInt(String value) {
+		return Integer.parseInt(value);
+	}
+
+	private static int[] parseIvec2(String value) {
+		int[] result = new int[2];
+		String typeName = "ivec2";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseInt(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int[] parseIvec3(String value) {
+		int[] result = new int[3];
+		String typeName = "ivec3";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseInt(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int[] parseIvec4(String value) {
+		int[] result = new int[4];
+		String typeName = "ivec4";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseInt(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int parseUint(String value) {
+		return Integer.parseUnsignedInt(value);
+	}
+
+	private static int[] parseUvec2(String value) {
+		int[] result = new int[2];
+		String typeName = "uvec2";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int[] parseUvec3(String value) {
+		int[] result = new int[3];
+		String typeName = "uvec3";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static int[] parseUvec4(String value) {
+		int[] result = new int[4];
+		String typeName = "uvec4";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static float parseFloat(String value) {
+		return (float) Double.parseDouble(value);
+	}
+
+	private static float[] parseVec2(String value) {
+		float[] result = new float[2];
+		String typeName = "vec2";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static float[] parseVec3(String value) {
+		float[] result = new float[3];
+		String typeName = "vec3";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static float[] parseVec4(String value) {
+		float[] result = new float[4];
+		String typeName = "vec4";
+		if (value.startsWith(typeName + "(") && value.endsWith(")")) {
+			String vectorValue = value.substring(typeName.length() + 1);
+			vectorValue = vectorValue.substring(0, vectorValue.length() - 1);
+			String[] parts = vectorValue.split(";");
+			if (parts.length == result.length) {
+				System.out.println(Arrays.toString(parts));
+				for (int i = 0; i < parts.length; i++) {
+					result[i] = parseUint(parts[i]);
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public static Color getColorForType(JOPAGLSLType type) {
