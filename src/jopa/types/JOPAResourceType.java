@@ -6,5 +6,6 @@ public enum JOPAResourceType {
 	IMAGE,
 	SHADER,
 	PROGRAM,
+	LABEL,
 	GLSL_TYPE
 }

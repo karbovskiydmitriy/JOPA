@@ -348,8 +348,8 @@ public class JOPAProject implements Serializable {
 		if (verifyFunctions()) {
 			String shaderCode = "#version ";
 			switch (projectType) {
+			// HACK!!!
 			case CUSTOM:
-				return false;
 			case FRAGMENT:
 				shaderCode += "130";
 				break;

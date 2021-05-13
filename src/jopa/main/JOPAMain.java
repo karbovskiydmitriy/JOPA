@@ -73,7 +73,7 @@ public class JOPAMain {
 
 	public static void createNewProject() {
 		synchronized (projectSync) {
-			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
+			currentProject = new JOPAProject("New project", JOPAProjectType.CUSTOM);
 			createNewFunction();
 			createPlayground(currentProject.projectType);
 		}
@@ -231,7 +231,9 @@ public class JOPAMain {
 	public static void generateShader() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				currentProject.generateShader();
+				if (!currentProject.generateShader()) {
+					gui.showMessage("Shader contains errors");
+				}
 			} else {
 				projectNotCreated();
 			}

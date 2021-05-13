@@ -13,7 +13,7 @@ public class JOPAPlayground implements Closeable {
 	private JOPASimulationThread simulationThread;
 
 	private JOPAPlayground() {
-		System.out.println("Playground created");
+		System.out.println("[PLAYGROUND] Playground created");
 	}
 
 	public static JOPAPlayground create(JOPAProjectType type) {
@@ -32,11 +32,11 @@ public class JOPAPlayground implements Closeable {
 	public synchronized void start() {
 		if (simulationThread == null) {
 			if (currentProject.script == null) {
-				System.out.println("Script not set up");
+				System.err.println("[PLAYGROUND] Script not set up");
 
 				return;
 			}
-			System.out.println("Playground started");
+			System.out.println("[PLAYGROUND] Playground started");
 
 			simulationThread = new JOPASimulationThread(currentProject.script);
 			simulationThread.start();
@@ -50,9 +50,13 @@ public class JOPAPlayground implements Closeable {
 		}
 	}
 
+	public static void stoppedEvent() {
+		System.out.println("[PLAYGROUND] Playground stopped");
+	}
+
 	@Override
 	public synchronized void close() {
-		System.out.println("Playground closed");
+		System.out.println("[PLAYGROUND] Playground closed");
 	}
 
 }

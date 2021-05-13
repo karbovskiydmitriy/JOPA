@@ -92,6 +92,18 @@ public class JOPAResource implements Serializable {
 		return 0;
 	}
 
+	public int getAsLabel() {
+		if (type == JOPAResourceType.LABEL) {
+			try {
+				return (int) value;
+			} catch (Exception e) {
+				return -1;
+			}
+		}
+
+		return -1;
+	}
+
 	public JOPAGLSLType getAsGLSLType() {
 		if (type == JOPAResourceType.GLSL_TYPE) {
 			try {

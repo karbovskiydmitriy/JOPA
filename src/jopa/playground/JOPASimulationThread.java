@@ -13,7 +13,7 @@ public class JOPASimulationThread extends Thread {
 					isRunning = false;
 				}
 			}
-			System.out.println("Playground stopped");
+			JOPAPlayground.stoppedEvent();
 		});
 	}
 

@@ -98,7 +98,7 @@ public class JOPAUI {
 		window.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				System.out.println(e);
+				System.out.println("[UI] " + e);
 				currentProject.keyPressed(e.getKeyCode());
 			}
 		});

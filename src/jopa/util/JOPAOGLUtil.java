@@ -324,29 +324,28 @@ public final class JOPAOGLUtil {
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	public static boolean tick(long window, JOPASimulationScript context) {
-		if (!glfwWindowShouldClose(window)) {
-			passVariables(context);
+	public static void tick(long window, JOPASimulationScript context) {
+		passVariables(context);
 
-			glClear(GL_COLOR_BUFFER_BIT);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 1);
-			glVertex2i(-1, -1);
-			glTexCoord2f(0, 0);
-			glVertex2i(-1, 1);
-			glTexCoord2f(1, 0);
-			glVertex2i(1, 1);
-			glTexCoord2f(1, 1);
-			glVertex2i(1, -1);
-			glEnd();
+		glClear(GL_COLOR_BUFFER_BIT);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 1);
+		glVertex2i(-1, -1);
+		glTexCoord2f(0, 0);
+		glVertex2i(-1, 1);
+		glTexCoord2f(1, 0);
+		glVertex2i(1, 1);
+		glTexCoord2f(1, 1);
+		glVertex2i(1, -1);
+		glEnd();
 
-			glfwSwapBuffers(window);
-			glfwPollEvents();
+		glfwSwapBuffers(window);
+	}
 
-			return true;
-		}
+	public static boolean checkWindow(long window) {
+		glfwPollEvents();
 
-		return false;
+		return !glfwWindowShouldClose(window);
 	}
 
 	public static boolean compute(int x, int y, int z) {

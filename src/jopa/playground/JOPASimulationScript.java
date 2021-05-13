@@ -19,7 +19,7 @@ import static jopa.util.JOPAOGLUtil.getWindowSize;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.loadTexture;
-import static jopa.util.JOPAOGLUtil.tick;
+import static jopa.util.JOPAOGLUtil.*;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
 import static jopa.util.JOPATypeUtil.getValueForType;
@@ -65,9 +65,12 @@ public class JOPASimulationScript implements Serializable {
 	private transient static final String[] SET_INT = { "set", "int" };
 	private transient static final String[] SET_UINT = { "set", "uint" };
 	private transient static final String[] SET_FLOAT = { "set", "float" };
+	private transient static final String[] SET_LABEL = { "set", "label" };
+	private transient static final String[] GO_TO = { "go", "to" };
 	private transient static final String[] BIND_IMAGE = { "bind", "image" };
 	private transient static final String[] BIND_BUFFER = { "bind", "buffer" };
 	private transient static final String[] DRAW = { "draw" };
+	private transient static final String[] CHECK = { "check" };
 	private transient static final String[] COMPUTE = { "compute" };
 	private transient static final String[] CLOSE_WINDOW = { "close", "window" };
 	private transient static final String[] DELETE_TEXTURE = { "destroy", "texture" };
@@ -201,6 +204,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 		int size = typeSize * count;
 		int buffer = createBuffer(ByteBuffer.allocate(size));
+
 		checkForError("new buffer");
 		if (buffer == 0)
 
@@ -347,9 +351,14 @@ public class JOPASimulationScript implements Serializable {
 			checkForError("generate shader");
 			break;
 		default:
-			logSimulationError(this, "Shader type is not set up in the project", currentProject);
+			// HACK gonna replace this
+			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			if (shader == 0) {
+				shader = createShader(GL_COMPUTE_SHADER, shaderCode);
+			}
+//			logSimulationError(this, "Shader type is not set up in the project", currentProject);
 
-			return false;
+//			return false;
 		}
 		if (shader == 0) {
 			logSimulationError(this, "Shader was not compiled", shaderCode);
@@ -534,6 +543,45 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private transient final Predicate<String[]> SET_LABEL_OPERATION = args -> {
+		if (args.length != 1) {
+			logSimulationError(this, "SET LABEL uses 1 argument (name)", args);
+
+			return false;
+		}
+
+		String labelName = args[0];
+		JOPAResource labelResource = new JOPAResource(JOPAResourceType.LABEL, labelName, commandIndex);
+		addResource(labelResource);
+
+		return true;
+	};
+
+	private transient final Predicate<String[]> GO_TO_OPERATION = args -> {
+		if (args.length != 1) {
+			logSimulationError(this, "GO TO uses 1 argument (name)", args);
+
+			return false;
+		}
+
+		String labelName = args[0];
+		JOPAResource labelResource = getResourceByName(labelName);
+		if (labelResource == null) {
+			logSimulationError(this, "Label resource was not found", labelName);
+
+			return false;
+		}
+		int index = labelResource.getAsLabel();
+		if (index == -1) {
+			logSimulationError(this, "Label instruction index is -1", labelResource);
+
+			return false;
+		}
+		commandIndex = index;
+
+		return true;
+	};
+
 	private transient final Predicate<String[]> BIND_IMAGE_OPERATION = args -> {
 		if (args.length != 2) {
 			logSimulationError(this, "BIND IMAGE uses 2 arguments (texture name, binding index)", args);
@@ -617,12 +665,25 @@ public class JOPASimulationScript implements Serializable {
 	};
 
 	private transient final Predicate<String[]> DRAW_PREDICATE = args -> {
-		if (args.length != 0) {
-			logSimulationError(this, "DRAW uses 0 arguments", args);
+		if (args.length != 1) {
+			logSimulationError(this, "DRAW uses 1 argument (window)", args);
 
 			return false;
 		}
 
+		String windowName = args[0];
+		JOPAResource windowResource = getResourceByName(windowName);
+		if (windowResource == null) {
+			logSimulationError(this, "Window resource was not found", windowName);
+
+			return false;
+		}
+		long windowHandle = windowResource.getAsWindow();
+		if (windowHandle == 0) {
+			logSimulationError(this, "Window variable is NULL", windowResource);
+
+			return false;
+		}
 		long currentTime = System.currentTimeMillis() - startTime;
 		float deltaTime = (currentTime - prevTime) / 1000.0f;
 		JOPAResource timeResource = getResourceByName("time");
@@ -639,33 +700,38 @@ public class JOPASimulationScript implements Serializable {
 		}
 		timeResource.setValue(currentTime / 1000.0f);
 		deltaTimeResource.setValue(deltaTime);
+		tick(windowHandle, this);
+		checkForError("draw");
+		prevTime = currentTime;
 
-		int windowsCount = 0;
+		return true;
+	};
 
-		for (JOPAResource resource : resources) {
-			if (resource.type == JOPAResourceType.WINDOW_HANDLE) {
-				long windowHandle = resource.getAsWindow();
-				if (windowHandle == 0) {
-					logSimulationError(this, "Window variable is NULL", resource);
-
-					return false;
-				} else {
-					windowsCount++;
-					boolean result = tick(windowHandle, this);
-					checkForError("draw");
-					if (!result) {
-						return false;
-					}
-				}
-			}
-		}
-		if (windowsCount == 0) {
-			logSimulationError(this, "Could not find any window resource", resources);
+	private transient final Predicate<String[]> CHECK_OPERATION = args -> {
+		if (args.length != 1) {
+			logSimulationError(this, "CHECK uses 1 argument (window)", args);
 
 			return false;
 		}
-		commandIndex--;
-		prevTime = currentTime;
+
+		String windowName = args[0];
+		JOPAResource windowResource = getResourceByName(windowName);
+		if (windowResource == null) {
+			logSimulationError(this, "Window resource was not found", windowName);
+
+			return false;
+		}
+		long windowHandle = windowResource.getAsWindow();
+		if (windowHandle == 0) {
+			logSimulationError(this, "Window variable is NULL", windowResource);
+
+			return false;
+		}
+		boolean result = checkWindow(windowHandle);
+		checkForError("check");
+		if (!result) {
+			return false;
+		}
 
 		return true;
 	};
@@ -720,6 +786,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		boolean result = compute(xGroups, yGroups, zGroups);
+
 		checkForError("compute");
 		if (!result) {
 			logSimulationError(this, "Compute call failed", args);
@@ -913,9 +980,12 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(SET_INT, SET_INT_OPERATION);
 		operations.put(SET_UINT, SET_UINT_OPERATION);
 		operations.put(SET_FLOAT, SET_FLOAT_OPERATION);
+		operations.put(SET_LABEL, SET_LABEL_OPERATION);
+		operations.put(GO_TO, GO_TO_OPERATION);
 		operations.put(BIND_IMAGE, BIND_IMAGE_OPERATION);
 		operations.put(BIND_BUFFER, BIND_BUFFER_OPERATION);
 		operations.put(DRAW, DRAW_PREDICATE);
+		operations.put(CHECK, CHECK_OPERATION);
 		operations.put(COMPUTE, COMPUTE_OPERATION);
 		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_PREDICATE);
 		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
@@ -937,8 +1007,8 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	private void logSimulationError(Object source, String errorMessage, Object object) {
-		System.err.println(source.getClass().getSimpleName() + ": " + errorMessage);
-//		System.err.println(object);
+		System.err.println("[SCRIPT] " + source.getClass().getSimpleName() + ": " + errorMessage);
+//		System.err.println("[SCRIPT] " + object);
 	}
 
 	public static JOPASimulationScript create(JOPAProjectType type) {
@@ -995,16 +1065,18 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 
-		String command = commands.get(commandIndex++);
+		String command = commands.get(commandIndex);
+//		System.out.println("[SCRIPT] Command: " + command);
 		if (command.startsWith("#")) {
 			return true;
 		}
 		if (command.length() > 0) {
 			boolean result = executeCommand(command);
+			commandIndex++;
 
 			if (!result) {
 				if (checkForError()) {
-					System.err.println("Command: " + command);
+					System.err.println("[SCRIPT] Command: " + command);
 				}
 			}
 
@@ -1018,9 +1090,9 @@ public class JOPASimulationScript implements Serializable {
 		int error = glGetError();
 		if (error != 0) {
 			if (context.length > 0) {
-				System.out.println(context[0]);
+				System.out.println("[SCRIPT] " + context[0]);
 			}
-			System.out.println("Error code: " + error);
+			System.out.println("[SCRIPT] Error code: " + error);
 
 			return true;
 		}
@@ -1107,10 +1179,10 @@ public class JOPASimulationScript implements Serializable {
 	public void addResource(JOPAResource resource) {
 		JOPAResource foundResource = getResourceByName(resource.name);
 		if (foundResource != null) {
-			System.out.println("Updating resource: " + resource.name);
+			System.out.println("[SCRIPT] Updating resource: " + resource.name);
 			resources.remove(foundResource);
 		} else {
-			System.out.println("Adding resource: " + resource.name);
+			System.out.println("[SCRIPT] Adding resource: " + resource.name);
 		}
 		resources.add(resource);
 	}
