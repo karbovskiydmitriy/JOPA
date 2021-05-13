@@ -5,6 +5,7 @@ import static jopa.main.JOPAFunction.TWO_LINES;
 import static jopa.main.JOPAMain.currentProject;
 import static jopa.main.JOPAMain.gui;
 import static jopa.main.JOPAMain.settings;
+import static jopa.io.JOPALoader.loadStandardScript;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -120,13 +121,22 @@ public class JOPAProject implements Serializable {
 			playground.stop();
 			playground.close();
 		}
-		playground = JOPAPlayground.create(type);
+		playground = new JOPAPlayground();
+		script = JOPASimulationScript.create(type);
 	}
 
 	public synchronized void startPlayground() {
 		if (playground != null) {
-			playground.stop();
-			playground.start();
+			if (projectType == JOPAProjectType.CUSTOM) {
+				String scriptCode = loadStandardScript("test.jopascript");
+				if (scriptCode != null) {
+					script.setupScript(scriptCode);
+					playground.stop();
+					playground.start();
+				} else {
+					gui.showMessage("Shader generation failed");
+				}
+			}
 		}
 	}
 

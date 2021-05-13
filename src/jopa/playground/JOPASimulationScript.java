@@ -2,6 +2,7 @@ package jopa.playground;
 
 import static jopa.io.JOPALoader.loadStandardScript;
 import static jopa.main.JOPAMain.currentProject;
+import static jopa.util.JOPAOGLUtil.checkWindow;
 import static jopa.util.JOPAOGLUtil.closeWindow;
 import static jopa.util.JOPAOGLUtil.compute;
 import static jopa.util.JOPAOGLUtil.createBuffer;
@@ -19,7 +20,7 @@ import static jopa.util.JOPAOGLUtil.getWindowSize;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.loadTexture;
-import static jopa.util.JOPAOGLUtil.*;
+import static jopa.util.JOPAOGLUtil.tick;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
 import static jopa.util.JOPATypeUtil.getValueForType;
@@ -27,10 +28,11 @@ import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL30.GL_RGBA32F;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -41,7 +43,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import jopa.exceptions.JOPAPlaygroundException;
 import jopa.graphics.JOPAImage;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAProjectType;
@@ -356,9 +357,10 @@ public class JOPASimulationScript implements Serializable {
 			if (shader == 0) {
 				shader = createShader(GL_COMPUTE_SHADER, shaderCode);
 			}
-//			logSimulationError(this, "Shader type is not set up in the project", currentProject);
+			// logSimulationError(this, "Shader type is not set up in the project",
+			// currentProject);
 
-//			return false;
+			// return false;
 		}
 		if (shader == 0) {
 			logSimulationError(this, "Shader was not compiled", shaderCode);
@@ -1000,52 +1002,51 @@ public class JOPASimulationScript implements Serializable {
 		addResource(deltaTimeResource);
 	}
 
-	public void start() {
+	private void logSimulationError(Object source, String errorMessage, Object object) {
+		System.err.println("[SCRIPT] " + source.getClass().getSimpleName() + ": " + errorMessage);
+		// System.err.println("[SCRIPT] " + object);
+	}
+
+	public boolean start() {
 		startTime = System.currentTimeMillis();
 		commandIndex = 0;
 		init();
-	}
+		if (commands.size() == 0) {
+			return false;
+		}
 
-	private void logSimulationError(Object source, String errorMessage, Object object) {
-		System.err.println("[SCRIPT] " + source.getClass().getSimpleName() + ": " + errorMessage);
-//		System.err.println("[SCRIPT] " + object);
+		return true;
 	}
 
 	public static JOPASimulationScript create(JOPAProjectType type) {
-		if (type == null) {
-			return null;
+		// if (type == null) {
+		// return null;
+		// }
+		System.out.println("[SCRIPT] creating with type: " + type);
+		JOPASimulationScript script = new JOPASimulationScript();
+		switch (type) {
+		case FRAGMENT:
+			script.setupScript(loadStandardScript("frag.jopascript"));
+			break;
+		case COMPUTE:
+			script.setupScript(loadStandardScript("comp.jopascript"));
+			break;
+		default:
+			break;
 		}
 
-		try {
-			JOPASimulationScript script = new JOPASimulationScript();
-			switch (type) {
-			case FRAGMENT:
-				script.setupScript(loadStandardScript("frag.jopascript"));
-				break;
-			case COMPUTE:
-				script.setupScript(loadStandardScript("comp.jopascript"));
-				break;
-			case CUSTOM:
-				script.setupScript(loadStandardScript("test.jopascript"));
-				break;
-			default:
-				return null;
-			}
-
-			return script;
-		} catch (JOPAPlaygroundException e) {
-			System.err.println(e.getMessage());
-
-			return null;
-		}
+		return script;
 	}
 
-	public void setupScript(String code) throws JOPAPlaygroundException {
+	public boolean setupScript(String code) {
 		if (code == null) {
-			throw new JOPAPlaygroundException("commands is null");
+			return false;
 		}
 
 		setCode(code);
+		System.out.println("[SCRIPT] set up with " + commands.size() + " lines");
+
+		return true;
 	}
 
 	public String getCode() {
@@ -1066,7 +1067,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		String command = commands.get(commandIndex);
-//		System.out.println("[SCRIPT] Command: " + command);
+		// System.out.println("[SCRIPT] Command: " + command);
 		if (command.startsWith("#")) {
 			return true;
 		}
@@ -1151,7 +1152,7 @@ public class JOPASimulationScript implements Serializable {
 							}
 							Predicate<String[]> operation = getOperation(parts);
 							if (operation == null) {
-								System.err.println("Unknown command: " + operationPart);
+								System.err.println("[SCRIPT] Unknown command: " + operationPart);
 
 								return false;
 							}
