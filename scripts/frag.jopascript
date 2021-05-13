@@ -1,4 +1,4 @@
-new window(window,1,1,true)
+new window(window,500,500,false)
 new shader(shader,fragment,frag.glsl)
 new program(program,shader)
 set program(program)

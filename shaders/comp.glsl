@@ -2,7 +2,7 @@
 
 layout(local_size_x = 2, local_size_y = 2) in;
 
-layout(rgba32f, binding = 0, location = 0) uniform image2D image;
+layout(rgba32f, binding = 0) uniform image2D image;
 
 void main()
 {

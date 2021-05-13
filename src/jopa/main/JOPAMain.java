@@ -75,7 +75,7 @@ public class JOPAMain {
 		synchronized (projectSync) {
 			currentProject = new JOPAProject("New project", JOPAProjectType.FRAGMENT);
 			createNewFunction();
-			createPlayground(JOPAProjectType.CUSTOM);
+			createPlayground(currentProject.projectType);
 		}
 
 		gui.repaint();
@@ -165,7 +165,7 @@ public class JOPAMain {
 			}
 		}
 	}
-	
+
 	public static void showFunctionList() {
 		synchronized (projectSync) {
 			// TODO showFunctionList

@@ -120,6 +120,7 @@ import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.GL43.GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
+import static org.lwjgl.opengl.GL43.glGetDebugMessageLog;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
@@ -145,6 +146,19 @@ public final class JOPAOGLUtil {
 		deleteContext();
 
 		return version;
+	}
+
+	public static void printDebug() {
+		int count = 1;
+		int[] sources = new int[count];
+		int[] types = new int[count];
+		int[] ids = new int[count];
+		int[] severities = new int[count];
+		int[] lengths = new int[count];
+		ByteBuffer log = ByteBuffer.allocate(256);
+		glGetDebugMessageLog(count, sources, types, ids, severities, lengths, log);
+		glGetError();
+		System.out.println(new String(log.array()));
 	}
 
 	public static boolean validateShader(String shaderCode, JOPAProjectType projectType) {
@@ -179,7 +193,18 @@ public final class JOPAOGLUtil {
 		glCompileShader(shader);
 		int status = glGetShaderi(shader, GL_COMPILE_STATUS);
 		if (status == GL_FALSE) {
-			System.err.println("Shader code:\n" + shaderCode);
+			System.err.println("Shader compilation failed");
+			System.err.println("Shader type: " + ((shaderType == GL_FRAGMENT_SHADER) ? "fragment"
+					: (shaderType == GL_COMPUTE_SHADER) ? "compute" : "other"));
+			System.err.println("Shader code:\n");
+			String[] lines = shaderCode.split("\n");
+			for (int i = 0; i < lines.length; i++) {
+				String lineString = "" + i;
+				while (lineString.length() < 3) {
+					lineString = "0" + lineString;
+				}
+				System.err.println(lineString + ">" + lines[i]);
+			}
 			System.err.println(glGetShaderInfoLog(shader));
 			glDeleteShader(shader);
 
@@ -270,6 +295,7 @@ public final class JOPAOGLUtil {
 		glfwShowWindow(window);
 
 		createCapabilities();
+		glEnable(GL_TEXTURE_2D);
 
 		glViewport(0, 0, windowWidht[0], windowHeight[0]);
 
@@ -292,6 +318,10 @@ public final class JOPAOGLUtil {
 		int[] windowSize = new int[] { windowWidht[0], windowHeight[0] };
 
 		return windowSize;
+	}
+
+	public static void closeWindow(long window) {
+		glfwSetWindowShouldClose(window, true);
 	}
 
 	public static boolean tick(long window, JOPASimulationScript context) {
@@ -322,12 +352,39 @@ public final class JOPAOGLUtil {
 	public static boolean compute(int x, int y, int z) {
 		int currentProgram = glGetInteger(GL_CURRENT_PROGRAM);
 		if (currentProgram == 0) {
+			System.err.println("Current program is NULL");
+
 			return false;
 		}
-		if (x * y * z == 0) {
+		if (x == 0) {
+			System.err.println("x is 0");
+
 			return false;
 		}
-		if (x * y * z > glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS)) {
+		if (y == 0) {
+			System.err.println("y is 0");
+
+			return false;
+		}
+		if (z == 0) {
+			System.err.println("z is 0");
+
+			return false;
+		}
+		int maxInvocations = glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
+		if (x > maxInvocations) {
+			System.err.println("x > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
+
+			return false;
+		}
+		if (y > maxInvocations) {
+			System.err.println("y > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
+
+			return false;
+		}
+		if (z > maxInvocations) {
+			System.err.println("z > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
+
 			return false;
 		}
 
@@ -336,25 +393,21 @@ public final class JOPAOGLUtil {
 		glGetAttachedShaders(currentProgram, count, shaders);
 
 		boolean hasComputeShader = false;
-		for (int shader : shaders) {
+		for (int i = 0; i < count[0]; i++) {
+			int shader = shaders[i];
 			int shaderType = glGetShaderi(shader, GL_SHADER_TYPE);
 			if (shaderType == GL_COMPUTE_SHADER) {
 				hasComputeShader = true;
 			}
 		}
 		if (!hasComputeShader) {
+			System.err.println("Current program has no computer shader attached");
+
 			return false;
 		}
 		glDispatchCompute(x, y, z);
-		if (glGetError() != 0) {
-			return false;
-		}
 
 		return true;
-	}
-
-	public static void closeWindow(long window) {
-		glfwSetWindowShouldClose(window, true);
 	}
 
 	public static JOPAImage createTexture(int width, int height, int format) {
@@ -363,9 +416,9 @@ public final class JOPAOGLUtil {
 		}
 
 		glEnable(GL_TEXTURE_2D);
-		JOPAImage image = new JOPAImage(width, height, glGenTextures(), format);
+		JOPAImage image = new JOPAImage(glGenTextures(), width, height, format);
 		glBindTexture(GL_TEXTURE_2D, image.handle);
-		glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);
 
 		return image;
 	}
@@ -526,12 +579,14 @@ public final class JOPAOGLUtil {
 		if (script != null) {
 			int program = glGetInteger(GL_CURRENT_PROGRAM);
 			if (program != 0) {
-				script.forEachResource(resource -> {
-					String name = resource.name;
+				script.forEachResource(variable -> {
+					String name = variable.name;
 					if (name != null && name.length() > 0) {
 						int location = glGetUniformLocation(program, name);
 						if (location > -1) {
-							passVariable(resource, location);
+							if (passVariable(variable, location)) {
+								System.out.println("Variable " + name + " passed");
+							}
 						}
 					}
 				});

@@ -23,12 +23,14 @@ import static jopa.util.JOPAOGLUtil.tick;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
 import static jopa.util.JOPATypeUtil.getValueForType;
-import static org.lwjgl.opengl.GL15.GL_READ_WRITE;
+import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL15.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL42.glBindImageTexture;
-import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
+import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
+import static org.lwjgl.opengl.GL43.*;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -118,7 +120,10 @@ public class JOPASimulationScript implements Serializable {
 
 		long windowHandle = createWindow(width, height, isFullscreen, this);
 
+		checkForError("new window");
+
 		JOPAResource windowResource = new JOPAResource(JOPAResourceType.WINDOW_HANDLE, name, windowHandle);
+
 		addResource(windowResource);
 
 		return true;
@@ -151,7 +156,8 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		JOPAImage image = createTexture(size[0], size[1], getTextureFormat(1, Float.class, false));
+		JOPAImage image = createTexture(size[0], size[1], getTextureFormat(4, float.class, false));
+		checkForError("new texture");
 		if (image == null) {
 			logSimulationError(this, "Texture was not created", textureName);
 
@@ -195,7 +201,10 @@ public class JOPASimulationScript implements Serializable {
 		}
 		int size = typeSize * count;
 		int buffer = createBuffer(ByteBuffer.allocate(size));
-		if (buffer == 0) {
+		checkForError("new buffer");
+		if (buffer == 0)
+
+		{
 			logSimulationError(this, "Buffer was not created1", name);
 
 			return false;
@@ -222,9 +231,11 @@ public class JOPASimulationScript implements Serializable {
 		switch (type) {
 		case "fragment":
 			shader = loadFragmentShader(file);
+			checkForError("new shader");
 			break;
 		case "compute":
 			shader = loadComputeShader(file);
+			checkForError("new shader");
 			break;
 		default:
 			logSimulationError(this, "Shader type should be either \"fragment\" or \"compute\"", type);
@@ -232,7 +243,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		if (shader == 0) {
-			logSimulationError(this, "Could not load shader file", file);
+			logSimulationError(this, "Could not create shader from file", file);
 
 			return false;
 		}
@@ -270,6 +281,7 @@ public class JOPASimulationScript implements Serializable {
 			shaders[i] = shader;
 		}
 		int program = createProgram(shaders);
+		checkForError("new program");
 		if (program == 0) {
 			logSimulationError(this, "Program could not be linked", programName);
 
@@ -292,6 +304,7 @@ public class JOPASimulationScript implements Serializable {
 		String fileName = args[1];
 
 		JOPAImage image = loadTexture(fileName);
+		checkForError("load texture");
 		if (image == null) {
 			logSimulationError(this, "Could not load texture from file", fileName);
 
@@ -327,9 +340,11 @@ public class JOPASimulationScript implements Serializable {
 		switch (currentProject.projectType) {
 		case FRAGMENT:
 			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			checkForError("generate shader");
 			break;
 		case COMPUTE:
-			shader = createShader(GL_FRAGMENT_SHADER, shaderCode);
+			shader = createShader(GL_COMPUTE_SHADER, shaderCode);
+			checkForError("generate shader");
 			break;
 		default:
 			logSimulationError(this, "Shader type is not set up in the project", currentProject);
@@ -337,7 +352,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		if (shader == 0) {
-			logSimulationError(this, "Shader could not be compiled", shaderCode);
+			logSimulationError(this, "Shader was not compiled", shaderCode);
 
 			return false;
 		}
@@ -375,6 +390,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		glUseProgram(program);
+		checkForError("set program");
 
 		return true;
 	};
@@ -552,13 +568,9 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		if (index == 0) {
-			logSimulationError(this, "\"binding index\" is 0", indexString);
 
-			return false;
-		}
-
-		glBindImageTexture(index, image.handle, 0, false, 0, GL_READ_WRITE, image.format);
+		glBindImageTexture(index, image.handle, 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		checkForError("bind image");
 
 		return true;
 	};
@@ -599,6 +611,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, bufferHandle);
+		checkForError("bind buffer");
 
 		return true;
 	};
@@ -638,7 +651,9 @@ public class JOPASimulationScript implements Serializable {
 					return false;
 				} else {
 					windowsCount++;
-					if (!tick(windowHandle, this)) {
+					boolean result = tick(windowHandle, this);
+					checkForError("draw");
+					if (!result) {
 						return false;
 					}
 				}
@@ -656,13 +671,13 @@ public class JOPASimulationScript implements Serializable {
 	};
 
 	private transient final Predicate<String[]> COMPUTE_OPERATION = args -> {
-		if (args.length != 4) {
+		if (args.length != 3) {
 			logSimulationError(this, "COMPUTE uses 3 args (x groups, y groups, z groups)", args);
 
 			return false;
 		}
 
-		String xString = args[1];
+		String xString = args[0];
 		int xGroups;
 		try {
 			xGroups = Integer.parseInt(xString);
@@ -676,7 +691,7 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		String yString = args[2];
+		String yString = args[1];
 		int yGroups;
 		try {
 			yGroups = Integer.parseInt(yString);
@@ -686,11 +701,11 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		if (yGroups == 0) {
-			logSimulationError(this, "\"y groups\" is 0", xString);
+			logSimulationError(this, "\"y groups\" is 0", yString);
 
 			return false;
 		}
-		String zString = args[3];
+		String zString = args[2];
 		int zGroups;
 		try {
 			zGroups = Integer.parseInt(zString);
@@ -700,11 +715,13 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		if (zGroups == 0) {
-			logSimulationError(this, "\"z groups\" is 0", xString);
+			logSimulationError(this, "\"z groups\" is 0", zString);
 
 			return false;
 		}
-		if (!compute(xGroups, yGroups, zGroups)) {
+		boolean result = compute(xGroups, yGroups, zGroups);
+		checkForError("compute");
+		if (!result) {
 			logSimulationError(this, "Compute call failed", args);
 
 			return false;
@@ -734,6 +751,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		closeWindow(windowHandle);
+		checkForError("close window");
 		resources.remove(resource);
 
 		return true;
@@ -759,7 +777,9 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		if (!deleteTexture(image)) {
+		boolean result = deleteTexture(image);
+		checkForError("delete texture");
+		if (!result) {
 			logSimulationError(this, "Texture was not deleted", image);
 
 			return false;
@@ -788,7 +808,9 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		if (!deleteBuffer(buffer)) {
+		boolean result = deleteBuffer(buffer);
+		checkForError("delete buffer");
+		if (!result) {
 			logSimulationError(this, "Buffer variable was not deleted", bufferName);
 
 			return false;
@@ -817,7 +839,9 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		if (!deleteShader(shader)) {
+		boolean result = deleteShader(shader);
+		checkForError("delete shader");
+		if (!result) {
 			logSimulationError(this, "Shader was not deleted", shaderName);
 
 			return false;
@@ -846,7 +870,9 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		if (!deleteProgram(program)) {
+		boolean result = deleteProgram(program);
+		checkForError("delete program");
+		if (!result) {
 			logSimulationError(this, "Program was not deleted", programName);
 
 			return false;
@@ -861,6 +887,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		deleteContext();
+		checkForError("exit");
 
 		return false;
 	};
@@ -911,7 +938,7 @@ public class JOPASimulationScript implements Serializable {
 
 	private void logSimulationError(Object source, String errorMessage, Object object) {
 		System.err.println(source.getClass().getSimpleName() + ": " + errorMessage);
-		System.err.println(object);
+//		System.err.println(object);
 	}
 
 	public static JOPASimulationScript create(JOPAProjectType type) {
@@ -964,14 +991,6 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	public boolean execute() {
-		// switch (executionType) {
-		// case NONE:
-		// return false;
-		// case FRAGMENT:
-		// return executeDefaultFragmentShaderSimulation();
-		// case COMPUTE:
-		// return executeDefaultComputeShaderSimulation();
-		// case CUSTOM:
 		if (commandIndex == commands.size()) {
 			return false;
 		}
@@ -980,17 +999,33 @@ public class JOPASimulationScript implements Serializable {
 		if (command.startsWith("#")) {
 			return true;
 		}
-		// System.out.println("Command: " + command);
 		if (command.length() > 0) {
 			boolean result = executeCommand(command);
+
+			if (!result) {
+				if (checkForError()) {
+					System.err.println("Command: " + command);
+				}
+			}
 
 			return result;
 		}
 
 		return true;
-		// default:
-		// return false;
-		// }
+	}
+
+	public static boolean checkForError(String... context) {
+		int error = glGetError();
+		if (error != 0) {
+			if (context.length > 0) {
+				System.out.println(context[0]);
+			}
+			System.out.println("Error code: " + error);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private boolean executeCommand(String command) {

@@ -344,12 +344,12 @@ public class JOPAProject implements Serializable {
 		return true;
 	}
 
-	public synchronized void generateShader() {
+	public synchronized boolean generateShader() {
 		if (verifyFunctions()) {
 			String shaderCode = "#version ";
 			switch (projectType) {
 			case CUSTOM:
-				return;
+				return false;
 			case FRAGMENT:
 				shaderCode += "130";
 				break;
@@ -408,6 +408,8 @@ public class JOPAProject implements Serializable {
 			gui.showMessage("project contains error!");
 			generatedShader = null;
 		}
+		
+		return true;
 	}
 
 	public synchronized String getGeneratedShader() {

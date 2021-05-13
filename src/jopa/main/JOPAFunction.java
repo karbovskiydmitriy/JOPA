@@ -1,5 +1,6 @@
 package jopa.main;
 
+import static jopa.main.JOPAMain.currentProject;
 import static jopa.util.JOPATypeUtil.getNameForType;
 
 import java.awt.Graphics2D;
@@ -48,22 +49,44 @@ public class JOPAFunction implements Serializable {
 		this.typesNode = new JOPATypesNode(50, 200);
 		this.constantsNode = new JOPAConstantsNode(50, 350);
 		this.globalsNode = new JOPAGlobalsNode(200, 350);
-		this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
-		this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
 		this.statementNodes = new ArrayList<JOPANode>();
-		init();
+		setupInitialNodes();
 	}
 
-	private void init() {
-		statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
-		// statementNodes.add(new JOPABranchNode(350, 200));
-		JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
-		startNode.flowStart.makeConnection(statement.incomingControlFlow);
-		statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
-		startNode.outputs.get(0).makeConnection(statement.inputs.get(0));
-		startNode.outputs.get(1).makeConnection(statement.inputs.get(1));
-		startNode.outputs.get(2).makeConnection(statement.inputs.get(2));
-		statement.outputs.get(0).makeConnection(endNode.inputs.get(0));
+	private void setupInitialNodes() {
+		switch (currentProject.projectType) {
+		case CUSTOM:
+		case FRAGMENT: {
+			statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
+			// statementNodes.add(new JOPABranchNode(350, 200));
+			this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
+			this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
+			JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
+			startNode.flowStart.makeConnection(statement.incomingControlFlow);
+			statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
+			startNode.outputs.get(0).makeConnection(statement.inputs.get(0));
+			startNode.outputs.get(1).makeConnection(statement.inputs.get(1));
+			startNode.outputs.get(2).makeConnection(statement.inputs.get(2));
+			statement.outputs.get(0).makeConnection(endNode.inputs.get(0));
+		}
+			break;
+		case COMPUTE: {
+			statementNodes.add(new JOPAStatementNode(350, 50, "COMPUTE_TEST"));
+			// statementNodes.add(new JOPABranchNode(350, 200));
+			this.startNode = new JOPAStartNode(50, 50, "COMPUTE_INPUT");
+			this.endNode = new JOPAEndNode(650, 50, "COMPUTE_OUTPUT");
+			JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
+			startNode.flowStart.makeConnection(statement.incomingControlFlow);
+			statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
+			startNode.outputs.get(0).makeConnection(statement.inputs.get(0));
+			startNode.outputs.get(1).makeConnection(statement.inputs.get(1));
+			startNode.outputs.get(2).makeConnection(statement.inputs.get(2));
+			statement.outputs.get(0).makeConnection(endNode.inputs.get(0));
+		}
+			break;
+		default:
+			break;
+		}
 	}
 
 	public void draw(Graphics2D g, JOPANode selectedNode, JOPAPort selectedPort) {

@@ -44,6 +44,37 @@
 				"vec4:color"
 			],
 			"template": "t *= speed;vec2 uv = vec2(coord.yx) / vec2(size);uv.xy = vec2(uv.x * cos(t), sin(uv.y) / 2.0 + 0.5);vec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);"
+		},
+		"COMPUTE_INPUT": {
+			"type" : "start",
+			"inputs": [],
+			"outputs": [
+				"vec4:gl_FragCoord",
+				"ivec2:windowSize",
+				"float:time",
+				"float:speed"
+			],
+			"template": null
+		},
+		"COMPUTE_OUTPUT": {
+			"type" : "end",
+			"inputs": [
+				"vec4:gl_FragColor"
+			],
+			"outputs": [],
+			"template": null
+		},
+		"COMPUTE_TEST": {
+			"type" : "statement",
+			"inputs": [
+				"vec4:coord",
+				"ivec2:size",
+				"float:t"
+			],
+			"outputs": [
+				"vec4:color"
+			],
+			"template": "vec2 uv = vec2(gl_GlobalInvocationID.xy) / imageSize(image);imageStore(image, ivec2(gl_GlobalInvocationID.xy), vec4(uv, 0.0, 1.0));"
 		}
 	},
 	"types": {
