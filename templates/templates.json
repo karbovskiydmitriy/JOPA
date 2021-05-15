@@ -75,6 +75,58 @@
 				"vec4:color"
 			],
 			"template": "vec2 uv = vec2(gl_GlobalInvocationID.xy) / imageSize(image);imageStore(image, ivec2(gl_GlobalInvocationID.xy), vec4(uv, 0.0, 1.0));"
+		},
+		"ANTS_INPUT": {
+			"type": "start",
+			"inputs": [],
+			"outputs": [
+				"int:operation",
+				"float:aspect",
+				"float:delta",
+				"int:count",
+				"float:moveSpeed",
+				"float:sensorLength",
+				"int:sensorSize",
+				"float:turnSpeed",
+				"float:sensorAngle",
+				"int:stepsPerFrame"
+			],
+			"template": null
+		},
+		"ANTS_OUTPUT": {
+			"type": "end",
+			"inputs": [],
+			"outputs": [],
+			"template": null
+		},
+		"ANTS_COMPUTE": {
+			"type": "statement",
+			"inputs": [],
+			"outputs": [],
+			"template": ""
+		},
+		"BLUR_INPUT": {
+			"type": "start",
+			"inputs": [],
+			"outputs": [
+				"float:delta",
+				"int:kernelSize",
+				"float:fadeRate",
+				"float:diffuseRate"
+			],
+			"template": null
+		},
+		"BLUR_OUTPUT": {
+			"type": "end",
+			"inputs": [],
+			"outputs": [],
+			"template": null
+		},
+		"BLUR": {
+			"type": "statement",
+			"inputs": [],
+			"outputs": [],
+			"template": "void main(void){ivec2 size = ivec2(imageSize(image));ivec2 coord = ivec2(gl_GlobalInvocationID.xy);vec4 color = vec4(0.0);int count = 0;for (int i = -kernelSize; i <= kernelSize; i++){for (int j = -kernelSize; j <= kernelSize; j++){ivec2 xy = coord + ivec2(i, j);xy = min(size - 1, max(xy, 0));color += imageLoad(image, xy);}}vec4 blurredColor = color / (2 * kernelSize * 2 * kernelSize);float diffuse = clamp(diffuseRate * delta, 0, 1);blurredColor = imageLoad(image, coord) * (1 - diffuse) + blurredColor * diffuseRate;imageStore(image, coord, vec4(max(blurredColor.xyz - fadeRate  * delta, 0), 1.0));"
 		}
 	},
 	"types": {

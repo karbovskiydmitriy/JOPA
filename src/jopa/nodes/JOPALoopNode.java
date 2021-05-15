@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
+//DECIDE remove
 public class JOPALoopNode extends JOPAStatementNode {
 
 	private static final long serialVersionUID = 6933041211578604855L;

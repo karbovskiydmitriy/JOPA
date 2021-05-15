@@ -42,6 +42,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
@@ -54,6 +55,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
+import jopa.main.JOPANodeTemplate;
 import jopa.main.JOPAProject;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
@@ -72,12 +74,14 @@ import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
+import jopa.ui.dialogs.JOPAEditTemplateDialog;
 import jopa.ui.dialogs.JOPAEditTypeDialog;
 import jopa.ui.dialogs.JOPAEditTypesListDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAQuestionDialog;
 import jopa.ui.dialogs.JOPAShowFunctionListDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
+import jopa.ui.dialogs.JOPAShowTemplateListDialog;
 
 public class JOPAUI {
 
@@ -431,6 +435,16 @@ public class JOPAUI {
 		showFunctionListDialog.dispose();
 	}
 
+	public synchronized void showTemplatesList(ArrayList<JOPANodeTemplate> templates) {
+		JOPAShowTemplateListDialog showTemplateListDialog = new JOPAShowTemplateListDialog(window, templates);
+		showTemplateListDialog.dispose();
+	}
+
+	public synchronized void openTemplateEditor(JOPANodeTemplate template) {
+		JOPAEditTemplateDialog editTemplateDialog = new JOPAEditTemplateDialog(window, template);
+		editTemplateDialog.dispose();
+	}
+
 	public synchronized void showShader(String shaderCode) {
 		JOPAShowShaderDialog showShaderDialog = new JOPAShowShaderDialog(window, shaderCode);
 		showShaderDialog.dispose();
@@ -479,7 +493,7 @@ public class JOPAUI {
 				File selectedFile = fileChooser.getSelectedFile();
 				if (selectedFile != null) {
 					String selectedPath = selectedFile.getAbsolutePath();
-					String extension = "." + filter.getExtensions()[0];
+					String extension = filter.getExtensions()[0];
 					if (!selectedPath.endsWith(extension)) {
 						selectedPath += extension;
 						selectedFile = new File(selectedPath);

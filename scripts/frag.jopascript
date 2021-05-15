@@ -5,4 +5,4 @@ set program(program)
 set label(cycle)
 draw(window)
 check(window)
-go to(cycle);
+go to(cycle)

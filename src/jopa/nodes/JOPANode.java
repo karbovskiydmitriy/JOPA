@@ -29,7 +29,7 @@ public abstract class JOPANode implements Serializable {
 
 	public Rectangle rect;
 	public String header;
-	public String command;
+	public String text;
 	public transient JOPANodeTemplate template;
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
@@ -65,6 +65,7 @@ public abstract class JOPANode implements Serializable {
 	protected void init() {
 		inputs = new ArrayList<JOPADataPort>();
 		outputs = new ArrayList<JOPADataPort>();
+		text = "SAMPLE TEXT";
 	}
 
 	public abstract boolean check();
@@ -187,8 +188,8 @@ public abstract class JOPANode implements Serializable {
 		g.drawRect(rect.x, rect.y, rect.width, HEADER_HEIGHT);
 		g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		g.drawString(header, rect.x + JOPAControlPort.WIDTH, rect.y + HEADER_HEIGHT);
-		if (command != null) {
-			g.drawString(command, rect.x, rect.y + HEADER_HEIGHT * 2);
+		if (text != null) {
+			g.drawString(text, rect.x, rect.y + HEADER_HEIGHT * 2);
 		}
 	}
 

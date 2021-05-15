@@ -1,5 +1,6 @@
 package jopa.ui.dialogs;
 
+import static jopa.main.JOPAMain.gui;
 import java.awt.Frame;
 
 import javax.swing.JButton;
@@ -97,7 +98,8 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			editMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 
 			editMenuItem.addActionListener(e -> {
-//				gui.
+				setVisible(false);
+				gui.openTemplateEditor(object.template);
 			});
 
 			templateMenu.add(editMenuItem);

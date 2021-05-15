@@ -300,6 +300,9 @@ public final class JOPAOGLUtil {
 			int[] size = new int[] { windowWidht[0], windowHeight[0] };
 			JOPAResource windowSize = new JOPAResource(JOPAGLSLType.INT_VECTOR_2, "windowSize", size);
 			context.addResource(windowSize);
+			float aspect = (float) windowWidht[0] / windowHeight[0];
+			JOPAResource aspectResource = new JOPAResource(JOPAGLSLType.FLOAT, "aspect", aspect);
+			context.addResource(aspectResource);
 		}
 
 		return window;
