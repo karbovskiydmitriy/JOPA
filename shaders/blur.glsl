@@ -6,7 +6,7 @@ layout(local_size_x = SIZE, local_size_y = SIZE) in;
 
 layout(rgba32f, binding = 0, location = 0) uniform image2D image;
 
-layout(location = 1) uniform float delta;
+layout(location = 1) uniform float deltaTime;
 layout(location = 2) uniform int kernelSize;
 layout(location = 3) uniform float fadeRate;
 layout(location = 4) uniform float diffuseRate;
@@ -30,8 +30,8 @@ void main(void)
 	}
 
 	vec4 blurredColor = color / (2 * kernelSize * 2 * kernelSize);
-	float diffuse = clamp(diffuseRate * delta, 0, 1);
+	float diffuse = clamp(diffuseRate * deltaTime, 0, 1);
 	blurredColor = imageLoad(image, coord) * (1 - diffuse) + blurredColor * diffuseRate;
 
-	imageStore(image, coord, vec4(max(blurredColor.xyz - fadeRate  * delta, 0), 1.0));
+	imageStore(image, coord, vec4(max(blurredColor.xyz - fadeRate  * deltaTime, 0), 1.0));
 }

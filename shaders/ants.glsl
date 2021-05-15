@@ -21,7 +21,7 @@ layout(rgba32f, binding = 1) uniform image2D image;
 
 layout(location = 0) uniform int operation;
 layout(location = 1) uniform float aspect;
-layout(location = 2) uniform float delta;
+layout(location = 2) uniform float deltaTime;
 layout(location = 3) uniform int count;
 layout(location = 4) uniform float moveSpeed;
 layout(location = 5) uniform float sensorLength;
@@ -79,7 +79,7 @@ float sampleTrails(int id, float seekAngle)
 
 void move(int id)
 {
-	ants[id].position += vec2(cos(ants[id].angle), sin(ants[id].angle)) * moveSpeed / size * ants[id].speed * delta;
+	ants[id].position += vec2(cos(ants[id].angle), sin(ants[id].angle)) * moveSpeed / size * ants[id].speed * deltaTime;
 }
 
 void turn(int id)
@@ -90,7 +90,7 @@ void turn(int id)
 
 	if (forwardSensor < leftSensor && forwardSensor < rightSensor)
 	{
-		float turn = turnSpeed * delta;
+		float turn = turnSpeed * deltaTime;
 		if (leftSensor > rightSensor)
 		{
 			ants[id].angle += turn;
@@ -102,7 +102,7 @@ void turn(int id)
 	}
 	else
 	{
-		ants[id].angle += (normrandom(ants[id].position.x)) * turnSpeed * delta;
+		ants[id].angle += (normrandom(ants[id].position.x)) * turnSpeed * deltaTime;
 	}
 }
 

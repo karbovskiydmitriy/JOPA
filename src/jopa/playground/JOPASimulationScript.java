@@ -20,7 +20,7 @@ import static jopa.util.JOPAOGLUtil.getWindowSize;
 import static jopa.util.JOPAOGLUtil.loadComputeShader;
 import static jopa.util.JOPAOGLUtil.loadFragmentShader;
 import static jopa.util.JOPAOGLUtil.loadTexture;
-import static jopa.util.JOPAOGLUtil.tick;
+import static jopa.util.JOPAOGLUtil.draw;
 import static jopa.util.JOPATypeUtil.getTypeForName;
 import static jopa.util.JOPATypeUtil.getTypeSize;
 import static jopa.util.JOPATypeUtil.getValueForType;
@@ -606,7 +606,7 @@ public class JOPASimulationScript implements Serializable {
 		try {
 			index = Integer.parseUnsignedInt(indexString);
 		} catch (NumberFormatException e) {
-			logSimulationError(this, "\"binding index\" should be positive unsigned integer", indexString);
+			logSimulationError(this, "\"binding index\" should be unsigned integer", indexString);
 
 			return false;
 		}
@@ -642,12 +642,7 @@ public class JOPASimulationScript implements Serializable {
 		try {
 			index = Integer.parseUnsignedInt(indexString);
 		} catch (NumberFormatException e) {
-			logSimulationError(this, "\"binding index\" should be positive unsigned integer", indexString);
-
-			return false;
-		}
-		if (index == 0) {
-			logSimulationError(this, "\"binding index\" is 0", indexString);
+			logSimulationError(this, "\"binding index\" should be unsigned integer", indexString);
 
 			return false;
 		}
@@ -658,7 +653,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private transient final Predicate<String[]> DRAW_PREDICATE = args -> {
+	private transient final Predicate<String[]> DRAW_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DRAW uses 1 argument (window)", args);
 
@@ -694,7 +689,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 		timeResource.setValue(currentTime / 1000.0f);
 		deltaTimeResource.setValue(deltaTime);
-		tick(windowHandle, this);
+		draw(windowHandle, this);
 		checkForError("draw");
 		prevTime = currentTime;
 
@@ -779,7 +774,7 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		boolean result = compute(xGroups, yGroups, zGroups);
+		boolean result = compute(xGroups, yGroups, zGroups, this);
 
 		checkForError("compute");
 		if (!result) {
@@ -791,7 +786,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private transient final Predicate<String[]> CLOSE_WINDOW_PREDICATE = args -> {
+	private transient final Predicate<String[]> CLOSE_WINDOW_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "CLOSE WINDOW uses 1 argument (window)", args);
 
@@ -818,7 +813,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private transient final Predicate<String[]> DELETE_TEXTURE_PREDICATE = args -> {
+	private transient final Predicate<String[]> DELETE_TEXTURE_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE TEXTURE uses 1 argument (texture)", args);
 
@@ -849,7 +844,7 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
-	private transient final Predicate<String[]> DELETE_BUFFER_PREDICATE = args -> {
+	private transient final Predicate<String[]> DELETE_BUFFER_OPERATION = args -> {
 		if (args.length != 1) {
 			logSimulationError(this, "DELETE BUFFER uses 1 argument (name)", args);
 
@@ -978,12 +973,12 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(GO_TO, GO_TO_OPERATION);
 		operations.put(BIND_IMAGE, BIND_IMAGE_OPERATION);
 		operations.put(BIND_BUFFER, BIND_BUFFER_OPERATION);
-		operations.put(DRAW, DRAW_PREDICATE);
+		operations.put(DRAW, DRAW_OPERATION);
 		operations.put(CHECK, CHECK_OPERATION);
 		operations.put(COMPUTE, COMPUTE_OPERATION);
-		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_PREDICATE);
-		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_PREDICATE);
-		operations.put(DELETE_BUFFER, DELETE_BUFFER_PREDICATE);
+		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_OPERATION);
+		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_OPERATION);
+		operations.put(DELETE_BUFFER, DELETE_BUFFER_OPERATION);
 		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
 		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
 		operations.put(EXIT, EXIT_OPERATION);
@@ -1059,8 +1054,9 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		String command = commands.get(commandIndex);
-		// System.out.println("[SCRIPT] Command: " + command);
+//		System.out.println("[SCRIPT] Command: " + command);
 		if (command.startsWith("#")) {
+			commandIndex++;
 			return true;
 		}
 		if (command.length() > 0) {
@@ -1096,12 +1092,6 @@ public class JOPASimulationScript implements Serializable {
 	private boolean executeCommand(String command) {
 		boolean containsBraces = command.contains("(") || command.contains(")");
 
-		switch (command.toLowerCase()) {
-		case "exit":
-		case "quit":
-		case "end":
-			return false;
-		}
 		if (containsBraces) {
 			if (command.contains("(") && command.contains(")")) {
 				if (command.indexOf('(') == command.lastIndexOf('(')) {
@@ -1144,7 +1134,7 @@ public class JOPASimulationScript implements Serializable {
 							}
 							Predicate<String[]> operation = getOperation(parts);
 							if (operation == null) {
-								System.err.println("[SCRIPT] Unknown command: " + operationPart);
+//								System.err.println("[SCRIPT] Unknown command: " + operationPart);
 
 								return false;
 							}

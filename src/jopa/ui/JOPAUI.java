@@ -493,7 +493,7 @@ public class JOPAUI {
 				File selectedFile = fileChooser.getSelectedFile();
 				if (selectedFile != null) {
 					String selectedPath = selectedFile.getAbsolutePath();
-					String extension = filter.getExtensions()[0];
+					String extension = "." + filter.getExtensions()[0];
 					if (!selectedPath.endsWith(extension)) {
 						selectedPath += extension;
 						selectedFile = new File(selectedPath);

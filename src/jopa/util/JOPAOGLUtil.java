@@ -16,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -117,7 +117,6 @@ import static org.lwjgl.opengl.GL30.glUniform1ui;
 import static org.lwjgl.opengl.GL40.glUniform1d;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
-import static org.lwjgl.opengl.GL43.GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
 import static org.lwjgl.opengl.GL43.glDispatchCompute;
 import static org.lwjgl.opengl.GL43.glGetDebugMessageLog;
@@ -333,9 +332,9 @@ public final class JOPAOGLUtil {
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	public static void tick(long window, JOPASimulationScript context) {
+	public static void draw(long window, JOPASimulationScript context) {
 		passVariables(context);
-
+		
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 1);
@@ -357,7 +356,7 @@ public final class JOPAOGLUtil {
 		return !glfwWindowShouldClose(window);
 	}
 
-	public static boolean compute(int x, int y, int z) {
+	public static boolean compute(int x, int y, int z, JOPASimulationScript context) {
 		int currentProgram = glGetInteger(GL_CURRENT_PROGRAM);
 		if (currentProgram == 0) {
 			System.err.println("Current program is NULL");
@@ -379,22 +378,22 @@ public final class JOPAOGLUtil {
 
 			return false;
 		}
-		int maxInvocations = glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
-		if (x > maxInvocations) {
-			System.err.println("x > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
-
-			return false;
-		}
-		if (y > maxInvocations) {
-			System.err.println("y > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
-
-			return false;
-		}
-		if (z > maxInvocations) {
-			System.err.println("z > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS");
-
-			return false;
-		}
+//		int maxInvocations = glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
+//		if (x > maxInvocations) {
+//			System.err.println("x > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
+//
+//			return false;
+//		}
+//		if (y > maxInvocations) {
+//			System.err.println("y > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
+//
+//			return false;
+//		}
+//		if (z > maxInvocations) {
+//			System.err.println("z > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
+//
+//			return false;
+//		}
 
 		int[] count = new int[1];
 		int[] shaders = new int[64];
@@ -413,6 +412,7 @@ public final class JOPAOGLUtil {
 
 			return false;
 		}
+		passVariables(context);
 		glDispatchCompute(x, y, z);
 
 		return true;
@@ -706,6 +706,7 @@ public final class JOPAOGLUtil {
 					}
 				}
 			}
+				return true;
 			default:
 				return false;
 			}

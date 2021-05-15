@@ -50,7 +50,7 @@ public class JOPAProject implements Serializable {
 	private JOPAFunction mainFunction;
 
 	public transient JOPASimulationScript script;
-	public boolean isCustom;
+	public boolean isCustom = false;
 	public String name;
 	public JOPAProjectType projectType;
 	public int[] localGroupSize;
@@ -130,7 +130,7 @@ public class JOPAProject implements Serializable {
 	public synchronized void startPlayground() {
 		if (playground != null) {
 			if (isCustom) {
-				String scriptCode = loadStandardScript("test.jopascript");
+				String scriptCode = loadStandardScript("ants.jopascript");
 				if (scriptCode != null) {
 					script.setupScript(scriptCode);
 				} else {

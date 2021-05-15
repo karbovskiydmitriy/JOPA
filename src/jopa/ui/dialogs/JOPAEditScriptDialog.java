@@ -1,7 +1,9 @@
 package jopa.ui.dialogs;
 
-import static jopa.io.JOPAIO.*;
-import static jopa.main.JOPAMain.*;
+import static jopa.io.JOPAIO.loadTextFile;
+import static jopa.io.JOPAIO.saveTextFile;
+import static jopa.main.JOPAMain.gui;
+
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
@@ -26,7 +28,7 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 
 	public JOPAEditScriptDialog(Frame owner, JOPASimulationScript script) {
 		super(owner, "Edit script", script);
-		jopascriptFilter = new FileNameExtensionFilter("JOPA script file", ".jopascript");
+		jopascriptFilter = new FileNameExtensionFilter("JOPA script file", "jopascript");
 
 		init();
 		initMenu();
@@ -40,11 +42,13 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 	}
 
 	private void init() {
+		area.removeAll();
 		area.setLayout(new BorderLayout());
 		scriptEditor = new JTextArea();
 		scriptEditor.setText(object.getCode());
 		scriptEditor.setFont(new Font("Consolas", Font.BOLD, 22));
 		area.add(scriptEditor);
+		pack();
 	}
 
 	private void initMenu() {
