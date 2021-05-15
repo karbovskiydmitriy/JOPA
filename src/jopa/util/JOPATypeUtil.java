@@ -455,7 +455,6 @@ public final class JOPATypeUtil {
 		case VOID:
 		case NONE:
 		default:
-			// TODO other types
 			return 0;
 		}
 	}

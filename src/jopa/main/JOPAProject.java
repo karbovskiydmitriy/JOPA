@@ -32,6 +32,8 @@ import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPACustomType;
 import jopa.types.JOPAProjectType;
+import jopa.types.JOPAResource;
+import jopa.types.JOPAResourceType;
 
 public class JOPAProject implements Serializable {
 
@@ -57,6 +59,7 @@ public class JOPAProject implements Serializable {
 	public ArrayList<JOPASymbol> defines;
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
+	public ArrayList<JOPAResource> resources;
 	public ArrayList<JOPAVariable> globalVariables;
 	public JOPAFunction currentFunction;
 
@@ -72,6 +75,7 @@ public class JOPAProject implements Serializable {
 		defines = new ArrayList<JOPASymbol>();
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
+		resources = new ArrayList<JOPAResource>();
 		globalVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
 	}
@@ -393,7 +397,36 @@ public class JOPAProject implements Serializable {
 				shaderCode += mainFunction.constantsNode.generateCode();
 				shaderCode += NEW_LINE;
 			}
-			// TODO buffers, images
+			if (resources.size() > 0) {
+				int index = 0;
+				boolean hasImages = false;
+				for (JOPAResource resource : resources) {
+					if (resource.type == JOPAResourceType.IMAGE) {
+						hasImages = true;
+						// TODO format
+						String format = "";
+						shaderCode += "layout(" + format + ", binding = " + index++ + ") image2D ";
+						shaderCode += resource.name + ";" + NEW_LINE;
+					}
+				}
+				if (hasImages) {
+					shaderCode += TWO_LINES;
+				}
+				boolean hasBuffers = false;
+				for (JOPAResource resource : resources) {
+					if (resource.type == JOPAResourceType.BUFFER_HANDLE) {
+						hasBuffers = true;
+						shaderCode += "layout(std430, binding = " + index++ + ") buffer name" + NEW_LINE;
+						shaderCode += "{" + NEW_LINE;
+						// TODO buffer type
+						// shaderCode +=
+						shaderCode += "};" + NEW_LINE;
+					}
+				}
+				if (hasBuffers) {
+					shaderCode += TWO_LINES;
+				}
+			}
 			if (mainFunction.startNode.outputs.size() > 0) {
 				for (JOPADataPort port : mainFunction.startNode.outputs) {
 					if (port.variable.name.startsWith("gl_")) {

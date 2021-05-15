@@ -42,22 +42,34 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		projectTypeComboBox = new JComboBox<String>(PROJECT_TYPES);
 		projectTypeComboBox.setSelectedIndex((int) object.projectType.ordinal());
 		projectTypeComboBox.setPreferredSize(new Dimension(200, 50));
-		JButton editDefines = new JButton("Edit defines");
+		JButton editDefinesButton = new JButton("Edit defines");
 		JButton editTypesButton = new JButton("Edit types");
-		JButton editConstants = new JButton("Edit constants");
-		editDefines.addActionListener(e -> {
+		JButton editResourcesButton = new JButton("Edit resources");
+		JButton editConstantsButton = new JButton("Edit constants");
+		JButton editGlobalsButton = new JButton("Edit globals");
+		
+		editDefinesButton.addActionListener(e -> {
 			gui.openDefinesEditor(currentProject);
 		});
 		editTypesButton.addActionListener(e -> {
 			gui.openTypesListEditor(object);
 		});
-		editConstants.addActionListener(e -> {
+		editResourcesButton.addActionListener(e -> {
+			gui.openResourcesEditor(currentProject);
+		});
+		editConstantsButton.addActionListener(e -> {
 			gui.openConstantsEditor(currentProject);
 		});
+		editGlobalsButton.addActionListener(e -> {
+			gui.openGlobalsEditor(currentProject.getFunctionByName(currentProject.getFunctions()[0]));
+		});
+		
 		area.add(projectTypeComboBox);
-		area.add(editDefines);
+		area.add(editDefinesButton);
 		area.add(editTypesButton);
-		area.add(editConstants);
+		area.add(editConstantsButton);
+		area.add(editResourcesButton);
+		area.add(editGlobalsButton);
 		adjustGrid(area.getComponentCount(), 1, 10, 10, 10, 10);
 
 		pack();

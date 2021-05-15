@@ -9,6 +9,7 @@ import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewProject;
 import static jopa.main.JOPAMain.createPlayground;
 import static jopa.main.JOPAMain.currentProject;
+import static jopa.main.JOPAMain.editCurrentFunction;
 import static jopa.main.JOPAMain.editProject;
 import static jopa.main.JOPAMain.editScript;
 import static jopa.main.JOPAMain.generateShader;
@@ -72,6 +73,7 @@ import jopa.ui.dialogs.JOPAEditFunctionNodeDialog;
 import jopa.ui.dialogs.JOPAEditGlobalsDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
 import jopa.ui.dialogs.JOPAEditProjectDialog;
+import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAEditTemplateDialog;
@@ -176,18 +178,20 @@ public class JOPAUI {
 			{
 				Menu functionMenu = new Menu("function");
 
-				MenuItem createNewMenuItem = new MenuItem("create new");
+				MenuItem createMenuItem = new MenuItem("new");
+				MenuItem editMenuItem = new MenuItem("edit");
 				MenuItem showListMenuItem = new MenuItem("show list");
 				MenuItem validateMenuItem = new MenuItem("validate");
 
-				createNewMenuItem.setShortcut(new MenuShortcut('F'));
+				createMenuItem.setShortcut(new MenuShortcut('F'));
 				showListMenuItem.setShortcut(new MenuShortcut('L'));
 
-				createNewMenuItem.addActionListener(e -> createNewFunction());
+				createMenuItem.addActionListener(e -> createNewFunction());
+				editMenuItem.addActionListener(e -> editCurrentFunction());
 				showListMenuItem.addActionListener(e -> showFunctionList());
 				validateMenuItem.addActionListener(e -> validateFunction());
 
-				functionMenu.add(createNewMenuItem);
+				functionMenu.add(createMenuItem);
 				functionMenu.add(showListMenuItem);
 				functionMenu.add(validateMenuItem);
 
@@ -388,6 +392,11 @@ public class JOPAUI {
 	public synchronized void openTypeEditor(JOPACustomType type) {
 		JOPAEditTypeDialog editTypeDialog = new JOPAEditTypeDialog(window, type);
 		editTypeDialog.dispose();
+	}
+
+	public synchronized void openResourcesEditor(JOPAProject project) {
+		JOPAEditResourcesDialog editResourcesDialog = new JOPAEditResourcesDialog(window, currentProject);
+		editResourcesDialog.dispose();
 	}
 
 	public synchronized void openConstantsEditor(JOPAProject project) {

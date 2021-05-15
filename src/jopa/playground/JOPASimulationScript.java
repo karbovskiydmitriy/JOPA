@@ -79,6 +79,9 @@ public class JOPASimulationScript implements Serializable {
 	private transient static final String[] DELETE_SHADER = { "delete", "shader" };
 	private transient static final String[] DELETE_PROGRAM = { "delete", "program" };
 	private transient static final String[] EXIT = { "exit" };
+	// TODO load buffer
+	// TODO save buffer
+	// DECIDE save image?
 
 	private transient long startTime;
 	private transient long prevTime;

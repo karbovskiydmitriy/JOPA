@@ -43,7 +43,7 @@
 			"outputs": [
 				"vec4:color"
 			],
-			"template": "t *= speed;vec2 uv = vec2(coord.yx) / vec2(size);uv.xy = vec2(uv.x * cos(t), sin(uv.y) / 2.0 + 0.5);vec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);"
+			"template": "t *= speed;\nvec2 uv = vec2(coord.yx) / vec2(size);\nuv.xy = vec2(uv.x * cos(t), sin(uv.y) / 2.0 + 0.5);\nvec4 color = vec4(uv, cos(t) / 2.0 + 0.5, 1.0);\n"
 		},
 		"COMPUTE_INPUT": {
 			"type": "start",
@@ -74,7 +74,7 @@
 			"outputs": [
 				"vec4:color"
 			],
-			"template": "vec2 uv = vec2(gl_GlobalInvocationID.xy) / imageSize(image);imageStore(image, ivec2(gl_GlobalInvocationID.xy), vec4(uv, 0.0, 1.0));"
+			"template": "vec2 uv = vec2(gl_GlobalInvocationID.xy) / imageSize(image);\nimageStore(image, ivec2(gl_GlobalInvocationID.xy), vec4(uv, 0.0, 1.0));"
 		},
 		"ANTS_INPUT": {
 			"type": "start",

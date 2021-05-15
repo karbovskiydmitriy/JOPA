@@ -20,5 +20,4 @@ public enum JOPAGLSLType {
 	INT_VECTOR_4,
 	UINT_VECTOR_4,
 	FLOAT_VECTOR_4,
-	// TODO matrices, samplers?
 }

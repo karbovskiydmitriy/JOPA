@@ -697,7 +697,6 @@ public final class JOPAOGLUtil {
 						glUniform4fv(location, value);
 						break;
 					}
-					// TODO remaining types
 					case NONE: {
 						return false;
 					}

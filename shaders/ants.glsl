@@ -12,12 +12,12 @@ struct Ant
 	vec4 color;
 };
 
-layout(std430, binding = 0) buffer entities
+layout(rgba32f, binding = 0) uniform image2D image;
+
+layout(std430, binding = 1) buffer entities
 {
 	Ant ants[];
 };
-
-layout(rgba32f, binding = 1) uniform image2D image;
 
 layout(location = 0) uniform int operation;
 layout(location = 1) uniform float aspect;
