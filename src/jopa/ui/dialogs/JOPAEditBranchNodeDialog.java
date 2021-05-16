@@ -38,7 +38,7 @@ public class JOPAEditBranchNodeDialog extends JOPADialog<JOPABranchNode> {
 
 		for (int i = 0; i < object.branches.size(); i++) {
 			JOPABranchPort port = object.branches.get(i);
-			addEditorPair("branches[" + i + "]", port);
+			addEditor("branches[" + i + "]", port);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
@@ -70,7 +70,7 @@ public class JOPAEditBranchNodeDialog extends JOPADialog<JOPABranchNode> {
 		setJMenuBar(branchMenuBar);
 	}
 
-	protected void addEditorPair(String name, JOPABranchPort port) {
+	private void addEditor(String name, JOPABranchPort port) {
 		JOPAEditorComponent<?> editor = new JOPABranchEditor(port);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

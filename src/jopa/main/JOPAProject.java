@@ -49,19 +49,20 @@ public class JOPAProject implements Serializable {
 	private transient JOPAPlayground playground;
 	private boolean projectChanged;
 	private ArrayList<JOPAFunction> functions;
-	private JOPAFunction mainFunction;
 
 	public transient JOPASimulationScript script;
 	public boolean isCustom = false;
 	public String name;
 	public JOPAProjectType projectType;
 	public int[] localGroupSize;
+	public ArrayList<JOPANodeTemplate> templates;
 	public ArrayList<JOPASymbol> defines;
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAResource> resources;
 	public ArrayList<JOPAVariable> globalVariables;
 	public JOPAFunction currentFunction;
+	public JOPAFunction mainFunction;
 
 	public JOPAProject(String name, JOPAProjectType type) {
 		this.name = name;
@@ -72,12 +73,15 @@ public class JOPAProject implements Serializable {
 	private void init() {
 		currentProject = this;
 		localGroupSize = new int[] { 1, 1, 1 };
+		templates = new ArrayList<JOPANodeTemplate>();
 		defines = new ArrayList<JOPASymbol>();
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
 		resources = new ArrayList<JOPAResource>();
 		globalVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
+		JOPANodeTemplate.initStandardNodeTemplates(this);
+		System.out.println("[PROJECT] Loaded " + templates.size() + " templates");
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {

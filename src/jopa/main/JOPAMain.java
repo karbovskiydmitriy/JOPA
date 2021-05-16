@@ -165,17 +165,21 @@ public class JOPAMain {
 			}
 		}
 	}
-	
+
 	public static void editCurrentFunction() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-			gui.openFunctionEditor(currentProject.currentFunction);
+				if (currentProject.currentFunction != currentProject.mainFunction) {
+					gui.openFunctionEditor(currentProject.currentFunction);
+				} else {
+					gui.showMessage("you can not edit main function");
+				}
 			} else {
 				projectNotCreated();
 			}
 		}
 	}
-	
+
 	public static void showFunctionList() {
 		synchronized (projectSync) {
 			if (currentProject != null) {

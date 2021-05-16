@@ -40,7 +40,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 		for (int i = 0; i < object.constants.size(); i++) {
 			JOPAConstant constant = object.constants.get(i);
-			addEditorPair("constants[" + i + "]", constant);
+			addEditor("constants[" + i + "]", constant);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
@@ -74,7 +74,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		setJMenuBar(constantsMenuBar);
 	}
 
-	protected void addEditorPair(String name, JOPAConstant constant) {
+	private void addEditor(String name, JOPAConstant constant) {
 		JOPAEditorComponent<?> editor = new JOPAConstantEditor(constant);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

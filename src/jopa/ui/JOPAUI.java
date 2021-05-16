@@ -43,7 +43,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
@@ -192,6 +191,7 @@ public class JOPAUI {
 				validateMenuItem.addActionListener(e -> validateFunction());
 
 				functionMenu.add(createMenuItem);
+				functionMenu.add(editMenuItem);
 				functionMenu.add(showListMenuItem);
 				functionMenu.add(validateMenuItem);
 
@@ -444,8 +444,8 @@ public class JOPAUI {
 		showFunctionListDialog.dispose();
 	}
 
-	public synchronized void showTemplatesList(ArrayList<JOPANodeTemplate> templates) {
-		JOPAShowTemplateListDialog showTemplateListDialog = new JOPAShowTemplateListDialog(window, templates);
+	public synchronized void showTemplatesList(JOPAProject project) {
+		JOPAShowTemplateListDialog showTemplateListDialog = new JOPAShowTemplateListDialog(window, project);
 		showTemplateListDialog.dispose();
 	}
 

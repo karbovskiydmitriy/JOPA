@@ -39,7 +39,7 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 
 		for (int i = 0; i < object.globalVariables.size(); i++) {
 			JOPAVariable variable = object.globalVariables.get(i);
-			addEditorPair("defines[" + i + "]", variable);
+			addEditor("defines[" + i + "]", variable);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
@@ -54,18 +54,24 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 			JMenu globalsMenu = new JMenu("global");
 
 			JMenuItem newMenuItem = new JMenuItem("new");
+			JMenuItem clearMenuItem = new JMenuItem("clear");
 
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
 			newMenuItem.addActionListener(e -> {
 				JOPAVariable globalVariable = new JOPAVariable(JOPAGLSLType.INT, "foobar");
 				object.globalVariables.add(globalVariable);
-				System.out.println(object.globalVariables.size());
+				object.updateGlobals();
+				init();
+			});
+			clearMenuItem.addActionListener(e -> {
+				object.globalVariables.clear();
 				object.updateGlobals();
 				init();
 			});
 
 			globalsMenu.add(newMenuItem);
+			globalsMenu.add(clearMenuItem);
 
 			globalsMenuBar.add(globalsMenu);
 		}
@@ -73,7 +79,7 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 		setJMenuBar(globalsMenuBar);
 	}
 
-	protected void addEditorPair(String name, JOPAVariable variable) {
+	private void addEditor(String name, JOPAVariable variable) {
 		JOPAEditorComponent<?> editor = new JOPAGlobalVariableEditor(variable);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

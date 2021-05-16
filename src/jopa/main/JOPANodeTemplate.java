@@ -3,14 +3,13 @@ package jopa.main;
 import static jopa.io.JOPALoader.loadStandardTemplate;
 import static jopa.main.JOPAMain.gui;
 
-import java.util.ArrayList;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import jopa.exceptions.JOPAException;
+import com.google.gson.JsonPrimitive;
 
 public class JOPANodeTemplate {
 
@@ -20,21 +19,19 @@ public class JOPANodeTemplate {
 	public String type;
 	public String template;
 
-	private static ArrayList<JOPANodeTemplate> standardFormulas;
-
-	static {
-		initStandardNodeTemplates();
+	private JOPANodeTemplate(String name) {
+		this.name = name;
 	}
 
-	public JOPANodeTemplate(String name, String formula) throws JOPAException {
+	public static JOPANodeTemplate create(String name, String formula) {
 		if (name == null || formula == null) {
-			throw new JOPAException("Formula string must be non-null!");
+			// throw new JOPAException("Formula string must be non-null!");
 		}
 		if (name.length() == 0 || formula.length() == 0) {
-			throw new JOPAException("Formula string can not be empty!");
+			// throw new JOPAException("Formula string can not be empty!");
 		}
 
-		this.name = name;
+		JOPANodeTemplate template = new JOPANodeTemplate(name);
 
 		try {
 			JsonElement element = new JsonParser().parse(formula);
@@ -45,17 +42,17 @@ public class JOPANodeTemplate {
 					if (typeElement != null) {
 						String typeString = typeElement.getAsString();
 						if (typeString != null) {
-							type = typeString;
+							template.type = typeString;
 						}
 					}
 					JsonElement inputsElement = object.get("inputs");
 					if (inputsElement != null) {
 						JsonArray inputsArray = inputsElement.getAsJsonArray();
 						if (inputsArray != null) {
-							this.inputs = new String[inputsArray.size()];
+							template.inputs = new String[inputsArray.size()];
 							for (int i = 0; i < inputsArray.size(); i++) {
 								String input = inputsArray.get(i).getAsString();
-								inputs[i] = input;
+								template.inputs[i] = input;
 							}
 						}
 					}
@@ -63,19 +60,19 @@ public class JOPANodeTemplate {
 					if (outputsElement != null) {
 						JsonArray outputsArray = outputsElement.getAsJsonArray();
 						if (outputsArray != null) {
-							this.outputs = new String[outputsArray.size()];
+							template.outputs = new String[outputsArray.size()];
 							for (int i = 0; i < outputsArray.size(); i++) {
 								String output = outputsArray.get(i).getAsString();
-								outputs[i] = output;
+								template.outputs[i] = output;
 							}
 						}
 					}
 					JsonElement templateElement = object.get("template");
 					if (templateElement != null) {
 						if (templateElement.isJsonNull()) {
-							template = "";
+							template.template = "";
 						} else {
-							template = templateElement.getAsString();
+							template.template = templateElement.getAsString();
 						}
 					}
 				}
@@ -86,10 +83,12 @@ public class JOPANodeTemplate {
 			System.err.println(e);
 			e.printStackTrace();
 		}
+
+		return template;
 	}
 
 	public static JOPANodeTemplate getFormulaByName(String name) {
-		for (JOPANodeTemplate formula : standardFormulas) {
+		for (JOPANodeTemplate formula : JOPAMain.currentProject.templates) {
 			if (formula.name.equals(name)) {
 				return formula;
 			}
@@ -98,8 +97,7 @@ public class JOPANodeTemplate {
 		return null;
 	}
 
-	private static void initStandardNodeTemplates() {
-		standardFormulas = new ArrayList<JOPANodeTemplate>();
+	public static void initStandardNodeTemplates(JOPAProject project) {
 		try {
 			String standardTemplates = loadStandardTemplate("templates.json");
 			if (standardTemplates != null) {
@@ -114,7 +112,7 @@ public class JOPANodeTemplate {
 								for (String name : nodesObject.keySet()) {
 									JOPANodeTemplate foobar = getFormulaFromTemplate(nodesObject, name);
 									if (foobar != null) {
-										standardFormulas.add(foobar);
+										project.templates.add(foobar);
 									}
 								}
 							} else {
@@ -132,8 +130,6 @@ public class JOPANodeTemplate {
 			} else {
 				fileCorrupted();
 			}
-		} catch (JOPAException e) {
-			System.err.println(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -143,7 +139,7 @@ public class JOPANodeTemplate {
 		gui.showMessage("templates file is corrupted");
 	}
 
-	private static JOPANodeTemplate getFormulaFromTemplate(JsonObject object, String name) throws JOPAException {
+	private static JOPANodeTemplate getFormulaFromTemplate(JsonObject object, String name) {
 		if (object == null || name == null || name.length() == 0) {
 			return null;
 		}
@@ -152,11 +148,35 @@ public class JOPANodeTemplate {
 		if (element != null) {
 			JsonObject formulaObject = element.getAsJsonObject();
 			if (formulaObject != null) {
-				return new JOPANodeTemplate(name, formulaObject.toString());
+				return JOPANodeTemplate.create(name, formulaObject.toString());
 			}
 		}
 
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		JsonObject obj = new JsonObject();
+
+		JsonArray inputsArray = new JsonArray();
+		for (String input : inputs) {
+			inputsArray.add(input);
+		}
+		JsonArray outputsArray = new JsonArray();
+		for (String output : outputs) {
+			outputsArray.add(output);
+		}
+		
+		obj.add("inputs", inputsArray);
+		obj.add("outputs", outputsArray);
+		obj.add("type", new JsonPrimitive(type));
+		obj.add("template", new JsonPrimitive(template));
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String text = gson.toJson(obj);
+
+		return text;
 	}
 
 }

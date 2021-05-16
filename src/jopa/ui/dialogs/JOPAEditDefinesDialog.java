@@ -38,7 +38,7 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 
 		for (int i = 0; i < object.defines.size(); i++) {
 			JOPASymbol symbol = object.defines.get(i);
-			addEditorPair("defines[" + i + "]", symbol);
+			addEditor("defines[" + i + "]", symbol);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
@@ -76,7 +76,7 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 		setJMenuBar(definesMenuBar);
 	}
 
-	protected void addEditorPair(String name, JOPASymbol symbol) {
+	private void addEditor(String name, JOPASymbol symbol) {
 		JOPAEditorComponent<?> editor = new JOPASymbolEditor(symbol);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

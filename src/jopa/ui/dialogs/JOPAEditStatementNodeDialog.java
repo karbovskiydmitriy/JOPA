@@ -41,11 +41,11 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 		for (int i = 0; i < object.inputs.size(); i++) {
 			JOPADataPort port = object.inputs.get(i);
-			addEditorPair("input[" + i + "]", port);
+			addEditor("input[" + i + "]", port);
 		}
 		for (int i = 0; i < object.outputs.size(); i++) {
 			JOPADataPort port = object.outputs.get(i);
-			addEditorPair("output[" + i + "]", port);
+			addEditor("output[" + i + "]", port);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
 
@@ -110,7 +110,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 		setJMenuBar(statementNodeMenuBar);
 	}
 
-	protected void addEditorPair(String name, JOPADataPort port) {
+	private void addEditor(String name, JOPADataPort port) {
 		JOPAEditorComponent<?> editor = new JOPADataPortEditor(port);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

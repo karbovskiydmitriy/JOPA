@@ -4,6 +4,8 @@ import static jopa.util.JOPAOGLUtil.getTextureFormat;
 
 import java.awt.Frame;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -12,6 +14,8 @@ import jopa.graphics.JOPAImage;
 import jopa.main.JOPAProject;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
+import jopa.ui.editors.JOPAEditorComponent;
+import jopa.ui.editors.JOPAResourceEditor;
 
 public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 
@@ -35,7 +39,10 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 		editors.clear();
 		area.removeAll();
 		
-		
+		for (int i = 0; i < object.resources.size(); i++) {
+			JOPAResource resource = object.resources.get(0);
+			addEditor("resources[" + i + "]", resource);
+		}
 		
 		revalidate();
 		repaint();
@@ -61,6 +68,21 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 		}
 
 		setJMenuBar(resourcesMenuBar);
+	}
+
+	private void addEditor(String name, JOPAResource resource) {
+		JOPAEditorComponent<?> editor = new JOPAResourceEditor(resource);
+		JLabel label = new JLabel(name, JLabel.TRAILING);
+		label.setLabelFor(editor);
+		JButton deleteButton = new JButton("delete");
+		deleteButton.addActionListener(e -> {
+			object.resources.remove(resource);
+			init();
+		});
+		area.add(label);
+		area.add(editor);
+		area.add(deleteButton);
+		editors.add(editor);
 	}
 
 }
