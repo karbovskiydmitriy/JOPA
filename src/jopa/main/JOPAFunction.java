@@ -30,6 +30,7 @@ public class JOPAFunction implements Serializable {
 	public static final String BLOCK_START = "\n{\n";
 	public static final String BLOCK_END = "}\n";
 
+	public boolean isCustom;
 	public JOPAGLSLType returnType;
 	public String name;
 	public ArrayList<JOPAVariable> args;
@@ -41,16 +42,19 @@ public class JOPAFunction implements Serializable {
 	public JOPAEndNode endNode;
 	public ArrayList<JOPANode> statementNodes;
 
-	public JOPAFunction(String name, JOPAVariable... args) {
-		this.returnType = JOPAGLSLType.VOID;
+	public JOPAFunction(String name, JOPAGLSLType returnType, boolean isCustom, JOPAVariable... args) {
+		this.isCustom = isCustom;
+		this.returnType = returnType;
 		this.name = name;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
-		this.definesNode = new JOPADefinesNode(200, 200);
-		this.typesNode = new JOPATypesNode(50, 200);
-		this.constantsNode = new JOPAConstantsNode(50, 350);
-		this.globalsNode = new JOPAGlobalsNode(200, 350);
-		this.statementNodes = new ArrayList<JOPANode>();
-		setupInitialNodes();
+		if (isCustom) {
+			this.definesNode = new JOPADefinesNode(200, 200);
+			this.typesNode = new JOPATypesNode(50, 200);
+			this.constantsNode = new JOPAConstantsNode(50, 350);
+			this.globalsNode = new JOPAGlobalsNode(200, 350);
+			this.statementNodes = new ArrayList<JOPANode>();
+			setupInitialNodes();
+		}
 	}
 
 	private void setupInitialNodes() {
@@ -212,6 +216,10 @@ public class JOPAFunction implements Serializable {
 		return code;
 	}
 
+	public void updateFunction() {
+		// TODO updateFunction
+	}
+
 	private static String getTabs(int count) {
 		char[] tabs = new char[count];
 		Arrays.fill(tabs, '\t');
@@ -222,6 +230,7 @@ public class JOPAFunction implements Serializable {
 	private static String format(String text) {
 		String[] lines = text.replaceAll(";", ";" + NEW_LINE).toString().split(NEW_LINE);
 		String code = "";
+
 		for (String line : lines) {
 			code += getTabs(1) + line + NEW_LINE;
 		}

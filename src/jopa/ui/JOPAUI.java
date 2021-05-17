@@ -55,7 +55,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jopa.graphics.JOPACanvas;
 import jopa.main.JOPAFunction;
-import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPATemplate;
 import jopa.main.JOPAProject;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
@@ -78,9 +78,10 @@ import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAEditTemplateDialog;
 import jopa.ui.dialogs.JOPAEditTypeDialog;
 import jopa.ui.dialogs.JOPAEditTypesListDialog;
+import jopa.ui.dialogs.JOPAFindTemplateDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAQuestionDialog;
-import jopa.ui.dialogs.JOPAShowFunctionListDialog;
+import jopa.ui.dialogs.JOPAEditFunctionListDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 import jopa.ui.dialogs.JOPAShowTemplateListDialog;
 
@@ -370,6 +371,7 @@ public class JOPAUI {
 		JOPACanvas canvas = new JOPACanvas();
 		tabs.addTab(function.name, canvas);
 		canvases.put(function.name, canvas);
+		tabs.setSelectedComponent(canvas);
 		currentCanvas.setPreferredSize(tabs.getSize());
 		currentCanvas = canvas;
 	}
@@ -440,7 +442,7 @@ public class JOPAUI {
 	}
 
 	public synchronized void showFunctionsList(JOPAProject project) {
-		JOPAShowFunctionListDialog showFunctionListDialog = new JOPAShowFunctionListDialog(window, project);
+		JOPAEditFunctionListDialog showFunctionListDialog = new JOPAEditFunctionListDialog(window, project);
 		showFunctionListDialog.dispose();
 	}
 
@@ -449,7 +451,7 @@ public class JOPAUI {
 		showTemplateListDialog.dispose();
 	}
 
-	public synchronized void openTemplateEditor(JOPANodeTemplate template) {
+	public synchronized void openTemplateEditor(JOPATemplate template) {
 		JOPAEditTemplateDialog editTemplateDialog = new JOPAEditTemplateDialog(window, template);
 		editTemplateDialog.dispose();
 	}
@@ -457,6 +459,13 @@ public class JOPAUI {
 	public synchronized void showShader(String shaderCode) {
 		JOPAShowShaderDialog showShaderDialog = new JOPAShowShaderDialog(window, shaderCode);
 		showShaderDialog.dispose();
+	}
+
+	public synchronized JOPATemplate selectTemplate() {
+		JOPAFindTemplateDialog findTemplateDialog = new JOPAFindTemplateDialog(window, currentProject.templates);
+		findTemplateDialog.dispose();
+
+		return findTemplateDialog.selectedTemplate;
 	}
 
 	public synchronized void showMessage(String text) {

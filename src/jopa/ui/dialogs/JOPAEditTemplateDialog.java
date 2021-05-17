@@ -15,9 +15,9 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPATemplate;
 
-public class JOPAEditTemplateDialog extends JOPADialog<JOPANodeTemplate> {
+public class JOPAEditTemplateDialog extends JOPADialog<JOPATemplate> {
 
 	private static final long serialVersionUID = 7445189603617253590L;
 
@@ -25,10 +25,9 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPANodeTemplate> {
 
 	private TextArea templateEditor;
 
-	public JOPAEditTemplateDialog(Frame owner, JOPANodeTemplate template) {
+	public JOPAEditTemplateDialog(Frame owner, JOPATemplate template) {
 		super(owner, "Edit template", template);
-		// DECIDE template file format
-		templateFilter = new FileNameExtensionFilter("Template file", "txt");
+		templateFilter = new FileNameExtensionFilter("Template file", "json");
 
 		init();
 		initMenu();
@@ -72,6 +71,7 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPANodeTemplate> {
 				if (selectedFile != null) {
 					String code = loadTextFile(selectedFile.getAbsolutePath());
 					object.template = code;
+					// TODO init
 					init();
 				}
 			});

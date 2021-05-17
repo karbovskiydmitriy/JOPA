@@ -10,6 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import jopa.main.JOPATemplate;
 import jopa.main.JOPAVariable;
 import jopa.nodes.JOPAStatementNode;
 import jopa.ports.JOPADataPort;
@@ -93,15 +94,22 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 		{
 			JMenu templateMenu = new JMenu("template");
 
+			JMenuItem selectMenuItem = new JMenuItem("select");
 			JMenuItem editMenuItem = new JMenuItem("edit");
 
-			editMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
-
+			selectMenuItem.addActionListener(e -> {
+				JOPATemplate template = gui.selectTemplate();
+				System.out.println(template);
+				if (template != null) {
+					object.template = template;
+				}
+			});
 			editMenuItem.addActionListener(e -> {
 				setVisible(false);
 				gui.openTemplateEditor(object.template);
 			});
 
+			templateMenu.add(selectMenuItem);
 			templateMenu.add(editMenuItem);
 
 			statementNodeMenuBar.add(templateMenu);

@@ -5,15 +5,15 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 
-import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPATemplate;
 
-public class JOPATemplateEditor extends JOPAEditorComponent<JOPANodeTemplate> {
+public class JOPATemplateEditor extends JOPAEditorComponent<JOPATemplate> {
 
 	private static final long serialVersionUID = 1313263351292997404L;
 
 	private JTextField nameTextField;
 
-	public JOPATemplateEditor(JOPANodeTemplate object) {
+	public JOPATemplateEditor(JOPATemplate object) {
 		super(object);
 		nameTextField = new JTextField(object.name);
 		add(nameTextField);

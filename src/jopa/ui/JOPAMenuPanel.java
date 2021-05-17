@@ -1,6 +1,6 @@
 package jopa.ui;
 
-import static jopa.main.JOPAMain.createNewFunction;
+import static jopa.main.JOPAMain.*;
 import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewProject;
 import static jopa.main.JOPAMain.showShaderCode;
@@ -30,12 +30,26 @@ public class JOPAMenuPanel extends Panel {
 			newProjectButton.setFocusable(false);
 			add(newProjectButton);
 		}
+		
+		{
+			Button editProjectButton = new Button("edit project");
+			editProjectButton.addActionListener(e -> editProject());
+			editProjectButton.setFocusable(false);
+			add(editProjectButton);
+		}
 
 		{
 			Button newFunctionButton = new Button("new function");
 			newFunctionButton.addActionListener(e -> createNewFunction());
 			newFunctionButton.setFocusable(false);
 			add(newFunctionButton);
+		}
+
+		{
+			Button editFunctionButton = new Button("edit function");
+			editFunctionButton.addActionListener(e -> editCurrentFunction());
+			editFunctionButton.setFocusable(false);
+			add(editFunctionButton);
 		}
 
 		{

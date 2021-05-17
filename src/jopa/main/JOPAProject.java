@@ -31,6 +31,7 @@ import jopa.playground.JOPASimulationScript;
 import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 import jopa.types.JOPACustomType;
+import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAProjectType;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
@@ -55,7 +56,7 @@ public class JOPAProject implements Serializable {
 	public String name;
 	public JOPAProjectType projectType;
 	public int[] localGroupSize;
-	public ArrayList<JOPANodeTemplate> templates;
+	public ArrayList<JOPATemplate> templates;
 	public ArrayList<JOPASymbol> defines;
 	public ArrayList<JOPACustomType> types;
 	public ArrayList<JOPAConstant> constants;
@@ -73,27 +74,27 @@ public class JOPAProject implements Serializable {
 	private void init() {
 		currentProject = this;
 		localGroupSize = new int[] { 1, 1, 1 };
-		templates = new ArrayList<JOPANodeTemplate>();
+		templates = new ArrayList<JOPATemplate>();
 		defines = new ArrayList<JOPASymbol>();
 		types = new ArrayList<JOPACustomType>();
 		constants = new ArrayList<JOPAConstant>();
 		resources = new ArrayList<JOPAResource>();
 		globalVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
-		JOPANodeTemplate.initStandardNodeTemplates(this);
+		JOPATemplate.initStandardNodeTemplates(this);
 		System.out.println("[PROJECT] Loaded " + templates.size() + " templates");
 	}
 
 	public synchronized JOPAFunction createFunction(String name) {
 		JOPAFunction function;
 		if (functions.size() == 0) {
-			function = new JOPAFunction("main");
+			function = new JOPAFunction("main", JOPAGLSLType.VOID, true);
 			mainFunction = function;
 		} else {
 			if (name == null) {
 				name = "function_" + functions.size();
 			}
-			function = new JOPAFunction(name);
+			function = new JOPAFunction(name, JOPAGLSLType.VOID, true);
 		}
 		functions.add(function);
 
@@ -455,7 +456,7 @@ public class JOPAProject implements Serializable {
 				shaderCode += TWO_LINES;
 			}
 			for (JOPAFunction function : functions) {
-				shaderCode += function.generateCode();
+				shaderCode += function.generateCode() + NEW_LINE;
 			}
 			this.generatedShader = shaderCode;
 		} else {

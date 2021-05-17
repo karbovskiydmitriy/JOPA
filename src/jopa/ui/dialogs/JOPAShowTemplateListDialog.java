@@ -9,7 +9,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPATemplate;
 import jopa.main.JOPAProject;
 import jopa.ui.editors.JOPAEditorComponent;
 import jopa.ui.editors.JOPATemplateEditor;
@@ -36,7 +36,7 @@ public class JOPAShowTemplateListDialog extends JOPADialog<JOPAProject> {
 		area.removeAll();
 
 		for (int i = 0; i < object.templates.size(); i++) {
-			JOPANodeTemplate template = object.templates.get(i);
+			JOPATemplate template = object.templates.get(i);
 			addEditor("templates[" + i + "]", template);
 		}
 		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
@@ -58,7 +58,7 @@ public class JOPAShowTemplateListDialog extends JOPADialog<JOPAProject> {
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
 			newMenuItem.addActionListener(e -> {
-				JOPANodeTemplate template = JOPANodeTemplate.create("new template", "");
+				JOPATemplate template = JOPATemplate.create("new template", "");
 				object.templates.add(template);
 				init();
 			});
@@ -76,7 +76,7 @@ public class JOPAShowTemplateListDialog extends JOPADialog<JOPAProject> {
 		setJMenuBar(templatesMenuBar);
 	}
 
-	private void addEditor(String name, JOPANodeTemplate template) {
+	private void addEditor(String name, JOPATemplate template) {
 		JOPAEditorComponent<?> editor = new JOPATemplateEditor(template);
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);

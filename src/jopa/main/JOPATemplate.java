@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-public class JOPANodeTemplate {
+public class JOPATemplate {
 
 	public String name;
 	public String inputs[];
@@ -19,19 +19,19 @@ public class JOPANodeTemplate {
 	public String type;
 	public String template;
 
-	private JOPANodeTemplate(String name) {
+	private JOPATemplate(String name) {
 		this.name = name;
 	}
 
-	public static JOPANodeTemplate create(String name, String formula) {
+	public static JOPATemplate create(String name, String formula) {
 		if (name == null || formula == null) {
-			// throw new JOPAException("Formula string must be non-null!");
+			return null;
 		}
 		if (name.length() == 0 || formula.length() == 0) {
-			// throw new JOPAException("Formula string can not be empty!");
+			return null;
 		}
 
-		JOPANodeTemplate template = new JOPANodeTemplate(name);
+		JOPATemplate template = new JOPATemplate(name);
 
 		try {
 			JsonElement element = new JsonParser().parse(formula);
@@ -87,8 +87,8 @@ public class JOPANodeTemplate {
 		return template;
 	}
 
-	public static JOPANodeTemplate getFormulaByName(String name) {
-		for (JOPANodeTemplate formula : JOPAMain.currentProject.templates) {
+	public static JOPATemplate getFormulaByName(String name) {
+		for (JOPATemplate formula : JOPAMain.currentProject.templates) {
 			if (formula.name.equals(name)) {
 				return formula;
 			}
@@ -110,7 +110,7 @@ public class JOPANodeTemplate {
 							JsonObject nodesObject = nodesElement.getAsJsonObject();
 							if (nodesObject != null) {
 								for (String name : nodesObject.keySet()) {
-									JOPANodeTemplate foobar = getFormulaFromTemplate(nodesObject, name);
+									JOPATemplate foobar = getFormulaFromTemplate(nodesObject, name);
 									if (foobar != null) {
 										project.templates.add(foobar);
 									}
@@ -139,7 +139,7 @@ public class JOPANodeTemplate {
 		gui.showMessage("templates file is corrupted");
 	}
 
-	private static JOPANodeTemplate getFormulaFromTemplate(JsonObject object, String name) {
+	private static JOPATemplate getFormulaFromTemplate(JsonObject object, String name) {
 		if (object == null || name == null || name.length() == 0) {
 			return null;
 		}
@@ -148,7 +148,7 @@ public class JOPANodeTemplate {
 		if (element != null) {
 			JsonObject formulaObject = element.getAsJsonObject();
 			if (formulaObject != null) {
-				return JOPANodeTemplate.create(name, formulaObject.toString());
+				return JOPATemplate.create(name, formulaObject.toString());
 			}
 		}
 

@@ -78,10 +78,8 @@ public class JOPASimulationScript implements Serializable {
 	private transient static final String[] DELETE_BUFFER = { "destroy", "buffer" };
 	private transient static final String[] DELETE_SHADER = { "delete", "shader" };
 	private transient static final String[] DELETE_PROGRAM = { "delete", "program" };
+	private transient static final String[] PAUSE = { "pause" };
 	private transient static final String[] EXIT = { "exit" };
-	// TODO load buffer
-	// TODO save buffer
-	// DECIDE save image?
 
 	private transient long startTime;
 	private transient long prevTime;
@@ -940,6 +938,12 @@ public class JOPASimulationScript implements Serializable {
 		return true;
 	};
 
+	private transient final Predicate<String[]> PAUSE_OPERATION = args -> {
+		// TOOD pause
+
+		return true;
+	};
+
 	private transient final Predicate<String[]> EXIT_OPERATION = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "EXIT uses 0 arguments", args);
@@ -958,7 +962,6 @@ public class JOPASimulationScript implements Serializable {
 
 	public void init() {
 		operations = new HashMap<String[], Predicate<String[]>>();
-		operations.clear();
 		operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
 		operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
 		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
@@ -984,6 +987,7 @@ public class JOPASimulationScript implements Serializable {
 		operations.put(DELETE_BUFFER, DELETE_BUFFER_OPERATION);
 		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
 		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
+		operations.put(PAUSE, PAUSE_OPERATION);
 		operations.put(EXIT, EXIT_OPERATION);
 
 		JOPAResource timeResource = new JOPAResource(JOPAGLSLType.FLOAT, "time", 0.0f);
@@ -1057,7 +1061,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		String command = commands.get(commandIndex);
-//		System.out.println("[SCRIPT] Command: " + command);
+		// System.out.println("[SCRIPT] Command: " + command);
 		if (command.startsWith("#")) {
 			commandIndex++;
 			return true;
@@ -1137,7 +1141,7 @@ public class JOPASimulationScript implements Serializable {
 							}
 							Predicate<String[]> operation = getOperation(parts);
 							if (operation == null) {
-//								System.err.println("[SCRIPT] Unknown command: " + operationPart);
+								// System.err.println("[SCRIPT] Unknown command: " + operationPart);
 
 								return false;
 							}

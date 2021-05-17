@@ -42,17 +42,12 @@ float random(vec2 st)
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
-float normrandom(float f)
-{
-	return (1 + random(f)) / 2.0;
-}
-
 void init(int id)
 {
 	float angle = random(id + 0) * PI * 2;
 	float rad = random(id + 1) * 0.22;
 	ants[id].position = vec2(0.5 + cos(angle) * rad, (0.5 + sin(angle) * rad / aspect));
-	ants[id].angle = normrandom(id + 2) * PI * 2;
+	ants[id].angle = random(id + 2) * PI * 2;
 	ants[id].speed = 1.0;
 	ants[id].color = vec4(0.118, 0.235, 0.784, 1.0);
 }

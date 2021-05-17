@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.main.JOPAConstant;
-import jopa.main.JOPANodeTemplate;
+import jopa.main.JOPATemplate;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPADataPort;
@@ -30,7 +30,7 @@ public abstract class JOPANode implements Serializable {
 	public Rectangle rect;
 	public String header;
 	public String text;
-	public transient JOPANodeTemplate template;
+	public transient JOPATemplate template;
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
 
@@ -97,7 +97,7 @@ public abstract class JOPANode implements Serializable {
 			return;
 		}
 
-		JOPANodeTemplate template = JOPANodeTemplate.getFormulaByName(formulaName);
+		JOPATemplate template = JOPATemplate.getFormulaByName(formulaName);
 		this.template = template;
 		if (template != null) {
 			for (int i = 0; i < template.inputs.length; i++) {
