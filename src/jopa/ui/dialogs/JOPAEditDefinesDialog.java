@@ -57,12 +57,12 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			newMenuItem.addActionListener(e -> {
+			newMenuItem.addActionListener(l -> {
 				JOPASymbol preprocessorSymbol = new JOPASymbol("name", "value");
 				object.defines.add(preprocessorSymbol);
 				init();
 			});
-			clearMenuItem.addActionListener(e -> {
+			clearMenuItem.addActionListener(l -> {
 				object.defines.clear();
 				init();
 			});
@@ -81,7 +81,7 @@ public class JOPAEditDefinesDialog extends JOPADialog<JOPAProject> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.defines.remove(symbol);
 			init();
 		});

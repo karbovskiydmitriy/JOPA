@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 
 import jopa.graphics.JOPAImage;
 import jopa.main.JOPAProject;
+import jopa.types.JOPABuffer;
 import jopa.types.JOPAResource;
 import jopa.types.JOPAResourceType;
 import jopa.ui.editors.JOPAEditorComponent;
@@ -38,12 +39,13 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 	private void init() {
 		editors.clear();
 		area.removeAll();
-		
+
 		for (int i = 0; i < object.resources.size(); i++) {
-			JOPAResource resource = object.resources.get(0);
+			JOPAResource resource = object.resources.get(i);
 			addEditor("resources[" + i + "]", resource);
 		}
-		
+		adjustGrid(area.getComponentCount() / 3, 3, 10, 10, 10, 10);
+
 		revalidate();
 		repaint();
 	}
@@ -52,17 +54,26 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 		JMenuBar resourcesMenuBar = new JMenuBar();
 
 		{
-			JMenu resourcesMenu = new JMenu();
+			JMenu resourcesMenu = new JMenu("resources");
 
 			JMenuItem newTextureMenuBar = new JMenuItem("new texture");
+			JMenuItem newBufferMenuBar = new JMenuItem("new buffer");
 
-			newTextureMenuBar.addActionListener(e -> {
+			newTextureMenuBar.addActionListener(l -> {
 				JOPAImage image = new JOPAImage(0, 100, 100, getTextureFormat(4, float.class, false));
-				JOPAResource resource = new JOPAResource(JOPAResourceType.BUFFER_HANDLE, "", image);
+				JOPAResource resource = new JOPAResource(JOPAResourceType.IMAGE, "", image);
 				object.resources.add(resource);
+				init();
+			});
+			newBufferMenuBar.addActionListener(l -> {
+				JOPABuffer buffer = new JOPABuffer();
+				JOPAResource resource = new JOPAResource(JOPAResourceType.BUFFER, "", buffer);
+				object.resources.add(resource);
+				init();
 			});
 
 			resourcesMenu.add(newTextureMenuBar);
+			resourcesMenu.add(newBufferMenuBar);
 
 			resourcesMenuBar.add(resourcesMenu);
 		}
@@ -75,7 +86,7 @@ public class JOPAEditResourcesDialog extends JOPADialog<JOPAProject> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.resources.remove(resource);
 			init();
 		});

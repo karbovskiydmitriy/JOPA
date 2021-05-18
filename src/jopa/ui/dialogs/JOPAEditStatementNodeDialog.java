@@ -64,7 +64,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			newInputMenuItem.setAccelerator(KeyStroke.getKeyStroke('I', CTRL_MODIFIER));
 
-			newInputMenuItem.addActionListener(e -> {
+			newInputMenuItem.addActionListener(l -> {
 				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "input_port"), false, true);
 				init();
 			});
@@ -81,7 +81,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 
 			newOutputMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 
-			newOutputMenuItem.addActionListener(e -> {
+			newOutputMenuItem.addActionListener(l -> {
 				object.createPort(new JOPAVariable(JOPAGLSLType.FLOAT, "output_port"), true, true);
 				init();
 			});
@@ -97,14 +97,14 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 			JMenuItem selectMenuItem = new JMenuItem("select");
 			JMenuItem editMenuItem = new JMenuItem("edit");
 
-			selectMenuItem.addActionListener(e -> {
+			selectMenuItem.addActionListener(l -> {
 				JOPATemplate template = gui.selectTemplate();
 				System.out.println(template);
 				if (template != null) {
 					object.template = template;
 				}
 			});
-			editMenuItem.addActionListener(e -> {
+			editMenuItem.addActionListener(l -> {
 				setVisible(false);
 				gui.openTemplateEditor(object.template);
 			});
@@ -123,7 +123,7 @@ public class JOPAEditStatementNodeDialog extends JOPADialog<JOPAStatementNode> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.deletePort(port);
 			init();
 		});

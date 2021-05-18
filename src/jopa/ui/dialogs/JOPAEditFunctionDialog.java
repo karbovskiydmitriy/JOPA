@@ -48,7 +48,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		JLabel nameLabel = new JLabel("name");
 		nameTextArea = new JTextArea(object.name);
 		JButton applyNameButton = new JButton("apply");
-		applyNameButton.addActionListener(e -> {
+		applyNameButton.addActionListener(l -> {
 			object.name = nameTextArea.getText();
 			object.updateFunction();
 		});
@@ -63,7 +63,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		returnTypeComboBox = new JComboBox<String>(getAllTypes());
 		returnTypeComboBox.setSelectedItem(getNameForType(object.returnType));
 		JButton applyReturnTypeButton = new JButton("apply");
-		applyNameButton.addActionListener(e -> {
+		applyNameButton.addActionListener(l -> {
 			object.returnType = getTypeForName((String) returnTypeComboBox.getSelectedItem());
 			object.updateFunction();
 		});
@@ -85,13 +85,13 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 			JMenuItem newArgumentMenuItem = new JMenuItem("new argument");
 			JMenuItem clearArgumentsMenuItem = new JMenuItem("clear arguments");
 
-			newArgumentMenuItem.addActionListener(e -> {
+			newArgumentMenuItem.addActionListener(l -> {
 				JOPAVariable globalVariable = new JOPAVariable(JOPAGLSLType.INT, "foobar");
 				object.args.add(globalVariable);
 				object.updateFunction();
 				init();
 			});
-			clearArgumentsMenuItem.addActionListener(e -> {
+			clearArgumentsMenuItem.addActionListener(l -> {
 				object.args.clear();
 				object.updateFunction();
 				init();
@@ -111,7 +111,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.args.remove(variable);
 			init();
 		});

@@ -5,7 +5,6 @@ import static jopa.main.JOPAFunction.TWO_LINES;
 import static jopa.main.JOPAMain.currentProject;
 import static jopa.main.JOPAMain.gui;
 import static jopa.main.JOPAMain.settings;
-import static jopa.io.JOPALoader.loadStandardScript;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -49,7 +48,6 @@ public class JOPAProject implements Serializable {
 	private transient String generatedShader;
 	private transient JOPAPlayground playground;
 	private boolean projectChanged;
-	private ArrayList<JOPAFunction> functions;
 
 	public transient JOPASimulationScript script;
 	public boolean isCustom = false;
@@ -62,6 +60,7 @@ public class JOPAProject implements Serializable {
 	public ArrayList<JOPAConstant> constants;
 	public ArrayList<JOPAResource> resources;
 	public ArrayList<JOPAVariable> globalVariables;
+	public ArrayList<JOPAFunction> functions;
 	public JOPAFunction currentFunction;
 	public JOPAFunction mainFunction;
 
@@ -81,20 +80,20 @@ public class JOPAProject implements Serializable {
 		resources = new ArrayList<JOPAResource>();
 		globalVariables = new ArrayList<JOPAVariable>();
 		functions = new ArrayList<JOPAFunction>();
-		JOPATemplate.initStandardNodeTemplates(this);
+		JOPATemplate.initStandardTemplates(this);
 		System.out.println("[PROJECT] Loaded " + templates.size() + " templates");
 	}
 
-	public synchronized JOPAFunction createFunction(String name) {
+	public synchronized JOPAFunction createFunction(String name, boolean isMain) {
 		JOPAFunction function;
-		if (functions.size() == 0) {
-			function = new JOPAFunction("main", JOPAGLSLType.VOID, true);
+		if (isMain) {
+			function = new JOPAFunction("main", JOPAGLSLType.VOID, true, null);
 			mainFunction = function;
 		} else {
 			if (name == null) {
 				name = "function_" + functions.size();
 			}
-			function = new JOPAFunction(name, JOPAGLSLType.VOID, true);
+			function = new JOPAFunction(name, JOPAGLSLType.VOID, true, null);
 		}
 		functions.add(function);
 
@@ -133,15 +132,16 @@ public class JOPAProject implements Serializable {
 			playground.close();
 		}
 		playground = new JOPAPlayground();
-		script = JOPASimulationScript.create(type);
+		script = JOPASimulationScript.createCustom("test.jopascript");
 	}
 
 	public synchronized void startPlayground() {
 		if (playground != null) {
 			if (isCustom) {
-				String scriptCode = loadStandardScript("ants.jopascript");
-				if (scriptCode != null) {
-					script.setupScript(scriptCode);
+				// String scriptCode = loadStandardScript("ants.jopascript");
+				if (generateShader()) {
+					// script.setupScript(scriptCode);
+
 				} else {
 					gui.showMessage("Shader generation failed");
 
@@ -354,8 +354,10 @@ public class JOPAProject implements Serializable {
 	}
 
 	public synchronized boolean verifyFunction(JOPAFunction function) {
-		if (!function.verifyNodes()) {
-			return false;
+		if (function.isCustom) {
+			if (!function.verifyNodes()) {
+				return false;
+			}
 		}
 
 		return true;
@@ -419,7 +421,7 @@ public class JOPAProject implements Serializable {
 				}
 				boolean hasBuffers = false;
 				for (JOPAResource resource : resources) {
-					if (resource.type == JOPAResourceType.BUFFER_HANDLE) {
+					if (resource.type == JOPAResourceType.BUFFER) {
 						hasBuffers = true;
 						shaderCode += "layout(std430, binding = " + index++ + ") buffer name" + NEW_LINE;
 						shaderCode += "{" + NEW_LINE;
@@ -450,13 +452,16 @@ public class JOPAProject implements Serializable {
 			if (functions.size() > 1) {
 				for (JOPAFunction function : functions) {
 					if (function != mainFunction) {
-						shaderCode += function.getPrototype() + ";";
+						shaderCode += function.getPrototype() + ";" + NEW_LINE;
 					}
 				}
-				shaderCode += TWO_LINES;
+				shaderCode += NEW_LINE;
 			}
+			shaderCode += mainFunction.generateCode() + NEW_LINE;
 			for (JOPAFunction function : functions) {
-				shaderCode += function.generateCode() + NEW_LINE;
+				if (function != mainFunction) {
+					shaderCode += function.generateCode() + NEW_LINE;
+				}
 			}
 			this.generatedShader = shaderCode;
 		} else {

@@ -31,11 +31,11 @@ public class JOPAEditFunctionListDialog extends JOPADialog<JOPAProject> {
 			if (function.isCustom) {
 				JButton editFunctionButton = new JButton("Edit \"" + functionName + "\"");
 				JButton deleteFunctionButton = new JButton("Delete \"" + functionName + "\"");
-				editFunctionButton.addActionListener(e -> {
+				editFunctionButton.addActionListener(l -> {
 					setVisible(false);
 					gui.openFunctionEditor(function);
 				});
-				deleteFunctionButton.addActionListener(e -> {
+				deleteFunctionButton.addActionListener(l -> {
 					object.deleteFunction(functionName);
 					// TODO update functions?
 					init();

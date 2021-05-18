@@ -5,6 +5,7 @@ import static jopa.io.JOPAIO.saveTextFile;
 import static jopa.main.JOPAMain.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.TextArea;
 import java.io.File;
@@ -42,9 +43,13 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPATemplate> {
 
 	private void init() {
 		area.removeAll();
+		
 		area.setLayout(new BorderLayout());
 		templateEditor = new TextArea(object.template);
+		Font templateFont = new Font("Consolas", Font.BOLD, 18);
+		templateEditor.setFont(templateFont);
 		area.add(templateEditor);
+		
 		revalidate();
 		repaint();
 	}
@@ -62,11 +67,11 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPATemplate> {
 			loadMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 			saveMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_MODIFIER));
 
-			clearMenuItem.addActionListener(e -> {
+			clearMenuItem.addActionListener(l -> {
 				templateEditor.setText("");
 				init();
 			});
-			loadMenuItem.addActionListener(e -> {
+			loadMenuItem.addActionListener(l -> {
 				File selectedFile = gui.showFileDialog(null, templateFilter, "Load template", false);
 				if (selectedFile != null) {
 					String code = loadTextFile(selectedFile.getAbsolutePath());
@@ -75,7 +80,7 @@ public class JOPAEditTemplateDialog extends JOPADialog<JOPATemplate> {
 					init();
 				}
 			});
-			saveMenuItem.addActionListener(e -> {
+			saveMenuItem.addActionListener(l -> {
 				File selectedFile = gui.showFileDialog(null, templateFilter, "Load template", false);
 				if (selectedFile != null) {
 					String code = templateEditor.getText();

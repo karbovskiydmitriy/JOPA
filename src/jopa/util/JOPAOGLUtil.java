@@ -307,15 +307,6 @@ public final class JOPAOGLUtil {
 		return window;
 	}
 
-	public static int[] getScreenSize() {
-		createWindowForOpenGLContext();
-		long monitor = glfwGetPrimaryMonitor();
-		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
-		deleteContext();
-
-		return new int[] { videoMode.width(), videoMode.height() };
-	}
-
 	public static int[] getWindowSize(long window) {
 		if (window <= 0) {
 			return null;
@@ -334,7 +325,7 @@ public final class JOPAOGLUtil {
 
 	public static void draw(long window, JOPASimulationScript context) {
 		passVariables(context);
-		
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 1);
@@ -378,22 +369,25 @@ public final class JOPAOGLUtil {
 
 			return false;
 		}
-//		int maxInvocations = glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
-//		if (x > maxInvocations) {
-//			System.err.println("x > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
-//
-//			return false;
-//		}
-//		if (y > maxInvocations) {
-//			System.err.println("y > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
-//
-//			return false;
-//		}
-//		if (z > maxInvocations) {
-//			System.err.println("z > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " + maxInvocations);
-//
-//			return false;
-//		}
+		// int maxInvocations = glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
+		// if (x > maxInvocations) {
+		// System.err.println("x > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " +
+		// maxInvocations);
+		//
+		// return false;
+		// }
+		// if (y > maxInvocations) {
+		// System.err.println("y > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " +
+		// maxInvocations);
+		//
+		// return false;
+		// }
+		// if (z > maxInvocations) {
+		// System.err.println("z > GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: " +
+		// maxInvocations);
+		//
+		// return false;
+		// }
 
 		int[] count = new int[1];
 		int[] shaders = new int[64];
@@ -570,6 +564,69 @@ public final class JOPAOGLUtil {
 		return 0;
 	}
 
+	public static String getTextureFormatText(int format) {
+		switch (format) {
+		case GL_R32UI:
+			return "r32ui";
+		case GL_RG32UI:
+			return "rg32ui";
+		case GL_RGB32UI:
+			return "rgba32ui";
+		case GL_RGBA32UI:
+			return "rgba32ui";
+		case GL_R32I:
+			return "r32i";
+		case GL_RG32I:
+			return "rg32i";
+		case GL_RGB32I:
+			return "rgba32i";
+		case GL_RGBA32I:
+			return "rgba32i";
+		case GL_R32F:
+			return "r32f";
+		case GL_RG32F:
+			return "rg32f";
+		case GL_RGB32F:
+			return "rgba32f";
+		case GL_RGBA32F:
+			return "rgba32f";
+		case GL_R16UI:
+			return "r26ui";
+		case GL_RG16UI:
+			return "rg16ui";
+		case GL_RGB16UI:
+			return "rgba16ui";
+		case GL_RGBA16UI:
+			return "rgba16ui";
+		case GL_R16I:
+			return "r16i";
+		case GL_RG16I:
+			return "rg16i";
+		case GL_RGB16I:
+			return "rgba16ui";
+		case GL_RGBA16I:
+			return "rgba16ui";
+		case GL_R8UI:
+			return "r8ui";
+		case GL_RG8UI:
+			return "rg8ui";
+		case GL_RGB8UI:
+			return "rgba8ui";
+		case GL_RGBA8UI:
+			return "rgba8ui";
+		case GL_R8I:
+			return "r8i";
+		case GL_RG8I:
+			return "rg8i";
+		case GL_RGB8I:
+			return "rgba8i";
+		case GL_RGBA8I:
+			return "rgba8i";
+		default:
+			return null;
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> T safeCast(Object object, Class<T> type) {
 		if (object == null) {
@@ -606,7 +663,7 @@ public final class JOPAOGLUtil {
 		if (resource != null && resource.type != null) {
 			switch (resource.type) {
 			case IMAGE:
-			case BUFFER_HANDLE:
+			case BUFFER:
 				return false;
 			case GLSL_TYPE: {
 				if (resource.glslType != null) {

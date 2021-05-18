@@ -56,7 +56,7 @@ public class JOPAEditFunctionNodeDialog extends JOPADialog<JOPAFunctionNode> {
 
 			createNewMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			createNewMenuItem.addActionListener(e -> {
+			createNewMenuItem.addActionListener(l -> {
 
 			});
 

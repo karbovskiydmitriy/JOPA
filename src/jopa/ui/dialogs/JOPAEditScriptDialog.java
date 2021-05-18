@@ -66,10 +66,10 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 			loadFromFileMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_MODIFIER));
 			saveToFileMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_MODIFIER));
 
-			newScriptMenuItem.addActionListener(e -> {
+			newScriptMenuItem.addActionListener(l -> {
 				scriptEditor.setText("");
 			});
-			validateMenuItem.addActionListener(e -> {
+			validateMenuItem.addActionListener(l -> {
 				boolean correct = true;
 				String code = scriptEditor.getText();
 				String[] lines = code.split(" ");
@@ -93,7 +93,7 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 					gui.showMessage("Script contains errors");
 				}
 			});
-			loadFromFileMenuItem.addActionListener(e -> {
+			loadFromFileMenuItem.addActionListener(l -> {
 				File selectedFile = gui.showFileDialog(null, jopascriptFilter, "Load JOPA script", false);
 				if (selectedFile != null) {
 					String code = loadTextFile(selectedFile.getAbsolutePath());
@@ -101,7 +101,7 @@ public class JOPAEditScriptDialog extends JOPADialog<JOPASimulationScript> {
 					init();
 				}
 			});
-			saveToFileMenuItem.addActionListener(e -> {
+			saveToFileMenuItem.addActionListener(l -> {
 				String code = object.getCode();
 				File selectedFile = gui.showFileDialog(null, jopascriptFilter, "Save JOPA script", true);
 				if (selectedFile != null) {

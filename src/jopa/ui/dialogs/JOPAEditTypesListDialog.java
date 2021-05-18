@@ -42,10 +42,10 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 			JLabel typeNameLabel = new JLabel("Type name: " + type.name);
 			JButton editTypeButton = new JButton("edit");
 			JButton deleteTypeButton = new JButton("delete");
-			editTypeButton.addActionListener(e -> {
+			editTypeButton.addActionListener(l -> {
 				gui.openTypeEditor(type);
 			});
-			deleteTypeButton.addActionListener(e -> {
+			deleteTypeButton.addActionListener(l -> {
 				object.types.remove(type);
 				init();
 			});
@@ -71,11 +71,11 @@ public class JOPAEditTypesListDialog extends JOPADialog<JOPAProject> {
 
 		newTypeMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-		newTypeMenuItem.addActionListener(e -> {
+		newTypeMenuItem.addActionListener(l -> {
 			object.types.add(new JOPACustomType("NewType"));
 			init();
 		});
-		clearTypesMenuItem.addActionListener(e -> {
+		clearTypesMenuItem.addActionListener(l -> {
 			object.types.clear();
 			init();
 		});

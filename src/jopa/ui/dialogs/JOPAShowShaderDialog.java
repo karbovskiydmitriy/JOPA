@@ -4,6 +4,7 @@ import static jopa.main.JOPAMain.saveGeneratedShader;
 import static jopa.main.JOPAMain.validateGeneratedShader;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.TextArea;
 
@@ -30,9 +31,12 @@ public class JOPAShowShaderDialog extends JOPADialog<String> {
 	}
 
 	private void init() {
+		setSize(700, 700);
 		area.setLayout(new BorderLayout());
 		TextArea shaderTextTestArea = new TextArea(object);
 		shaderTextTestArea.setEditable(false);
+		Font shaderFont = new Font("Courrier new", Font.PLAIN, 22);
+		shaderTextTestArea.setFont(shaderFont);
 		area.add(shaderTextTestArea);
 	}
 
@@ -47,8 +51,8 @@ public class JOPAShowShaderDialog extends JOPADialog<String> {
 
 			saveToFileMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_MODIFIER));
 
-			validateMenuItem.addActionListener(e -> validateGeneratedShader());
-			saveToFileMenuItem.addActionListener(e -> saveGeneratedShader());
+			validateMenuItem.addActionListener(l -> validateGeneratedShader());
+			saveToFileMenuItem.addActionListener(l -> saveGeneratedShader());
 
 			shaderMenu.add(validateMenuItem);
 			shaderMenu.add(saveToFileMenuItem);

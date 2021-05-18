@@ -49,22 +49,22 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		JButton editConstantsButton = new JButton("Edit constants");
 		JButton editGlobalsButton = new JButton("Edit globals");
 
-		editTemplatesButton.addActionListener(e -> {
+		editTemplatesButton.addActionListener(l -> {
 			gui.showTemplatesList(currentProject);
 		});
-		editDefinesButton.addActionListener(e -> {
+		editDefinesButton.addActionListener(l -> {
 			gui.openDefinesEditor(currentProject);
 		});
-		editTypesButton.addActionListener(e -> {
+		editTypesButton.addActionListener(l -> {
 			gui.openTypesListEditor(object);
 		});
-		editResourcesButton.addActionListener(e -> {
+		editResourcesButton.addActionListener(l -> {
 			gui.openResourcesEditor(currentProject);
 		});
-		editConstantsButton.addActionListener(e -> {
+		editConstantsButton.addActionListener(l -> {
 			gui.openConstantsEditor(currentProject);
 		});
-		editGlobalsButton.addActionListener(e -> {
+		editGlobalsButton.addActionListener(l -> {
 			gui.openGlobalsEditor(currentProject.getFunctionByName(currentProject.getFunctions()[0]));
 		});
 
@@ -88,7 +88,7 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 
 			JMenuItem verifyMenuItem = new JMenuItem("verify");
 
-			verifyMenuItem.addActionListener(e -> verifyProject());
+			verifyMenuItem.addActionListener(l -> verifyProject());
 
 			projectMenu.add(verifyMenuItem);
 

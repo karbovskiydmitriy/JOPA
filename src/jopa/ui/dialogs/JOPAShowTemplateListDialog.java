@@ -57,12 +57,12 @@ public class JOPAShowTemplateListDialog extends JOPADialog<JOPAProject> {
 
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			newMenuItem.addActionListener(e -> {
+			newMenuItem.addActionListener(l -> {
 				JOPATemplate template = JOPATemplate.create("new template", "");
 				object.templates.add(template);
 				init();
 			});
-			clearMenuItem.addActionListener(e -> {
+			clearMenuItem.addActionListener(l -> {
 				object.templates.clear();
 				init();
 			});
@@ -81,7 +81,7 @@ public class JOPAShowTemplateListDialog extends JOPADialog<JOPAProject> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.templates.remove(template);
 			init();
 		});

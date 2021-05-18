@@ -2,6 +2,7 @@ package jopa.main;
 
 import static jopa.io.JOPALoader.loadStandardTemplate;
 import static jopa.main.JOPAMain.gui;
+import static jopa.util.JOPATypeUtil.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +11,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+
+import jopa.types.JOPAGLSLType;
 
 public class JOPATemplate {
 
@@ -97,7 +100,7 @@ public class JOPATemplate {
 		return null;
 	}
 
-	public static void initStandardNodeTemplates(JOPAProject project) {
+	public static void initStandardTemplates(JOPAProject project) {
 		try {
 			String standardTemplates = loadStandardTemplate("templates.json");
 			if (standardTemplates != null) {
@@ -110,9 +113,37 @@ public class JOPATemplate {
 							JsonObject nodesObject = nodesElement.getAsJsonObject();
 							if (nodesObject != null) {
 								for (String name : nodesObject.keySet()) {
-									JOPATemplate foobar = getFormulaFromTemplate(nodesObject, name);
-									if (foobar != null) {
-										project.templates.add(foobar);
+									JOPATemplate template = loadTemplate(nodesObject, name);
+									if (template != null) {
+										project.templates.add(template);
+									}
+								}
+							} else {
+								fileCorrupted();
+							}
+						} else {
+							fileCorrupted();
+						}
+						JsonElement functionsElement = templatesObject.get("functions");
+						if (functionsElement != null) {
+							JsonObject functionsObject = functionsElement.getAsJsonObject();
+							if (functionsObject != null) {
+								for (String name : functionsObject.keySet()) {
+									JOPATemplate template = loadTemplate(functionsObject, name);
+									if (template != null) {
+										if (template.outputs.length == 1) {
+											project.templates.add(template);
+											JOPAGLSLType returnType = getTypeForName(template.outputs[0]);
+											JOPAVariable[] args = new JOPAVariable[template.inputs.length];
+											for (int i = 0; i < template.inputs.length; i++) {
+												String input = template.inputs[i];
+												JOPAVariable variable = JOPAVariable.create(input);
+												args[i] = variable;
+											}
+											JOPAFunction function = new JOPAFunction(template.name, returnType, false,
+													template.template, args);
+											project.functions.add(function);
+										}
 									}
 								}
 							} else {
@@ -139,7 +170,7 @@ public class JOPATemplate {
 		gui.showMessage("templates file is corrupted");
 	}
 
-	private static JOPATemplate getFormulaFromTemplate(JsonObject object, String name) {
+	private static JOPATemplate loadTemplate(JsonObject object, String name) {
 		if (object == null || name == null || name.length() == 0) {
 			return null;
 		}
@@ -167,7 +198,7 @@ public class JOPATemplate {
 		for (String output : outputs) {
 			outputsArray.add(output);
 		}
-		
+
 		obj.add("inputs", inputsArray);
 		obj.add("outputs", outputsArray);
 		obj.add("type", new JsonPrimitive(type));

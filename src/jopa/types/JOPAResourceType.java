@@ -2,7 +2,7 @@ package jopa.types;
 
 public enum JOPAResourceType {
 	WINDOW_HANDLE,
-	BUFFER_HANDLE,
+	BUFFER,
 	IMAGE,
 	SHADER,
 	PROGRAM,

@@ -1,6 +1,7 @@
 package jopa.graphics;
 
 import static jopa.util.JOPAOGLUtil.getTextureFormat;
+import static jopa.util.JOPAOGLUtil.getTextureFormatText;
 import static org.lwjgl.stb.STBImage.stbi_load;
 
 import java.nio.ByteBuffer;
@@ -11,6 +12,7 @@ public class JOPAImage {
 	public int height;
 	public int colorDepth;
 	public int format;
+	public String formatText;
 	public int handle;
 	public ByteBuffer data;
 
@@ -36,6 +38,7 @@ public class JOPAImage {
 		height = h[0];
 		colorDepth = depth[0];
 		format = getTextureFormat(colorDepth / 8, byte.class, false);
+		formatText = getTextureFormatText(format);
 	}
 
 }

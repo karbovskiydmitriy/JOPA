@@ -58,7 +58,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 
 			newConstantMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			newConstantMenuItem.addActionListener(e -> {
+			newConstantMenuItem.addActionListener(l -> {
 				JOPAConstant newConstant = new JOPAConstant(JOPAGLSLType.INT, "foobar", "42");
 				object.constants.add(newConstant);
 				editors.forEach(editor -> editor.writeBack());
@@ -79,7 +79,7 @@ public class JOPAEditConstantsDialog extends JOPADialog<JOPAProject> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.constants.remove(constant);
 			init();
 		});

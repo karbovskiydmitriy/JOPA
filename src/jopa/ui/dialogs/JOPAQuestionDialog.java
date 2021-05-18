@@ -22,7 +22,7 @@ public class JOPAQuestionDialog extends JOPADialog<Boolean> {
 
 	private void init() {
 		JButton okButton = new JButton("OK");
-		okButton.addActionListener(e -> {
+		okButton.addActionListener(l -> {
 			object = true;
 			setVisible(true);
 		});

@@ -44,6 +44,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import jopa.graphics.JOPAImage;
+import jopa.types.JOPABuffer;
 import jopa.types.JOPAGLSLType;
 import jopa.types.JOPAProjectType;
 import jopa.types.JOPAResource;
@@ -205,10 +206,14 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 		int size = typeSize * count;
-		int buffer = createBuffer(ByteBuffer.allocate(size));
+		int bufferHandle = createBuffer(ByteBuffer.allocate(size));
+		JOPABuffer buffer = new JOPABuffer();
+		buffer.handle = bufferHandle;
+		buffer.type = typeName;
+		buffer.length = count;
 
 		checkForError("new buffer");
-		if (buffer == 0)
+		if (bufferHandle == 0)
 
 		{
 			logSimulationError(this, "Buffer was not created1", name);
@@ -216,7 +221,7 @@ public class JOPASimulationScript implements Serializable {
 			return false;
 		}
 
-		JOPAResource bufferResource = new JOPAResource(JOPAResourceType.BUFFER_HANDLE, name, buffer);
+		JOPAResource bufferResource = new JOPAResource(JOPAResourceType.BUFFER, name, bufferHandle);
 
 		addResource(bufferResource);
 
@@ -632,9 +637,15 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		int bufferHandle = bufferResource.getAsBuffer();
+		JOPABuffer buffer = bufferResource.getAsBuffer();
+		if (buffer == null) {
+			logSimulationError(this, "Buffer variable is NULL", bufferName);
+
+			return false;
+		}
+		int bufferHandle = buffer.handle;
 		if (bufferHandle == 0) {
-			logSimulationError(this, "Buffer handle is 0", bufferName);
+			logSimulationError(this, "Buffer handle is 0", buffer);
 
 			return false;
 		}
@@ -859,13 +870,19 @@ public class JOPASimulationScript implements Serializable {
 
 			return false;
 		}
-		int buffer = bufferResource.getAsBuffer();
-		if (buffer == 0) {
-			logSimulationError(this, "Buffer variable is NULL", bufferResource);
+		JOPABuffer buffer = bufferResource.getAsBuffer();
+		if (buffer == null) {
+			logSimulationError(this, "Buffer variable is NULL", bufferName);
 
 			return false;
 		}
-		boolean result = deleteBuffer(buffer);
+		int bufferHandle = buffer.handle;
+		if (bufferHandle == 0) {
+			logSimulationError(this, "Buffer handle is 0", buffer);
+
+			return false;
+		}
+		boolean result = deleteBuffer(bufferHandle);
 		checkForError("delete buffer");
 		if (!result) {
 			logSimulationError(this, "Buffer variable was not deleted", bufferName);
@@ -1013,9 +1030,10 @@ public class JOPASimulationScript implements Serializable {
 	}
 
 	public static JOPASimulationScript create(JOPAProjectType type) {
-		// if (type == null) {
-		// return null;
-		// }
+		if (type == null) {
+			return null;
+		}
+
 		System.out.println("[SCRIPT] Creating with type: " + type);
 		JOPASimulationScript script = new JOPASimulationScript();
 		switch (type) {
@@ -1028,6 +1046,18 @@ public class JOPASimulationScript implements Serializable {
 		default:
 			break;
 		}
+
+		return script;
+	}
+
+	public static JOPASimulationScript createCustom(String customScriptFileName) {
+		if (customScriptFileName == null) {
+			return null;
+		}
+
+		System.out.println("[SCRIPT] Creating custom script");
+		JOPASimulationScript script = new JOPASimulationScript();
+		script.setupScript(loadStandardScript(customScriptFileName));
 
 		return script;
 	}

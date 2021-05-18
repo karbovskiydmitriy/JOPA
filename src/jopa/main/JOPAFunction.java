@@ -33,6 +33,7 @@ public class JOPAFunction implements Serializable {
 	public boolean isCustom;
 	public JOPAGLSLType returnType;
 	public String name;
+	public String text;
 	public ArrayList<JOPAVariable> args;
 	public JOPADefinesNode definesNode;
 	public JOPATypesNode typesNode;
@@ -42,10 +43,11 @@ public class JOPAFunction implements Serializable {
 	public JOPAEndNode endNode;
 	public ArrayList<JOPANode> statementNodes;
 
-	public JOPAFunction(String name, JOPAGLSLType returnType, boolean isCustom, JOPAVariable... args) {
+	public JOPAFunction(String name, JOPAGLSLType returnType, boolean isCustom, String text, JOPAVariable... args) {
 		this.isCustom = isCustom;
 		this.returnType = returnType;
 		this.name = name;
+		this.text = text;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
 		if (isCustom) {
 			this.definesNode = new JOPADefinesNode(200, 200);
@@ -204,13 +206,19 @@ public class JOPAFunction implements Serializable {
 	}
 
 	public String generateCode() {
-		if (!verifyNodes()) {
-			return null;
+		if (isCustom) {
+			if (!verifyNodes()) {
+				return null;
+			}
 		}
 
 		String code = getPrototype();
 		code += BLOCK_START;
-		code += format(startNode.generateCode());
+		if (!isCustom) {
+			code += format(text);
+		} else {
+			code += format(startNode.generateCode());
+		}
 		code += BLOCK_END;
 
 		return code;
@@ -228,7 +236,9 @@ public class JOPAFunction implements Serializable {
 	}
 
 	private static String format(String text) {
-		String[] lines = text.replaceAll(";", ";" + NEW_LINE).toString().split(NEW_LINE);
+		text = text.replaceAll(NEW_LINE, "");
+		text = text.replaceAll(";", ";" + NEW_LINE);
+		String[] lines = text.split(NEW_LINE);
 		String code = "";
 
 		for (String line : lines) {

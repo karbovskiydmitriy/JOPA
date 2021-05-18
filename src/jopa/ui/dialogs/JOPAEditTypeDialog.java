@@ -57,12 +57,12 @@ public class JOPAEditTypeDialog extends JOPADialog<JOPACustomType> {
 			JMenuItem newStructMenuItem = new JMenuItem("new struct");
 			JMenuItem validateMenuItem = new JMenuItem("validate");
 
-			newStructMenuItem.addActionListener(e -> {
+			newStructMenuItem.addActionListener(l -> {
 				String code = "struct " + object.name + "\n{\n\n};";
 				object.template = code;
 				init();
 			});
-			validateMenuItem.addActionListener(e -> {
+			validateMenuItem.addActionListener(l -> {
 				String shaderCode = "#version 130\n";
 				shaderCode += typeEditor.getText() + '\n';
 				shaderCode += "void main()\n";

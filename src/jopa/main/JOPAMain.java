@@ -159,7 +159,8 @@ public class JOPAMain {
 	public static void createNewFunction() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				JOPAFunction function = currentProject.createFunction(null);
+				boolean isMain = currentProject.mainFunction == null;
+				JOPAFunction function = currentProject.createFunction(null, isMain);
 				gui.addFunction(function);
 			} else {
 				projectNotCreated();

@@ -58,13 +58,13 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 
 			newMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			newMenuItem.addActionListener(e -> {
+			newMenuItem.addActionListener(l -> {
 				JOPAVariable globalVariable = new JOPAVariable(JOPAGLSLType.INT, "foobar");
 				object.globalVariables.add(globalVariable);
 				object.updateGlobals();
 				init();
 			});
-			clearMenuItem.addActionListener(e -> {
+			clearMenuItem.addActionListener(l -> {
 				object.globalVariables.clear();
 				object.updateGlobals();
 				init();
@@ -84,7 +84,7 @@ public class JOPAEditGlobalsDialog extends JOPADialog<JOPAProject> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.globalVariables.remove(variable);
 			object.updateGlobals();
 			init();

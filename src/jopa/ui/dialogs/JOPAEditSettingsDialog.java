@@ -41,7 +41,7 @@ public class JOPAEditSettingsDialog extends JOPADialog<JOPASettings> {
 
 			restoreDefaultsMenuItem.setAccelerator(KeyStroke.getKeyStroke('R', CTRL_MODIFIER));
 
-			restoreDefaultsMenuItem.addActionListener(e -> {
+			restoreDefaultsMenuItem.addActionListener(l -> {
 				object.showPortTypes = true;
 				object.highlightNodes = true;
 				object.writeSettings();

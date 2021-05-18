@@ -56,16 +56,16 @@ public class JOPAResource implements Serializable {
 		return null;
 	}
 
-	public int getAsBuffer() {
-		if (type == JOPAResourceType.BUFFER_HANDLE) {
+	public JOPABuffer getAsBuffer() {
+		if (type == JOPAResourceType.BUFFER) {
 			try {
-				return (int) value;
+				return (JOPABuffer) value;
 			} catch (Exception e) {
-				return 0;
+				return null;
 			}
 		}
 
-		return 0;
+		return null;
 	}
 
 	public int getAsShader() {

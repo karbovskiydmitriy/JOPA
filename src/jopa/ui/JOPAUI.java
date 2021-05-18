@@ -28,7 +28,6 @@ import static jopa.main.JOPAMain.validateFunction;
 import static jopa.main.JOPAMain.validateGeneratedShader;
 import static jopa.main.JOPAMain.validateNodes;
 import static jopa.main.JOPAMain.verifyProject;
-import static jopa.util.JOPAOGLUtil.getScreenSize;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -54,20 +53,24 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jopa.graphics.JOPACanvas;
+import jopa.graphics.JOPAImage;
 import jopa.main.JOPAFunction;
-import jopa.main.JOPATemplate;
 import jopa.main.JOPAProject;
+import jopa.main.JOPATemplate;
 import jopa.nodes.JOPABranchNode;
 import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPALoopNode;
 import jopa.nodes.JOPAStatementNode;
 import jopa.playground.JOPASimulationScript;
+import jopa.types.JOPABuffer;
 import jopa.types.JOPACustomType;
 import jopa.types.JOPAProjectType;
 import jopa.ui.dialogs.JOPAEditBranchNodeDialog;
+import jopa.ui.dialogs.JOPAEditBufferDialog;
 import jopa.ui.dialogs.JOPAEditConstantsDialog;
 import jopa.ui.dialogs.JOPAEditDefinesDialog;
 import jopa.ui.dialogs.JOPAEditFunctionDialog;
+import jopa.ui.dialogs.JOPAEditFunctionListDialog;
 import jopa.ui.dialogs.JOPAEditFunctionNodeDialog;
 import jopa.ui.dialogs.JOPAEditGlobalsDialog;
 import jopa.ui.dialogs.JOPAEditLoopNodeDialog;
@@ -76,12 +79,12 @@ import jopa.ui.dialogs.JOPAEditResourcesDialog;
 import jopa.ui.dialogs.JOPAEditScriptDialog;
 import jopa.ui.dialogs.JOPAEditStatementNodeDialog;
 import jopa.ui.dialogs.JOPAEditTemplateDialog;
+import jopa.ui.dialogs.JOPAEditTextureDialog;
 import jopa.ui.dialogs.JOPAEditTypeDialog;
 import jopa.ui.dialogs.JOPAEditTypesListDialog;
 import jopa.ui.dialogs.JOPAFindTemplateDialog;
 import jopa.ui.dialogs.JOPAMessageDialog;
 import jopa.ui.dialogs.JOPAQuestionDialog;
-import jopa.ui.dialogs.JOPAEditFunctionListDialog;
 import jopa.ui.dialogs.JOPAShowShaderDialog;
 import jopa.ui.dialogs.JOPAShowTemplateListDialog;
 
@@ -108,8 +111,7 @@ public class JOPAUI {
 			}
 		});
 
-		int[] screenSize = getScreenSize();
-		window.setSize(screenSize[0], screenSize[1]);
+		window.setSize(800, 600);
 		window.setEnabled(true);
 		window.setVisible(true);
 		window.addKeyListener(new KeyAdapter() {
@@ -144,11 +146,11 @@ public class JOPAUI {
 				closeMenuItem.setShortcut(new MenuShortcut('W'));
 				quitMenuItem.setShortcut(new MenuShortcut('Q'));
 
-				newMenuItem.addActionListener(e -> createNewProject());
-				openMenuItem.addActionListener(e -> openProject());
-				saveMenuItem.addActionListener(e -> saveProject());
-				closeMenuItem.addActionListener(e -> closeProject());
-				quitMenuItem.addActionListener(e -> quit());
+				newMenuItem.addActionListener(l -> createNewProject());
+				openMenuItem.addActionListener(l -> openProject());
+				saveMenuItem.addActionListener(l -> saveProject());
+				closeMenuItem.addActionListener(l -> closeProject());
+				quitMenuItem.addActionListener(l -> quit());
 
 				fileMenu.add(newMenuItem);
 				fileMenu.add(openMenuItem);
@@ -166,8 +168,8 @@ public class JOPAUI {
 				MenuItem editMenuItem = new MenuItem("edit");
 				MenuItem verifyMenuItem = new MenuItem("verify");
 
-				editMenuItem.addActionListener(e -> editProject());
-				verifyMenuItem.addActionListener(e -> verifyProject());
+				editMenuItem.addActionListener(l -> editProject());
+				verifyMenuItem.addActionListener(l -> verifyProject());
 
 				projectMenu.add(editMenuItem);
 				projectMenu.add(verifyMenuItem);
@@ -186,10 +188,10 @@ public class JOPAUI {
 				createMenuItem.setShortcut(new MenuShortcut('F'));
 				showListMenuItem.setShortcut(new MenuShortcut('L'));
 
-				createMenuItem.addActionListener(e -> createNewFunction());
-				editMenuItem.addActionListener(e -> editCurrentFunction());
-				showListMenuItem.addActionListener(e -> showFunctionList());
-				validateMenuItem.addActionListener(e -> validateFunction());
+				createMenuItem.addActionListener(l -> createNewFunction());
+				editMenuItem.addActionListener(l -> editCurrentFunction());
+				showListMenuItem.addActionListener(l -> showFunctionList());
+				validateMenuItem.addActionListener(l -> validateFunction());
 
 				functionMenu.add(createMenuItem);
 				functionMenu.add(editMenuItem);
@@ -204,7 +206,7 @@ public class JOPAUI {
 
 				MenuItem validateNodesMenuItem = new MenuItem("validate nodes");
 
-				validateNodesMenuItem.addActionListener(e -> validateNodes());
+				validateNodesMenuItem.addActionListener(l -> validateNodes());
 
 				{
 					Menu createNewNodeMenu = new Menu("create new node");
@@ -214,10 +216,10 @@ public class JOPAUI {
 					MenuItem branchNodeMenuItem = new MenuItem("brach node");
 					MenuItem loopNodeMenuItem = new MenuItem("loop node");
 
-					statementNodeMenuItem.addActionListener(e -> createNewNode(JOPAStatementNode.class));
-					functionNodeMenuItem.addActionListener(e -> createNewNode(JOPAFunctionNode.class));
-					branchNodeMenuItem.addActionListener(e -> createNewNode(JOPABranchNode.class));
-					loopNodeMenuItem.addActionListener(e -> createNewNode(JOPALoopNode.class));
+					statementNodeMenuItem.addActionListener(l -> createNewNode(JOPAStatementNode.class));
+					functionNodeMenuItem.addActionListener(l -> createNewNode(JOPAFunctionNode.class));
+					branchNodeMenuItem.addActionListener(l -> createNewNode(JOPABranchNode.class));
+					loopNodeMenuItem.addActionListener(l -> createNewNode(JOPALoopNode.class));
 
 					createNewNodeMenu.add(statementNodeMenuItem);
 					createNewNodeMenu.add(functionNodeMenuItem);
@@ -243,9 +245,9 @@ public class JOPAUI {
 				showShaderCodeMenuItem.setShortcut(new MenuShortcut('S', true));
 				validateShaderMenuITem.setShortcut(new MenuShortcut('V', true));
 
-				generateShaderMenuItem.addActionListener(e -> generateShader());
-				showShaderCodeMenuItem.addActionListener(e -> showShaderCode());
-				validateShaderMenuITem.addActionListener(e -> validateGeneratedShader());
+				generateShaderMenuItem.addActionListener(l -> generateShader());
+				showShaderCodeMenuItem.addActionListener(l -> showShaderCode());
+				validateShaderMenuITem.addActionListener(l -> validateGeneratedShader());
 
 				shaderMenu.add(generateShaderMenuItem);
 				shaderMenu.add(showShaderCodeMenuItem);
@@ -264,9 +266,9 @@ public class JOPAUI {
 				showPortTypesMenuItem.setShortcut(new MenuShortcut('T', true));
 				hightlightNodesMenuItem.setShortcut(new MenuShortcut('H', true));
 
-				showPortTypesMenuItem.addActionListener(e -> toggleShowingPortTypes());
-				hightlightNodesMenuItem.addActionListener(e -> toggleHighlightingNodes());
-				saveSettingsMenuItem.addActionListener(e -> saveSettings());
+				showPortTypesMenuItem.addActionListener(l -> toggleShowingPortTypes());
+				hightlightNodesMenuItem.addActionListener(l -> toggleHighlightingNodes());
+				saveSettingsMenuItem.addActionListener(l -> saveSettings());
 
 				settingsMenu.add(showPortTypesMenuItem);
 				settingsMenu.add(hightlightNodesMenuItem);
@@ -285,10 +287,10 @@ public class JOPAUI {
 				editScriptMenuItem.setShortcut(new MenuShortcut('E'));
 				startPlaygroundMenuItem.setShortcut(new MenuShortcut('P'));
 
-				editScriptMenuItem.addActionListener(e -> editScript());
-				startPlaygroundMenuItem.addActionListener(e -> startPlayground());
-				stopPlaygroundMenuItem.addActionListener(e -> stopPlayground());
-				closePlaygroundMenuItem.addActionListener(e -> closePlayground());
+				editScriptMenuItem.addActionListener(l -> editScript());
+				startPlaygroundMenuItem.addActionListener(l -> startPlayground());
+				stopPlaygroundMenuItem.addActionListener(l -> stopPlayground());
+				closePlaygroundMenuItem.addActionListener(l -> closePlayground());
 
 				{
 					Menu createPlaygroundMenuItem = new Menu("create playground");
@@ -297,9 +299,9 @@ public class JOPAUI {
 					MenuItem defaultComputeShaderMenuItem = new MenuItem("default compute shader");
 					MenuItem customShaderMenuItem = new MenuItem("custom shader");
 
-					defaultFragmentShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.FRAGMENT));
-					defaultComputeShaderMenuItem.addActionListener(e -> createPlayground(JOPAProjectType.COMPUTE));
-					customShaderMenuItem.addActionListener(e -> createCustomPlayground(JOPAProjectType.FRAGMENT));
+					defaultFragmentShaderMenuItem.addActionListener(l -> createPlayground(JOPAProjectType.FRAGMENT));
+					defaultComputeShaderMenuItem.addActionListener(l -> createPlayground(JOPAProjectType.COMPUTE));
+					customShaderMenuItem.addActionListener(l -> createCustomPlayground(JOPAProjectType.FRAGMENT));
 
 					createPlaygroundMenuItem.add(defaultFragmentShaderMenuItem);
 					createPlaygroundMenuItem.add(defaultComputeShaderMenuItem);
@@ -322,8 +324,8 @@ public class JOPAUI {
 				MenuItem aboutMenuItem = new MenuItem("about");
 				MenuItem manualMenuItem = new MenuItem("manual");
 
-				aboutMenuItem.addActionListener(e -> about());
-				manualMenuItem.addActionListener(e -> manual());
+				aboutMenuItem.addActionListener(l -> about());
+				manualMenuItem.addActionListener(l -> manual());
 
 				helpMenu.add(aboutMenuItem);
 				helpMenu.add(manualMenuItem);
@@ -399,6 +401,16 @@ public class JOPAUI {
 	public synchronized void openResourcesEditor(JOPAProject project) {
 		JOPAEditResourcesDialog editResourcesDialog = new JOPAEditResourcesDialog(window, currentProject);
 		editResourcesDialog.dispose();
+	}
+
+	public synchronized void openTextureEditor(JOPAImage image) {
+		JOPAEditTextureDialog editTextureDialog = new JOPAEditTextureDialog(window, image);
+		editTextureDialog.dispose();
+	}
+
+	public synchronized void openBufferEditor(JOPABuffer buffer) {
+		JOPAEditBufferDialog editBufferDialog = new JOPAEditBufferDialog(window, buffer);
+		editBufferDialog.dispose();
 	}
 
 	public synchronized void openConstantsEditor(JOPAProject project) {

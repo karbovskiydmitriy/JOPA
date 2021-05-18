@@ -56,7 +56,7 @@ public class JOPAEditBranchNodeDialog extends JOPADialog<JOPABranchNode> {
 
 			newBranchMenu.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_MODIFIER));
 
-			newBranchMenu.addActionListener(e -> {
+			newBranchMenu.addActionListener(l -> {
 				JOPABranchPort branch = new JOPABranchPort(object, "");
 				object.branches.add(branch);
 				init();
@@ -75,7 +75,7 @@ public class JOPAEditBranchNodeDialog extends JOPADialog<JOPABranchNode> {
 		JLabel label = new JLabel(name, JLabel.TRAILING);
 		label.setLabelFor(editor);
 		JButton deleteButton = new JButton("delete");
-		deleteButton.addActionListener(e -> {
+		deleteButton.addActionListener(l -> {
 			object.branches.remove(port);
 			init();
 		});

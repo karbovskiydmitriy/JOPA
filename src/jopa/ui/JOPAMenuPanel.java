@@ -1,8 +1,11 @@
 package jopa.ui;
 
-import static jopa.main.JOPAMain.*;
+import static jopa.main.JOPAMain.createNewFunction;
 import static jopa.main.JOPAMain.createNewNode;
 import static jopa.main.JOPAMain.createNewProject;
+import static jopa.main.JOPAMain.editCurrentFunction;
+import static jopa.main.JOPAMain.editProject;
+import static jopa.main.JOPAMain.generateShader;
 import static jopa.main.JOPAMain.showShaderCode;
 import static jopa.main.JOPAMain.startPlayground;
 
@@ -26,49 +29,56 @@ public class JOPAMenuPanel extends Panel {
 	public void initMenu() {
 		{
 			Button newProjectButton = new Button("new project");
-			newProjectButton.addActionListener(e -> createNewProject());
+			newProjectButton.addActionListener(l -> createNewProject());
 			newProjectButton.setFocusable(false);
 			add(newProjectButton);
 		}
-		
+
 		{
 			Button editProjectButton = new Button("edit project");
-			editProjectButton.addActionListener(e -> editProject());
+			editProjectButton.addActionListener(l -> editProject());
 			editProjectButton.setFocusable(false);
 			add(editProjectButton);
 		}
 
 		{
 			Button newFunctionButton = new Button("new function");
-			newFunctionButton.addActionListener(e -> createNewFunction());
+			newFunctionButton.addActionListener(l -> createNewFunction());
 			newFunctionButton.setFocusable(false);
 			add(newFunctionButton);
 		}
 
 		{
 			Button editFunctionButton = new Button("edit function");
-			editFunctionButton.addActionListener(e -> editCurrentFunction());
+			editFunctionButton.addActionListener(l -> editCurrentFunction());
 			editFunctionButton.setFocusable(false);
 			add(editFunctionButton);
 		}
 
 		{
 			Button newNodeButton = new Button("new node");
-			newNodeButton.addActionListener(e -> createNewNode(JOPAStatementNode.class));
+			newNodeButton.addActionListener(l -> createNewNode(JOPAStatementNode.class));
 			newNodeButton.setFocusable(false);
 			add(newNodeButton);
 		}
 
 		{
+			Button genenerateShader = new Button("generate shader");
+			genenerateShader.addActionListener(l -> generateShader());
+			genenerateShader.setFocusable(false);
+			add(genenerateShader);
+		}
+
+		{
 			Button showShaderButton = new Button("show shader");
-			showShaderButton.addActionListener(e -> showShaderCode());
+			showShaderButton.addActionListener(l -> showShaderCode());
 			showShaderButton.setFocusable(false);
 			add(showShaderButton);
 		}
 
 		{
 			Button runSimulationButton = new Button("run simulation");
-			runSimulationButton.addActionListener(e -> startPlayground());
+			runSimulationButton.addActionListener(l -> startPlayground());
 			runSimulationButton.setFocusable(false);
 			add(runSimulationButton);
 		}
