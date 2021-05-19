@@ -213,18 +213,18 @@ public class JOPAUI {
 
 					MenuItem statementNodeMenuItem = new MenuItem("statement node");
 					MenuItem functionNodeMenuItem = new MenuItem("function node");
-					MenuItem branchNodeMenuItem = new MenuItem("brach node");
-					MenuItem loopNodeMenuItem = new MenuItem("loop node");
+					MenuItem branchNodeMenuItem = new MenuItem("branch node");
+					// MenuItem loopNodeMenuItem = new MenuItem("loop node");
 
 					statementNodeMenuItem.addActionListener(l -> createNewNode(JOPAStatementNode.class));
 					functionNodeMenuItem.addActionListener(l -> createNewNode(JOPAFunctionNode.class));
 					branchNodeMenuItem.addActionListener(l -> createNewNode(JOPABranchNode.class));
-					loopNodeMenuItem.addActionListener(l -> createNewNode(JOPALoopNode.class));
+					// loopNodeMenuItem.addActionListener(l -> createNewNode(JOPALoopNode.class));
 
 					createNewNodeMenu.add(statementNodeMenuItem);
 					createNewNodeMenu.add(functionNodeMenuItem);
 					createNewNodeMenu.add(branchNodeMenuItem);
-					createNewNodeMenu.add(loopNodeMenuItem);
+					// createNewNodeMenu.add(loopNodeMenuItem);
 
 					nodeMenu.add(createNewNodeMenu);
 				}
@@ -355,7 +355,6 @@ public class JOPAUI {
 					if (tab.getClass().equals(JOPACanvas.class)) {
 						JOPACanvas canvas = (JOPACanvas) tab;
 						String functionName = tabs.getTitleAt(tabs.getSelectedIndex());
-						System.out.println("[UI] New active function: " + functionName);
 						currentProject.selectFunction(functionName);
 						currentCanvas = canvas;
 					}

@@ -2,6 +2,7 @@ package jopa.nodes;
 
 import static jopa.main.JOPAFunction.NEW_LINE;
 
+import jopa.main.JOPAFunction;
 import jopa.main.JOPAMain;
 import jopa.main.JOPASymbol;
 
@@ -9,8 +10,8 @@ public class JOPADefinesNode extends JOPANode {
 
 	private static final long serialVersionUID = 8021995277803568890L;
 
-	public JOPADefinesNode(int x, int y) {
-		super(x, y, "DEFINES");
+	public JOPADefinesNode(JOPAFunction function, int x, int y) {
+		super(function, x, y, "DEFINES");
 	}
 
 	@Override

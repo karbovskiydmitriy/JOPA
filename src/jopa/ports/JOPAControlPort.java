@@ -60,4 +60,15 @@ public class JOPAControlPort extends JOPAPort {
 		return new Point(x, y);
 	}
 
+	public String generateCode() {
+		if (!isOutput) {
+			return null;
+		}
+		if (connections.size() == 0) {
+			return null;
+		}
+		
+		return connections.get(0).node.generateCode();
+	}
+
 }

@@ -4,21 +4,22 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import jopa.main.JOPAFunction;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
 public class JOPAStartNode extends JOPANode {
 
 	private static final long serialVersionUID = 4818138558904580829L;
-	
+
 	public JOPAControlPort flowStart;
 
-	public JOPAStartNode(Rectangle rect, String template) {
-		super(rect, "Start", template);
+	public JOPAStartNode(JOPAFunction function, Rectangle rect, String template) {
+		super(function, rect, "Start", template);
 	}
 
-	public JOPAStartNode(int x, int y, String template) {
-		super(x, y, "Start", template);
+	public JOPAStartNode(JOPAFunction function, int x, int y, String template) {
+		super(function, x, y, "Start", template);
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class JOPAStartNode extends JOPANode {
 
 	@Override
 	public String generateCode() {
-		String chainCode = flowStart.connections.get(0).node.generateCode();
+		String chainCode = flowStart.generateCode();
 
 		return chainCode;
 	}

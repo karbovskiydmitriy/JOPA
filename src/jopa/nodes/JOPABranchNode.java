@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import jopa.main.JOPAFunction;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPABranchPort;
 import jopa.ports.JOPAControlPort;
@@ -21,12 +22,12 @@ public class JOPABranchNode extends JOPANode {
 	public JOPAControlPort outcomingControlFlow;
 	public ArrayList<JOPABranchPort> branches;
 
-	public JOPABranchNode(Rectangle rect) {
-		super(rect, "BRANCH");
+	public JOPABranchNode(JOPAFunction function, Rectangle rect) {
+		super(function, rect, "BRANCH");
 	}
 
-	public JOPABranchNode(int x, int y) {
-		super(x, y, "BRANCH");
+	public JOPABranchNode(JOPAFunction function, int x, int y) {
+		super(function, x, y, "BRANCH");
 	}
 
 	@Override

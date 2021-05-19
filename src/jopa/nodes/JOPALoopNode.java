@@ -3,6 +3,7 @@ package jopa.nodes;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import jopa.main.JOPAFunction;
 import jopa.ports.JOPAControlPort;
 import jopa.ports.JOPAPort;
 
@@ -10,15 +11,15 @@ import jopa.ports.JOPAPort;
 public class JOPALoopNode extends JOPAStatementNode {
 
 	private static final long serialVersionUID = 6933041211578604855L;
-	
+
 	public JOPAControlPort loopIterationFlow;
 
-	public JOPALoopNode(Rectangle rect, String template) {
-		super(rect, "LOOP", template);
+	public JOPALoopNode(JOPAFunction function, Rectangle rect, String template) {
+		super(function, rect, "LOOP", template);
 	}
-	
-	public JOPALoopNode(int x, int y, String template) {
-		super(x, y, "LOOP", template);
+
+	public JOPALoopNode(JOPAFunction function, int x, int y, String template) {
+		super(function, x, y, "LOOP", template);
 	}
 
 	@Override

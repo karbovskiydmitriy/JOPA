@@ -114,4 +114,19 @@ public class JOPADataPort extends JOPAPort {
 		return variable.toString();
 	}
 
+	@Override
+	public String getName() {
+		if (variable.name.contains("gl_")) {
+			return variable.name;
+		}
+		if (node == node.function.startNode) {
+			return variable.name;
+		}
+		if (node == node.function.endNode) {
+			return variable.name;
+		}
+
+		return variable.name + "_" + node.getID();
+	}
+
 }

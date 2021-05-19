@@ -50,21 +50,27 @@ public class JOPAEditProjectDialog extends JOPADialog<JOPAProject> {
 		JButton editGlobalsButton = new JButton("Edit globals");
 
 		editTemplatesButton.addActionListener(l -> {
+			setVisible(false);
 			gui.showTemplatesList(currentProject);
 		});
 		editDefinesButton.addActionListener(l -> {
+			setVisible(false);
 			gui.openDefinesEditor(currentProject);
 		});
 		editTypesButton.addActionListener(l -> {
+			setVisible(false);
 			gui.openTypesListEditor(object);
 		});
 		editResourcesButton.addActionListener(l -> {
+			setVisible(false);
 			gui.openResourcesEditor(currentProject);
 		});
 		editConstantsButton.addActionListener(l -> {
+			setVisible(false);
 			gui.openConstantsEditor(currentProject);
 		});
 		editGlobalsButton.addActionListener(l -> {
+			setVisible(false);
 			gui.openGlobalsEditor(currentProject.getFunctionByName(currentProject.getFunctions()[0]));
 		});
 

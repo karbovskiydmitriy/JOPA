@@ -38,7 +38,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		editors.forEach(editor -> editor.writeBack());
 		object.name = nameTextArea.getText();
 		object.returnType = getTypeForName((String) returnTypeComboBox.getSelectedItem());
-		object.updateFunction();
+		object.updateReferencingNodes();
 	}
 
 	private void init() {
@@ -50,7 +50,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		JButton applyNameButton = new JButton("apply");
 		applyNameButton.addActionListener(l -> {
 			object.name = nameTextArea.getText();
-			object.updateFunction();
+			object.updateReferencingNodes();
 		});
 		add(nameLabel);
 		add(nameTextArea);
@@ -65,7 +65,7 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 		JButton applyReturnTypeButton = new JButton("apply");
 		applyNameButton.addActionListener(l -> {
 			object.returnType = getTypeForName((String) returnTypeComboBox.getSelectedItem());
-			object.updateFunction();
+			object.updateReferencingNodes();
 		});
 		add(returnTypeLabel);
 		add(returnTypeComboBox);
@@ -88,12 +88,12 @@ public class JOPAEditFunctionDialog extends JOPADialog<JOPAFunction> {
 			newArgumentMenuItem.addActionListener(l -> {
 				JOPAVariable globalVariable = new JOPAVariable(JOPAGLSLType.INT, "foobar");
 				object.args.add(globalVariable);
-				object.updateFunction();
+				object.updateReferencingNodes();
 				init();
 			});
 			clearArgumentsMenuItem.addActionListener(l -> {
 				object.args.clear();
-				object.updateFunction();
+				object.updateReferencingNodes();
 				init();
 			});
 

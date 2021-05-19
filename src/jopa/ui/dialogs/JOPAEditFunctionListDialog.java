@@ -37,7 +37,7 @@ public class JOPAEditFunctionListDialog extends JOPADialog<JOPAProject> {
 				});
 				deleteFunctionButton.addActionListener(l -> {
 					object.deleteFunction(functionName);
-					// TODO update functions?
+					object.deleteFunctionReferencies(function);
 					init();
 				});
 				add(editFunctionButton);

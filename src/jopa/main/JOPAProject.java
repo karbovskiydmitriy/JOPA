@@ -1,6 +1,7 @@
 package jopa.main;
 
 import static jopa.main.JOPAFunction.NEW_LINE;
+import static jopa.main.JOPAFunction.TAB;
 import static jopa.main.JOPAFunction.TWO_LINES;
 import static jopa.main.JOPAMain.currentProject;
 import static jopa.main.JOPAMain.gui;
@@ -109,6 +110,22 @@ public class JOPAProject implements Serializable {
 	public void updateGlobals() {
 		functions.forEach(function -> {
 			function.globalsNode.updateGlobals();
+		});
+	}
+
+	public void deleteFunctionReferencies(JOPAFunction function) {
+		functions.forEach(currentFunction -> {
+			if (currentFunction.isCustom) {
+				currentFunction.statementNodes.forEach(node -> {
+					if (node.getClass().equals(JOPAFunctionNode.class)) {
+						JOPAFunctionNode functionNode = (JOPAFunctionNode) node;
+						if (functionNode.referencedFunction == function) {
+							functionNode.referencedFunction = null;
+							functionNode.applyFunction(false);
+						}
+					}
+				});
+			}
 		});
 	}
 
@@ -410,8 +427,7 @@ public class JOPAProject implements Serializable {
 				for (JOPAResource resource : resources) {
 					if (resource.type == JOPAResourceType.IMAGE) {
 						hasImages = true;
-						// TODO format
-						String format = "";
+						String format = resource.getAsImage().formatText;
 						shaderCode += "layout(" + format + ", binding = " + index++ + ") image2D ";
 						shaderCode += resource.name + ";" + NEW_LINE;
 					}
@@ -425,8 +441,7 @@ public class JOPAProject implements Serializable {
 						hasBuffers = true;
 						shaderCode += "layout(std430, binding = " + index++ + ") buffer name" + NEW_LINE;
 						shaderCode += "{" + NEW_LINE;
-						// TODO buffer type
-						// shaderCode +=
+						shaderCode += TAB + resource.getAsBuffer().type + "[];" + NEW_LINE;
 						shaderCode += "};" + NEW_LINE;
 					}
 				}

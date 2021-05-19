@@ -84,8 +84,7 @@ public class JOPAMain {
 	public static boolean openProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				// TODO uncomment later
-				// askAsboutSavingTheProject();
+				askAsboutSavingTheProject();
 			}
 			File selectedFile = gui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
 			if (selectedFile != null) {
@@ -213,17 +212,18 @@ public class JOPAMain {
 			if (currentProject != null) {
 				JOPANode node = null;
 				if (type.equals(JOPAStatementNode.class)) {
-					node = new JOPAStatementNode(0, 0, "STATEMENT", "HEADER");
+					node = new JOPAStatementNode(currentProject.currentFunction, 0, 0, "STATEMENT", "HEADER");
 				} else if (type.equals(JOPAFunctionNode.class)) {
-					node = new JOPAFunctionNode(0, 0, null);
+					node = new JOPAFunctionNode(currentProject.currentFunction, 0, 0, null);
 				} else if (type.equals(JOPABranchNode.class)) {
-					node = new JOPABranchNode(0, 0);
+					node = new JOPABranchNode(currentProject.currentFunction, 0, 0);
 				} else if (type.equals(JOPALoopNode.class)) {
-					node = new JOPALoopNode(0, 0, null);
+					node = new JOPALoopNode(currentProject.currentFunction, 0, 0, null);
 				}
 				if (node != null) {
 					currentProject.currentFunction.statementNodes.add(node);
 				}
+				gui.repaint();
 			} else {
 				projectNotCreated();
 			}

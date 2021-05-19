@@ -11,13 +11,13 @@ import jopa.nodes.JOPANode;
 public abstract class JOPAPort implements Serializable {
 
 	private static final long serialVersionUID = 4696720939425567556L;
-	
+
 	public JOPANode node;
 	public Point position;
 	public boolean isOutput;
 	public ArrayList<JOPAPort> connections;
 
-	public JOPAPort(JOPANode node, boolean isOutput/*, String name*/) {
+	public JOPAPort(JOPANode node, boolean isOutput/* , String name */) {
 		this.node = node;
 		this.isOutput = isOutput;
 	}
@@ -56,15 +56,22 @@ public abstract class JOPAPort implements Serializable {
 		} else if (!to.isOutput) {
 			to.destroyAllConnections();
 		}
-
+		if (getClass().equals(JOPAControlPort.class)) {
+			destroyAllConnections();
+			to.destroyAllConnections();
+		}
 		connect(to);
 
 		return true;
 	}
-	
+
 	protected void connect(JOPAPort to) {
 		connections.add(to);
 		to.connections.add(this);
+	}
+
+	public String getName() {
+		return null;
 	}
 
 }

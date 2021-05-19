@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import jopa.main.JOPAConstant;
+import jopa.main.JOPAFunction;
 import jopa.main.JOPATemplate;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPAControlPort;
@@ -27,6 +28,7 @@ public abstract class JOPANode implements Serializable {
 	private static final int HEADER_HEIGHT = 20;
 	private static final int DEFAULT_SIZE = 100;
 
+	public JOPAFunction function;
 	public Rectangle rect;
 	public String header;
 	public String text;
@@ -34,28 +36,32 @@ public abstract class JOPANode implements Serializable {
 	public ArrayList<JOPADataPort> inputs;
 	public ArrayList<JOPADataPort> outputs;
 
-	public JOPANode(Rectangle rect, String header, String template) {
+	public JOPANode(JOPAFunction function, Rectangle rect, String header, String template) {
+		this.function = function;
 		this.rect = rect;
 		this.header = header;
 		init();
 		assignTemplate(template);
 	}
 
-	public JOPANode(Rectangle rect, String header) {
+	public JOPANode(JOPAFunction function, Rectangle rect, String header) {
+		this.function = function;
 		this.rect = rect;
 		this.header = header;
 		init();
 		assignTemplate("EMPTY");
 	}
 
-	public JOPANode(int x, int y, String header, String template) {
+	public JOPANode(JOPAFunction function, int x, int y, String header, String template) {
+		this.function = function;
 		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
 		init();
 		assignTemplate(template);
 	}
 
-	public JOPANode(int x, int y, String header) {
+	public JOPANode(JOPAFunction function, int x, int y, String header) {
+		this.function = function;
 		this.rect = new Rectangle(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		this.header = header;
 		init();
@@ -71,26 +77,37 @@ public abstract class JOPANode implements Serializable {
 	public abstract boolean check();
 
 	public abstract boolean remove();
-	
+
 	public abstract String generateCode();
 
 	protected boolean flowInconsistency() {
 		return false;
 	}
 
-	protected String generateConnectionsCode() {
-		String text = "";
-		for (JOPADataPort input : inputs) {
-			String valueName = ((JOPADataPort) input.connections.get(0)).variable.name;
-			if (input.variable.name.startsWith("gl_")) {
-				text += input.variable.name + " = " + valueName + ";";
-			} else {
-				text += input.generateCode() + " = " + valueName + ";";
-			}
+	public int getID() {
+		if (this == function.startNode) {
+			return 0;
+		}
+		if (this == function.endNode) {
+			return function.statementNodes.size() + 2;
 		}
 
-		return text;
+		return function.statementNodes.indexOf(this) + 1;
 	}
+
+	// protected String generateConnectionsCode() {
+	// String text = "";
+	// for (JOPADataPort input : inputs) {
+	// String valueName = ((JOPADataPort) input.connections.get(0)).variable.name;
+	// if (input.variable.name.startsWith("gl_")) {
+	// text += input.variable.name + " = " + valueName + ";";
+	// } else {
+	// text += input.generateCode() + " = " + valueName + ";";
+	// }
+	// }
+	//
+	// return text;
+	// }
 
 	private void assignTemplate(String formulaName) {
 		if (formulaName == null) {

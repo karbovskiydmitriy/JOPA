@@ -1,10 +1,13 @@
 package jopa.nodes;
 
+import static jopa.main.JOPAFunction.NEW_LINE;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import jopa.main.JOPAFunction;
 import jopa.ports.JOPAControlPort;
+import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 
 public class JOPAStatementNode extends JOPANode {
@@ -14,20 +17,20 @@ public class JOPAStatementNode extends JOPANode {
 	public JOPAControlPort incomingControlFlow;
 	public JOPAControlPort outcomingControlFlow;
 
-	public JOPAStatementNode(Rectangle rect, String header, String template) {
-		super(rect, header, template);
+	public JOPAStatementNode(JOPAFunction function, Rectangle rect, String header, String template) {
+		super(function, rect, header, template);
 	}
 
-	public JOPAStatementNode(int x, int y, String header, String template) {
-		super(x, y, header, template);
+	public JOPAStatementNode(JOPAFunction function, int x, int y, String header, String template) {
+		super(function, x, y, header, template);
 	}
 
-	public JOPAStatementNode(Rectangle rect, String template) {
-		super(rect, "STATEMENT", template);
+	public JOPAStatementNode(JOPAFunction function, Rectangle rect, String template) {
+		super(function, rect, "STATEMENT", template);
 	}
 
-	public JOPAStatementNode(int x, int y, String template) {
-		super(x, y, "STATEMENT", template);
+	public JOPAStatementNode(JOPAFunction function, int x, int y, String template) {
+		super(function, x, y, "STATEMENT", template);
 	}
 
 	@Override
@@ -51,11 +54,20 @@ public class JOPAStatementNode extends JOPANode {
 
 	@Override
 	public String generateCode() {
-		String connectionsCode = generateConnectionsCode();
+		String text = "";
+		for (JOPADataPort input : inputs) {
+			String valueName = input.connections.get(0).getName();
+			text += input.generateCode() + " = " + valueName + ";" + NEW_LINE;
+		}
 		String templateCode = template.template;
-		String chainCode = outcomingControlFlow.connections.get(0).node.generateCode();
+//		for (JOPADataPort input : inputs) {
+//			JOPADataPort connectedPort = (JOPADataPort) input.connections.get(0);
+//			String valueName = connectedPort.getName();
+//			templateCode.replaceAll(valueName, connectedPort.variable.name);
+//		}
+		String chainCode = outcomingControlFlow.generateCode();
 
-		return connectionsCode + templateCode + chainCode;
+		return text + templateCode + chainCode;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import static jopa.main.JOPAMain.currentProject;
 
 import java.awt.Graphics2D;
 
+import jopa.main.JOPAFunction;
 import jopa.main.JOPAVariable;
 import jopa.ports.JOPAPort;
 
@@ -12,8 +13,8 @@ public class JOPAGlobalsNode extends JOPANode {
 
 	private static final long serialVersionUID = -4245064405386575712L;
 
-	public JOPAGlobalsNode(int x, int y) {
-		super(x, y, "GLOBALS");
+	public JOPAGlobalsNode(JOPAFunction function, int x, int y) {
+		super(function, x, y, "GLOBALS");
 	}
 
 	@Override

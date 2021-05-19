@@ -32,15 +32,20 @@ public class JOPAEditFunctionNodeDialog extends JOPADialog<JOPAFunctionNode> {
 	protected void closing() {
 		String selectedFunction = (String) functionComboBox.getSelectedItem();
 		if (!selectedFunction.equals(currentProject.currentFunction.name)) {
-			object.applyFunction(currentProject.getFunctionByName(selectedFunction));
+			object.referencedFunction = currentProject.getFunctionByName(selectedFunction);
 		} else {
-			object.applyFunction(null);
+			object.referencedFunction = null;
 		}
+		object.applyFunction(true);
 	}
 
 	private void init() {
+		setSize(300, 100);
 		JLabel functionLabel = new JLabel("function");
 		functionComboBox = new JComboBox<String>(currentProject.getFunctions());
+		if (object.referencedFunction != null) {
+			functionComboBox.setSelectedItem(object.referencedFunction.name);
+		}
 		add(functionLabel);
 		add(functionComboBox);
 		adjustGrid(1, 2, 10, 10, 10, 10);

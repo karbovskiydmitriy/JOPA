@@ -4,6 +4,7 @@ import static jopa.main.JOPAFunction.NEW_LINE;
 import static jopa.main.JOPAMain.currentProject;
 
 import jopa.main.JOPAConstant;
+import jopa.main.JOPAFunction;
 import jopa.main.JOPAProject;;
 
 public class JOPAConstantsNode extends JOPANode {
@@ -12,8 +13,8 @@ public class JOPAConstantsNode extends JOPANode {
 
 	private JOPAProject project;
 
-	public JOPAConstantsNode(int x, int y) {
-		super(x, y, "CONSTANTS");
+	public JOPAConstantsNode(JOPAFunction function, int x, int y) {
+		super(function, x, y, "CONSTANTS");
 	}
 
 	@Override

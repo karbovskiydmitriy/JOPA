@@ -1068,7 +1068,7 @@ public class JOPASimulationScript implements Serializable {
 		}
 
 		setCode(code);
-		System.out.println("[SCRIPT] Set up with " + commands.size() + " lines");
+		// System.out.println("[SCRIPT] Set up with " + commands.size() + " lines");
 
 		return true;
 	}

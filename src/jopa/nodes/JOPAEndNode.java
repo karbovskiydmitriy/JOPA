@@ -4,7 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import jopa.main.JOPAFunction;
 import jopa.ports.JOPAControlPort;
+import jopa.ports.JOPADataPort;
 import jopa.ports.JOPAPort;
 
 public class JOPAEndNode extends JOPANode {
@@ -13,12 +15,12 @@ public class JOPAEndNode extends JOPANode {
 
 	public JOPAControlPort flowEnd;
 
-	public JOPAEndNode(Rectangle rect, String template) {
-		super(rect, "End", template);
+	public JOPAEndNode(JOPAFunction function, Rectangle rect, String template) {
+		super(function, rect, "End", template);
 	}
 
-	public JOPAEndNode(int x, int y, String template) {
-		super(x, y, "End", template);
+	public JOPAEndNode(JOPAFunction function, int x, int y, String template) {
+		super(function, x, y, "End", template);
 	}
 
 	@Override
@@ -44,7 +46,18 @@ public class JOPAEndNode extends JOPANode {
 
 	@Override
 	public String generateCode() {
-		return generateConnectionsCode();
+		String text = "";
+
+		for (JOPADataPort input : inputs) {
+			String valueName = ((JOPADataPort) input.connections.get(0)).variable.name;
+			if (input.variable.name.startsWith("gl_")) {
+				text += input.variable.name + " = " + valueName + ";";
+			} else {
+				text += input.generateCode() + " = " + valueName + ";";
+			}
+		}
+
+		return text;
 	}
 
 	@Override

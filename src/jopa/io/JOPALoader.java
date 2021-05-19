@@ -13,26 +13,26 @@ public final class JOPALoader {
 	private static final String IMAGES_DIRECTORY_PATH = ".\\images\\";
 
 	public static String loadStandardShader(String name) {
-		System.out.println("[LOADER] Loading shader: " + name);
-		
+		// System.out.println("[LOADER] Loading shader: " + name);
+
 		return loadTextFile(SHADERS_DIRECTORY_PATH + name);
 	}
 
 	public static String loadStandardTemplate(String name) {
-		System.out.println("[LOADER] Loading template: " + name);
-		
+		// System.out.println("[LOADER] Loading template: " + name);
+
 		return loadTextFile(TEMPLATES_DIRECTORY_PATH + name);
 	}
-	
+
 	public static String loadStandardScript(String name) {
-		System.out.println("[LOADER] Loading script: " + name);
-		
+		// System.out.println("[LOADER] Loading script: " + name);
+
 		return loadTextFile(SCRIPTS_DIRECTORY_PATH + name);
 	}
 
 	public static JOPAImage loadStandardImage(String name) {
-		System.out.println("[LOADER] Loading image: " + name);
-		
+		// System.out.println("[LOADER] Loading image: " + name);
+
 		return loadImage(IMAGES_DIRECTORY_PATH + name);
 	}
 

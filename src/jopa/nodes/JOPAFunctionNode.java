@@ -1,22 +1,27 @@
 package jopa.nodes;
 
+import static jopa.util.JOPATypeUtil.*;
 import jopa.main.JOPAFunction;
 import jopa.main.JOPAVariable;
+import jopa.ports.JOPADataPort;
+import jopa.ports.JOPAPort;
+import jopa.types.JOPAGLSLType;
 
 public class JOPAFunctionNode extends JOPAStatementNode {
 
 	private static final long serialVersionUID = 7559559202358367590L;
 
-	private JOPAFunction function;
+	public JOPAFunction referencedFunction;
 
-	public JOPAFunctionNode(int x, int y, JOPAFunction function) {
-		super(x, y, "FUNCTION", null);
-		applyFunction(function);
+	public JOPAFunctionNode(JOPAFunction function, int x, int y, JOPAFunction referencedFunction) {
+		super(function, x, y, "FUNCTION", null);
+		this.referencedFunction = referencedFunction;
+		applyFunction(false);
 	}
 
 	@Override
 	public boolean check() {
-		if (function == null) {
+		if (referencedFunction == null) {
 			return false;
 		}
 		if (flowInconsistency()) {
@@ -25,8 +30,13 @@ public class JOPAFunctionNode extends JOPAStatementNode {
 		if (!inputsConnected()) {
 			return false;
 		}
-		if (!function.verifyNodes()) {
+		if (referencedFunction == null) {
 			return false;
+		}
+		if (referencedFunction.isCustom) {
+			if (!referencedFunction.verifyNodes()) {
+				return false;
+			}
 		}
 
 		return super.check();
@@ -34,21 +44,25 @@ public class JOPAFunctionNode extends JOPAStatementNode {
 
 	@Override
 	public String generateCode() {
-		String connectionsCode = generateConnectionsCode();
-		String functionCallCode = function.name;
+		String functionCallCode = "";
+		if (referencedFunction.returnType != JOPAGLSLType.VOID) {
+			functionCallCode += getNameForType(((JOPADataPort) outputs.get(0)).variable.type);
+			functionCallCode += " " + outputs.get(0).getName() + " = ";
+		}
+		functionCallCode += referencedFunction.name;
 		functionCallCode += "(";
-		for (int i = 0; i < function.args.size(); i++) {
-			JOPAVariable arg = function.args.get(i);
-			functionCallCode += arg.name;
-			boolean isTheLast = i == function.args.size() - 1;
+		for (int i = 0; i < referencedFunction.args.size(); i++) {
+			JOPAPort input = inputs.get(i);
+			functionCallCode += input.connections.get(0).getName();
+			boolean isTheLast = i == referencedFunction.args.size() - 1;
 			if (!isTheLast) {
 				functionCallCode += ", ";
 			}
 		}
 		functionCallCode += ");";
-		String chainCode = outcomingControlFlow.connections.get(0).node.generateCode();
+		String chainCode = outcomingControlFlow.generateCode();
 
-		return connectionsCode + functionCallCode + chainCode;
+		return functionCallCode + chainCode;
 	}
 
 	@Override
@@ -65,7 +79,8 @@ public class JOPAFunctionNode extends JOPAStatementNode {
 		return true;
 	}
 
-	public void applyFunction(JOPAFunction function) {
+	public void applyFunction(boolean tryToKeepConnections) {
+		// TODO use tryToKeepConnections
 		if (inputs != null) {
 			inputs.forEach(input -> input.destroyAllConnections());
 			inputs.clear();
@@ -74,12 +89,11 @@ public class JOPAFunctionNode extends JOPAStatementNode {
 			outputs.forEach(output -> output.destroyAllConnections());
 			outputs.clear();
 		}
-		this.function = function;
-		if (function != null) {
-			for (JOPAVariable arg : function.args) {
+		if (referencedFunction != null) {
+			for (JOPAVariable arg : referencedFunction.args) {
 				createPort(arg, false, false);
 			}
-			JOPAVariable outVariable = new JOPAVariable(function.returnType, function.name);
+			JOPAVariable outVariable = new JOPAVariable(referencedFunction.returnType, referencedFunction.name);
 			createPort(outVariable, true, true);
 		}
 	}

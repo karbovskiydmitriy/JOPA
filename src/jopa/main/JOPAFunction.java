@@ -12,6 +12,7 @@ import java.util.Arrays;
 import jopa.nodes.JOPAConstantsNode;
 import jopa.nodes.JOPADefinesNode;
 import jopa.nodes.JOPAEndNode;
+import jopa.nodes.JOPAFunctionNode;
 import jopa.nodes.JOPAGlobalsNode;
 import jopa.nodes.JOPANode;
 import jopa.nodes.JOPAStartNode;
@@ -50,10 +51,10 @@ public class JOPAFunction implements Serializable {
 		this.text = text;
 		this.args = new ArrayList<JOPAVariable>(Arrays.asList(args));
 		if (isCustom) {
-			this.definesNode = new JOPADefinesNode(200, 200);
-			this.typesNode = new JOPATypesNode(50, 200);
-			this.constantsNode = new JOPAConstantsNode(50, 350);
-			this.globalsNode = new JOPAGlobalsNode(200, 350);
+			this.definesNode = new JOPADefinesNode(this, 200, 200);
+			this.typesNode = new JOPATypesNode(this, 50, 200);
+			this.constantsNode = new JOPAConstantsNode(this, 50, 350);
+			this.globalsNode = new JOPAGlobalsNode(this, 200, 350);
 			this.statementNodes = new ArrayList<JOPANode>();
 			setupInitialNodes();
 		}
@@ -62,10 +63,10 @@ public class JOPAFunction implements Serializable {
 	private void setupInitialNodes() {
 		switch (currentProject.projectType) {
 		case FRAGMENT: {
-			statementNodes.add(new JOPAStatementNode(350, 50, "FRAGMENT_TEST"));
-			// statementNodes.add(new JOPABranchNode(350, 200));
-			this.startNode = new JOPAStartNode(50, 50, "FRAGMENT_INPUT");
-			this.endNode = new JOPAEndNode(650, 50, "FRAGMENT_OUTPUT");
+			statementNodes.add(new JOPAStatementNode(this, 350, 50, "FRAGMENT_TEST"));
+			// statementNodes.add(new JOPABranchNode(this, 350, 200));
+			this.startNode = new JOPAStartNode(this, 50, 50, "FRAGMENT_INPUT");
+			this.endNode = new JOPAEndNode(this, 650, 50, "FRAGMENT_OUTPUT");
 			JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
 			startNode.flowStart.makeConnection(statement.incomingControlFlow);
 			statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
@@ -76,10 +77,10 @@ public class JOPAFunction implements Serializable {
 		}
 			break;
 		case COMPUTE: {
-			statementNodes.add(new JOPAStatementNode(350, 50, "COMPUTE_TEST"));
-			// statementNodes.add(new JOPABranchNode(350, 200));
-			this.startNode = new JOPAStartNode(50, 50, "COMPUTE_INPUT");
-			this.endNode = new JOPAEndNode(650, 50, "COMPUTE_OUTPUT");
+			statementNodes.add(new JOPAStatementNode(this, 350, 50, "COMPUTE_TEST"));
+			// statementNodes.add(new JOPABranchNode(this, 350, 200));
+			this.startNode = new JOPAStartNode(this, 50, 50, "COMPUTE_INPUT");
+			this.endNode = new JOPAEndNode(this, 650, 50, "COMPUTE_OUTPUT");
 			JOPAStatementNode statement = (JOPAStatementNode) statementNodes.get(0);
 			startNode.flowStart.makeConnection(statement.incomingControlFlow);
 			statement.outcomingControlFlow.makeConnection(endNode.flowEnd);
@@ -224,8 +225,17 @@ public class JOPAFunction implements Serializable {
 		return code;
 	}
 
-	public void updateFunction() {
-		// TODO updateFunction
+	public void updateReferencingNodes() {
+		currentProject.functions.forEach(currentFunction -> {
+			if (currentFunction.isCustom) {
+				currentFunction.statementNodes.forEach(node -> {
+					if (node.getClass().equals(JOPAFunctionNode.class)) {
+						JOPAFunctionNode functionNode = (JOPAFunctionNode) node;
+						functionNode.applyFunction(true);
+					}
+				});
+			}
+		});
 	}
 
 	private static String getTabs(int count) {
