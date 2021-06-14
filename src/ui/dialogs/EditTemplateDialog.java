@@ -76,12 +76,11 @@ public class EditTemplateDialog extends Dialog<Template> {
 				if (selectedFile != null) {
 					String code = loadTextFile(selectedFile.getAbsolutePath());
 					object.template = code;
-					// TODO init
 					init();
 				}
 			});
 			saveMenuItem.addActionListener(l -> {
-				File selectedFile = gui.showFileDialog(null, templateFilter, "Load template", false);
+				File selectedFile = gui.showFileDialog(null, templateFilter, "Save template", true);
 				if (selectedFile != null) {
 					String code = templateEditor.getText();
 					saveTextFile(selectedFile.getAbsolutePath(), code);

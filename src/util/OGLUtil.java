@@ -650,7 +650,7 @@ public final class OGLUtil {
 						int location = glGetUniformLocation(program, name);
 						if (location > -1) {
 							if (passVariable(variable, location)) {
-								System.out.println("[OPENGL] Variable " + name + " passed");
+//								System.out.println("[OPENGL] Variable " + name + " passed");
 							}
 						}
 					}

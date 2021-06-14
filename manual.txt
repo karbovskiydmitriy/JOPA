@@ -1,1 +1,37 @@
-Press everything
+Welcome to Java and OpenGL Parallel algorithms application!
+
+In this application, you can create, edit and export your projects, generated shaders and scripts
+You can create, load and save projects via bar.
+You can also use different functions and create your own.
+Application has a file with different templates that are used to describe blocks and generate their code.
+This application allows to model, design, test and prototype simple shaders.
+This application can manage 2 types of shaders: fragment shaders and compute shader.
+In order to use compute shaders, your system should have OpenGL 4.3 implemented in graphics card driver
+Once shader is created, you can run it in simulation environment.
+This environment is controlled by simple scripts. You can use the following commands:
+1)  new window
+2)	new texture
+3)  new buffer
+4)  new shader
+5)  new program
+6)  load texture
+7)  generate shader
+8)  set program
+9)  set var
+10)  set bool
+11) set int
+12) set uint
+13) set float
+14) set label
+15) go to
+16) bind image
+17) bind buffer
+18) draw
+19) check
+20) compute
+21) close window
+22) delete texture
+23) delete buffer
+24) delete shader
+25) delete program
+26) exit

@@ -17,7 +17,7 @@ public class FunctionNode extends StatementNode {
 	public FunctionNode(Function function, int x, int y, Function referencedFunction) {
 		super(function, x, y, "FUNCTION", null);
 		this.referencedFunction = referencedFunction;
-		applyFunction(false);
+		applyFunction();
 	}
 
 	@Override
@@ -80,8 +80,7 @@ public class FunctionNode extends StatementNode {
 		return true;
 	}
 
-	public void applyFunction(boolean tryToKeepConnections) {
-		// TODO use tryToKeepConnections
+	public void applyFunction() {
 		if (inputs != null) {
 			inputs.forEach(input -> input.destroyAllConnections());
 			inputs.clear();

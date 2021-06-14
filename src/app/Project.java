@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import io.Loader;
 import io.Serializer;
 import nodes.BranchNode;
 import nodes.ConstantsNode;
@@ -101,19 +102,23 @@ public class Project implements Serializable {
 		return function;
 	}
 
-	public void updateConstants() {
+	public synchronized void updateConstants() {
 		functions.forEach(function -> {
-			function.constantsNode.updateConstants();
+			if (function.isCustom) {
+				function.constantsNode.updateConstants();
+			}
 		});
 	}
 
-	public void updateGlobals() {
+	public synchronized void updateGlobals() {
 		functions.forEach(function -> {
-			function.globalsNode.updateGlobals();
+			if (function.isCustom) {
+				function.globalsNode.updateGlobals();
+			}
 		});
 	}
 
-	public void deleteFunctionReferencies(Function function) {
+	public synchronized void deleteFunctionReferencies(Function function) {
 		functions.forEach(currentFunction -> {
 			if (currentFunction.isCustom) {
 				currentFunction.statementNodes.forEach(node -> {
@@ -121,7 +126,7 @@ public class Project implements Serializable {
 						FunctionNode functionNode = (FunctionNode) node;
 						if (functionNode.referencedFunction == function) {
 							functionNode.referencedFunction = null;
-							functionNode.applyFunction(false);
+							functionNode.applyFunction();
 						}
 					}
 				});
@@ -155,16 +160,17 @@ public class Project implements Serializable {
 	public synchronized void startPlayground() {
 		if (playground != null) {
 			if (isCustom) {
-				// String scriptCode = loadStandardScript("ants.script");
 				if (generateShader()) {
-					// script.setupScript(scriptCode);
-
+					script.setupScript(getGeneratedShader());
 				} else {
 					gui.showMessage("Shader generation failed");
 
 					return;
 				}
 			}
+			// HACK
+			//String scriptCode = Loader.loadStandardScript("ants.script");
+			//script.setupScript(scriptCode);
 			playground.stop();
 			playground.start();
 		}

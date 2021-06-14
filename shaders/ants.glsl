@@ -44,8 +44,8 @@ float random(vec2 st)
 
 void init(int id)
 {
-	float angle = random(id + 0) * PI * 2;
-	float rad = random(id + 1) * 0.22;
+	float angle = random(id + 10000 - 1.0 / id) * PI * 2;
+	float rad = random(id + 100 + PI / id) * 0.22;
 	ants[id].position = vec2(0.5 + cos(angle) * rad, (0.5 + sin(angle) * rad / aspect));
 	ants[id].angle = random(id + 2) * PI * 2;
 	ants[id].speed = 1.0;
@@ -97,7 +97,7 @@ void turn(int id)
 	}
 	else
 	{
-		ants[id].angle += (normrandom(ants[id].position.x)) * turnSpeed * deltaTime;
+		ants[id].angle += (random(id)) * turnSpeed * deltaTime;
 	}
 }
 

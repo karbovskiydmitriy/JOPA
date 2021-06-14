@@ -79,7 +79,6 @@ public class SimulationScript implements Serializable {
 	private transient static final String[] DELETE_BUFFER = { "destroy", "buffer" };
 	private transient static final String[] DELETE_SHADER = { "delete", "shader" };
 	private transient static final String[] DELETE_PROGRAM = { "delete", "program" };
-	private transient static final String[] PAUSE = { "pause" };
 	private transient static final String[] EXIT = { "exit" };
 
 	private transient long startTime;
@@ -206,7 +205,8 @@ public class SimulationScript implements Serializable {
 			return false;
 		}
 		int size = typeSize * count;
-		int bufferHandle = createBuffer(ByteBuffer.allocate(size));
+		ByteBuffer nativeBuffer = ByteBuffer.allocate(size);
+		int bufferHandle = createBuffer(nativeBuffer);
 		Buffer buffer = new Buffer();
 		buffer.handle = bufferHandle;
 		buffer.type = typeName;
@@ -221,7 +221,7 @@ public class SimulationScript implements Serializable {
 			return false;
 		}
 
-		Resource bufferResource = new Resource(ResourceType.BUFFER, name, bufferHandle);
+		Resource bufferResource = new Resource(ResourceType.BUFFER, name, buffer);
 
 		addResource(bufferResource);
 
@@ -858,7 +858,7 @@ public class SimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> DELETE_BUFFER_OPERATION = args -> {
 		if (args.length != 1) {
-			logSimulationError(this, "DELETE BUFFER uses 1 argument (name)", args);
+			logSimulationError(this, "DELETE BUFFER uses 1 argument (buffer)", args);
 
 			return false;
 		}
@@ -895,7 +895,7 @@ public class SimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> DELETE_SHADER_OPERATION = args -> {
 		if (args.length != 1) {
-			logSimulationError(this, "DELETE SHADER uses 1 argument (name)", args);
+			logSimulationError(this, "DELETE SHADER uses 1 argument (shader)", args);
 
 			return false;
 		}
@@ -926,7 +926,7 @@ public class SimulationScript implements Serializable {
 
 	private transient final Predicate<String[]> DELETE_PROGRAM_OPERATION = args -> {
 		if (args.length != 1) {
-			logSimulationError(this, "DELETE PROGRAM uses 1 argument (name)", args);
+			logSimulationError(this, "DELETE PROGRAM uses 1 argument (program)", args);
 
 			return false;
 		}
@@ -955,16 +955,10 @@ public class SimulationScript implements Serializable {
 		return true;
 	};
 
-	private transient final Predicate<String[]> PAUSE_OPERATION = args -> {
-		// TODO pause
-
-		return true;
-	};
-
 	private transient final Predicate<String[]> EXIT_OPERATION = args -> {
 		if (args.length != 0) {
 			logSimulationError(this, "EXIT uses 0 arguments", args);
-			
+
 			return false;
 		}
 
@@ -979,56 +973,9 @@ public class SimulationScript implements Serializable {
 		this.resources = new ArrayList<Resource>();
 	}
 
-	public void init() {
-		operations = new HashMap<String[], Predicate<String[]>>();
-		operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
-		operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
-		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
-		operations.put(NEW_SHADER, NEW_SHADER_OPERATION);
-		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
-		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
-		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
-		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
-		operations.put(SET_VAR, SET_VAR_OPERATION);
-		operations.put(SET_BOOL, SET_BOOL_OPERATION);
-		operations.put(SET_INT, SET_INT_OPERATION);
-		operations.put(SET_UINT, SET_UINT_OPERATION);
-		operations.put(SET_FLOAT, SET_FLOAT_OPERATION);
-		operations.put(SET_LABEL, SET_LABEL_OPERATION);
-		operations.put(GO_TO, GO_TO_OPERATION);
-		operations.put(BIND_IMAGE, BIND_IMAGE_OPERATION);
-		operations.put(BIND_BUFFER, BIND_BUFFER_OPERATION);
-		operations.put(DRAW, DRAW_OPERATION);
-		operations.put(CHECK, CHECK_OPERATION);
-		operations.put(COMPUTE, COMPUTE_OPERATION);
-		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_OPERATION);
-		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_OPERATION);
-		operations.put(DELETE_BUFFER, DELETE_BUFFER_OPERATION);
-		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
-		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
-		operations.put(PAUSE, PAUSE_OPERATION);
-		operations.put(EXIT, EXIT_OPERATION);
-
-		Resource timeResource = new Resource(GLSLType.FLOAT, "time", 0.0f);
-		addResource(timeResource);
-		Resource deltaTimeResource = new Resource(GLSLType.FLOAT, "deltaTime", 0.0f);
-		addResource(deltaTimeResource);
-	}
-
 	private void logSimulationError(Object source, String errorMessage, Object object) {
 		System.err.println("[SCRIPT] " + source.getClass().getSimpleName() + ": " + errorMessage);
 		// System.err.println("[SCRIPT] " + object);
-	}
-
-	public boolean start() {
-		startTime = System.currentTimeMillis();
-		commandIndex = 0;
-		init();
-		if (commands.size() == 0) {
-			return false;
-		}
-
-		return true;
 	}
 
 	public static SimulationScript create(ProjectType type) {
@@ -1064,6 +1011,52 @@ public class SimulationScript implements Serializable {
 		return script;
 	}
 
+	public boolean start() {
+		startTime = System.currentTimeMillis();
+		commandIndex = 0;
+		init();
+		if (commands.size() == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private void init() {
+		operations = new HashMap<String[], Predicate<String[]>>();
+		operations.put(NEW_WINDOW, NEW_WINDOW_OPERATION);
+		operations.put(NEW_TEXTURE, NEW_TEXTURE_OPERATION);
+		operations.put(NEW_BUFFER, NEW_BUFFER_OPERATION);
+		operations.put(NEW_SHADER, NEW_SHADER_OPERATION);
+		operations.put(NEW_PROGRAM, NEW_PROGRAM_OPERATION);
+		operations.put(LOAD_TEXTURE, LOAD_TEXTURE_OPERATION);
+		operations.put(GENERATE_SHADER, GENERATE_SHADER_OPERATION);
+		operations.put(SET_PROGRAM, SET_PROGRAM_OPERATION);
+		operations.put(SET_VAR, SET_VAR_OPERATION);
+		operations.put(SET_BOOL, SET_BOOL_OPERATION);
+		operations.put(SET_INT, SET_INT_OPERATION);
+		operations.put(SET_UINT, SET_UINT_OPERATION);
+		operations.put(SET_FLOAT, SET_FLOAT_OPERATION);
+		operations.put(SET_LABEL, SET_LABEL_OPERATION);
+		operations.put(GO_TO, GO_TO_OPERATION);
+		operations.put(BIND_IMAGE, BIND_IMAGE_OPERATION);
+		operations.put(BIND_BUFFER, BIND_BUFFER_OPERATION);
+		operations.put(DRAW, DRAW_OPERATION);
+		operations.put(CHECK, CHECK_OPERATION);
+		operations.put(COMPUTE, COMPUTE_OPERATION);
+		operations.put(CLOSE_WINDOW, CLOSE_WINDOW_OPERATION);
+		operations.put(DELETE_TEXTURE, DELETE_TEXTURE_OPERATION);
+		operations.put(DELETE_BUFFER, DELETE_BUFFER_OPERATION);
+		operations.put(DELETE_SHADER, DELETE_SHADER_OPERATION);
+		operations.put(DELETE_PROGRAM, DELETE_PROGRAM_OPERATION);
+		operations.put(EXIT, EXIT_OPERATION);
+
+		Resource timeResource = new Resource(GLSLType.FLOAT, "time", 0.0f);
+		addResource(timeResource);
+		Resource deltaTimeResource = new Resource(GLSLType.FLOAT, "deltaTime", 0.0f);
+		addResource(deltaTimeResource);
+	}
+
 	public boolean setupScript(String code) {
 		if (code == null) {
 			return false;
@@ -1093,14 +1086,13 @@ public class SimulationScript implements Serializable {
 		}
 
 		String command = commands.get(commandIndex);
+		commandIndex++;
 		// System.out.println("[SCRIPT] Command: " + command);
 		if (command.startsWith("#")) {
-			commandIndex++;
 			return true;
 		}
-		if (command.length() > 0) {
+		if (command.length() > 1) {
 			boolean result = executeCommand(command);
-			commandIndex++;
 
 			if (!result) {
 				if (checkForError()) {
@@ -1173,7 +1165,7 @@ public class SimulationScript implements Serializable {
 							}
 							Predicate<String[]> operation = getOperation(parts);
 							if (operation == null) {
-								// System.err.println("[SCRIPT] Unknown command: " + operationPart);
+								System.err.println("[SCRIPT] Unknown command: " + operationPart);
 
 								return false;
 							}
@@ -1201,7 +1193,7 @@ public class SimulationScript implements Serializable {
 	public void addResource(Resource resource) {
 		Resource foundResource = getResourceByName(resource.name);
 		if (foundResource != null) {
-			System.out.println("[SCRIPT] Updating resource: " + resource.name);
+//			System.out.println("[SCRIPT] Updating resource: " + resource.name);
 			resources.remove(foundResource);
 		} else {
 			System.out.println("[SCRIPT] Adding resource: " + resource.name);

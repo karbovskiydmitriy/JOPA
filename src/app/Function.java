@@ -231,7 +231,7 @@ public class Function implements Serializable {
 				currentFunction.statementNodes.forEach(node -> {
 					if (node.getClass().equals(FunctionNode.class)) {
 						FunctionNode functionNode = (FunctionNode) node;
-						functionNode.applyFunction(true);
+						functionNode.applyFunction();
 					}
 				});
 			}

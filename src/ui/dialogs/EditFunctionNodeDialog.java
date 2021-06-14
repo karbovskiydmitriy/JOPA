@@ -36,7 +36,7 @@ public class EditFunctionNodeDialog extends Dialog<FunctionNode> {
 		} else {
 			object.referencedFunction = null;
 		}
-		object.applyFunction(true);
+		object.applyFunction();
 	}
 
 	private void init() {

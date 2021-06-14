@@ -19,9 +19,8 @@ import ui.UI;
 public class Main {
 
 	private static final String SYSTEM_NOT_SUPPORTED = "Your system is not officially supported!";
-	// private static final String OPENGL_VERSION_WARNING = "Your system does not
-	// support OpenGL 4.3, required for compute shaders!";
-	private static final String TEST_PROJECT_NAME = ".\\projects\\";
+	private static final String OPENGL_VERSION_WARNING = "Your system does not support OpenGL 4.3, required for compute shaders!";
+	private static final String PROJECTS_DIRECTORY = ".\\projects\\";
 
 	private static FileNameExtensionFilter projectFileFilter;
 	private static FileNameExtensionFilter shaderFileFilter;
@@ -55,7 +54,7 @@ public class Main {
 		}
 
 		if (!system.checkVersion()) {
-			// ui.showMessage(OPENGL_VERSION_WARNING);
+			gui.showMessage(OPENGL_VERSION_WARNING);
 		}
 
 		helpString = loadTextFile("about.txt");
@@ -75,7 +74,7 @@ public class Main {
 			gui.closeProjectTabs();
 			currentProject = new Project("New project", ProjectType.FRAGMENT);
 			createNewFunction();
-			createCustomPlayground(currentProject.projectType);
+			createPlayground(currentProject.projectType);
 		}
 
 		gui.repaint();
@@ -86,7 +85,7 @@ public class Main {
 			if (currentProject != null) {
 				askAsboutSavingTheProject();
 			}
-			File selectedFile = gui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, false);
+			File selectedFile = gui.showFileDialog(PROJECTS_DIRECTORY, projectFileFilter, null, false);
 			if (selectedFile != null) {
 				currentProject = Project.loadFromFile(selectedFile);
 
@@ -100,7 +99,7 @@ public class Main {
 	public static boolean saveProject() {
 		synchronized (projectSync) {
 			if (currentProject != null) {
-				File selectedFile = gui.showFileDialog(TEST_PROJECT_NAME, projectFileFilter, null, true);
+				File selectedFile = gui.showFileDialog(PROJECTS_DIRECTORY, projectFileFilter, null, true);
 				if (selectedFile != null) {
 					if (Project.saveToFile(selectedFile, currentProject)) {
 						return true;
@@ -119,8 +118,6 @@ public class Main {
 			currentProject = null;
 			gui.closeProjectTabs();
 		}
-
-		gui.repaint();
 	}
 
 	public static void quit() {
@@ -199,7 +196,7 @@ public class Main {
 						gui.showMessage("function contains errors");
 					}
 				} else {
-					gui.showMessage("Function not selected!");
+					gui.showMessage("unction not selected!");
 				}
 			} else {
 				projectNotCreated();
@@ -311,6 +308,7 @@ public class Main {
 	public static void createPlayground(ProjectType type) {
 		synchronized (projectSync) {
 			if (currentProject != null) {
+				currentProject.isCustom = false;
 				currentProject.createPlayground(type);
 			} else {
 				projectNotCreated();

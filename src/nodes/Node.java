@@ -71,7 +71,7 @@ public abstract class Node implements Serializable {
 	protected void init() {
 		inputs = new ArrayList<DataPort>();
 		outputs = new ArrayList<DataPort>();
-		text = "SAMPLE TEXT";
+		text = null;
 	}
 
 	public abstract boolean check();
