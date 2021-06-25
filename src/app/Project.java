@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import io.Loader;
 import io.Serializer;
 import nodes.BranchNode;
 import nodes.ConstantsNode;

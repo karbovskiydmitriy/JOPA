@@ -35,3 +35,8 @@ This environment is controlled by simple scripts. You can use the following comm
 24) delete shader
 25) delete program
 26) exit
+
+Fast start: run application, press Ctrl+E, load one of the standard scripts and run the simulation using Ctrl+P.
+Interesting scripts:
+- ants.script
+- demo.script
